@@ -1,0 +1,239 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "File Uploader",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/v3/files": {
+      "post": {
+        "tags": [
+          "OpenApi - File"
+        ],
+        "summary": "Create File",
+        "operationId": "create_file_v3_files_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Authorization",
+              "type": "string"
+            },
+            "name": "authorization",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_file_v3_files_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_create_file_v3_files_post": {
+        "title": "Body_create_file_v3_files_post",
+        "required": [
+          "file",
+          "file_type"
+        ],
+        "type": "object",
+        "properties": {
+          "file": {
+            "title": "File",
+            "type": "string",
+            "format": "binary"
+          },
+          "file_type": {
+            "$ref": "#/components/schemas/UserUploadFileTypeEnum"
+          },
+          "custom_unique_name": {
+            "title": "Custom Unique Name",
+            "type": "string"
+          },
+          "expire_minutes": {
+            "title": "Expire Minutes",
+            "type": "integer"
+          }
+        }
+      },
+      "FileResponse": {
+        "title": "FileResponse",
+        "required": [
+          "id",
+          "file_name",
+          "file_name_alone",
+          "path",
+          "format",
+          "type",
+          "file_type",
+          "width",
+          "height",
+          "size",
+          "duration",
+          "urls",
+          "created_at",
+          "creator_user_id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "file_name": {
+            "title": "File Name",
+            "type": "string"
+          },
+          "file_name_alone": {
+            "title": "File Name Alone",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "format": {
+            "title": "Format",
+            "type": "string"
+          },
+          "mime_type": {
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "file_type": {
+            "title": "File Type",
+            "type": "integer"
+          },
+          "width": {
+            "title": "Width",
+            "type": "integer"
+          },
+          "height": {
+            "title": "Height",
+            "type": "integer"
+          },
+          "size": {
+            "title": "Size",
+            "type": "integer"
+          },
+          "duration": {
+            "title": "Duration",
+            "type": "integer"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          },
+          "urls": {
+            "title": "Urls",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "creator_user_id": {
+            "title": "Creator User Id",
+            "type": "integer"
+          }
+        }
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "UserUploadFileTypeEnum": {
+        "title": "UserUploadFileTypeEnum",
+        "enum": [
+          "product.photo",
+          "product.video",
+          "user.avatar",
+          "user.cover",
+          "vendor.cover",
+          "vendor.logo",
+          "chat.photo",
+          "chat.video",
+          "chat.voice",
+          "chat.file"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

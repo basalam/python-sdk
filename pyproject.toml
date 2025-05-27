@@ -1,0 +1,96 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "basalam-sdk"
+dynamic = ["version"]
+description = "A comprehensive Python client library for interacting with Basalam API services"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Basalam", email = "developers@basalam.com" },
+]
+maintainers = [
+    { name = "Basalam Development Team", email = "developers@basalam.com" },
+]
+keywords = ["basalam", "sdk", "api", "client"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "requests>=2.25.0",
+    "aiohttp>=3.8.0",
+    "pydantic>=2.0.0",
+    "python-dateutil>=2.8.2",
+    "typing-extensions>=4.5.0",
+]
+
+[project.urls]
+Documentation = "https://github.com/basalam/python-sdk/docs"
+Source = "https://github.com/basalam/python-sdk"
+Issues = "https://github.com/basalam/python-sdk/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.3.1",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.3.0",
+    "isort>=5.12.0",
+    "mypy>=1.3.0",
+    "ruff>=0.0.271",
+    "pre-commit>=3.3.2",
+]
+
+[tool.setuptools_scm]
+write_to = "src/basalam_sdk/_version.py"
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+src_paths = ["src", "tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+select = ["E", "F", "B", "I", "W", "C90"]
+ignore = []
+fixable = ["ALL"]
+unfixable = []
+src = ["src", "tests"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+strict_optional = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+asyncio_mode = "auto"
+markers = [
+    "unit: marks test as a unit test",
+    "integration: marks test as an integration test",
+    "slow: marks test as slow (skipped by default)",
+]
