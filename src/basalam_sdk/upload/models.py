@@ -2,21 +2,9 @@
 Models for the Upload service API.
 """
 from enum import Enum
-from typing import List, Optional, Union, Dict
+from typing import Optional, Dict
 
 from pydantic import BaseModel
-
-
-class ValidationError(BaseModel):
-    """Validation error model."""
-    loc: List[Union[str, int]]
-    msg: str
-    type: str
-
-
-class HTTPValidationError(BaseModel):
-    """HTTP validation error model."""
-    detail: List[ValidationError]
 
 
 class UserUploadFileTypeEnum(str, Enum):
@@ -33,8 +21,16 @@ class UserUploadFileTypeEnum(str, Enum):
     CHAT_FILE = "chat.file"
 
 
+class UploadFileRequest(BaseModel):
+    """Upload file request model matching OpenAPI Body_create_file_v3_files_post schema."""
+    file_type: str
+    custom_unique_name: Optional[str] = None
+    expire_minutes: Optional[int] = None
+
+
 class FileResponse(BaseModel):
-    """File response model."""
+    """File response model matching OpenAPI FileResponse schema."""
+    # Required fields according to OpenAPI
     id: int
     file_name: str
     file_name_alone: str
@@ -49,5 +45,7 @@ class FileResponse(BaseModel):
     urls: Dict[str, str]
     created_at: str
     creator_user_id: int
+
+    # Optional fields (not in required list in OpenAPI)
     mime_type: Optional[str] = None
     url: Optional[str] = None

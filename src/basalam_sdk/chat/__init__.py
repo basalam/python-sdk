@@ -5,12 +5,49 @@ This module provides access to Basalam's chat service APIs.
 """
 
 from .client import ChatService
-from .models import MessageRequestModel, MessageInput, Attachment, AttachmentFile
+from .models import (
+    Attachment,
+    AttachmentFile,
+    ChatListData,
+    ChatListResponse,
+    ChatResponse,
+    Contact,
+    CreateChatRequest,
+    GetChatsRequest,
+    GetMessagesRequest,
+    GetMessagesResponse,
+    MessageContent,
+    MessageFile,
+    MessageInput,
+    MessageLink,
+    MessageRequest,
+    MessageSender,
+    MessageTypeEnum,
+    MessageOrderByEnum,
+    MessageFiltersEnum,
+    ChatListResponse,
+)
 
 __all__ = [
     "ChatService",
-    "MessageRequestModel",
-    "MessageInput",
     "Attachment",
     "AttachmentFile",
+    "ChatListData",
+    "ChatListResponse",
+    "ChatResponse",
+    "Contact",
+    "CreateChatRequest",
+    "GetChatsRequest",
+    "GetMessagesRequest",
+    "GetMessagesResponse",
+    "MessageContent",
+    "MessageFile",
+    "MessageInput",
+    "MessageLink",
+    "MessageRequest",
+    "MessageSender",
+    "MessageTypeEnum",
+    "MessageOrderByEnum",
+    "MessageFiltersEnum",
+    "ChatListResponse",
 ]

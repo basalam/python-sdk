@@ -1,9 +1,7 @@
 """
 Base client for making requests to the Basalam API.
 """
-import asyncio
 import json
-from functools import wraps
 from typing import Any, Dict, List, Optional, Union, TypeVar, Type
 from urllib.parse import urljoin
 
@@ -16,36 +14,6 @@ from .errors import BasalamError, BasalamAPIError, BasalamAuthError
 
 # Type variable for response models
 T = TypeVar('T', bound=BaseModel)
-
-
-def refresh_token_on_auth_error(func):
-    """
-    Decorator to handle token refresh on authentication error.
-    Will attempt to refresh the token and retry the request once if
-    authentication fails with a 401 error.
-    """
-
-    @wraps(func)
-    async def async_wrapper(self, *args, **kwargs):
-        try:
-            return await func(self, *args, **kwargs)
-        except BasalamAuthError:
-            # Try to refresh the token and retry once
-            await self.auth.refresh_token()
-            return await func(self, *args, **kwargs)
-
-    @wraps(func)
-    def sync_wrapper(self, *args, **kwargs):
-        try:
-            return func(self, *args, **kwargs)
-        except BasalamAuthError:
-            # Try to refresh the token and retry once
-            self.auth.refresh_token_sync()
-            return func(self, *args, **kwargs)
-
-    if asyncio.iscoroutinefunction(func):
-        return async_wrapper
-    return sync_wrapper
 
 
 class BaseClient:
@@ -75,33 +43,17 @@ class BaseClient:
         else:
             self.base_url = self.config.base_url
 
-    async def _get_client(self) -> httpx.AsyncClient:
-        """Get an async HTTP client with proper configuration."""
-        headers = self.config.get_headers()
-        auth_headers = await self.auth.get_auth_headers()
-        headers.update(auth_headers)
-
-        return httpx.AsyncClient(
-            headers=headers,
-            timeout=self.config.timeout,
-            follow_redirects=True,
-        )
-
-    def _get_client_sync(self) -> httpx.Client:
-        """Get a synchronous HTTP client with proper configuration."""
-        headers = self.config.get_headers()
-        auth_headers = self.auth.get_auth_headers_sync()
-        headers.update(auth_headers)
-
-        return httpx.Client(
-            headers=headers,
-            timeout=self.config.timeout,
-            follow_redirects=True,
-        )
-
     @staticmethod
     def _handle_http_error(e: httpx.HTTPStatusError) -> None:
         """Handle HTTP errors and convert them to Basalam exceptions."""
+        # Print the response data for debugging
+        try:
+            response_data = e.response.json()
+            print(
+                f"API Error Response ({e.response.status_code}): {json.dumps(response_data, ensure_ascii=False, indent=2)}")
+        except (json.JSONDecodeError, ValueError):
+            print(f"API Error Response ({e.response.status_code}): {e.response.text}")
+
         if e.response.status_code == 401:
             raise BasalamAuthError(f"Authentication failed: {e}", response=e.response)
 
@@ -143,7 +95,6 @@ class BaseClient:
 
         return data
 
-    @refresh_token_on_auth_error
     async def request(
             self,
             method: str,
@@ -151,23 +102,39 @@ class BaseClient:
             params: Optional[Dict[str, Any]] = None,
             data: Optional[Dict[str, Any]] = None,
             json_data: Optional[Dict[str, Any]] = None,
+            files: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """
         Make an async request to the API.
         """
         url = urljoin(self.base_url, path)
 
-        async with await self._get_client() as client:
+        # Build headers: start with config headers, add auth headers if needed, then custom headers
+        request_headers = self.config.get_headers().copy()
+
+        if require_auth:
+            auth_headers = await self.auth.get_auth_headers()
+            request_headers.update(auth_headers)
+
+        if headers:
+            request_headers.update(headers)
+
+        async with httpx.AsyncClient(
+                timeout=self.config.timeout,
+                follow_redirects=True,
+        ) as client:
             try:
                 response = await client.request(
                     method=method,
                     url=url,
+                    headers=request_headers,
                     params=params,
                     data=data,
                     json=json_data,
-                    headers=headers,
+                    files=files,
                 )
                 response.raise_for_status()
 
@@ -179,7 +146,6 @@ class BaseClient:
 
             return self._parse_response_data(response, response_model)
 
-    @refresh_token_on_auth_error
     def request_sync(
             self,
             method: str,
@@ -187,23 +153,39 @@ class BaseClient:
             params: Optional[Dict[str, Any]] = None,
             data: Optional[Dict[str, Any]] = None,
             json_data: Optional[Dict[str, Any]] = None,
+            files: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """
         Make a synchronous request to the API.
         """
         url = urljoin(self.base_url, path)
 
-        with self._get_client_sync() as client:
+        # Build headers: start with config headers, add auth headers if needed, then custom headers
+        request_headers = self.config.get_headers().copy()
+
+        if require_auth:
+            auth_headers = self.auth.get_auth_headers_sync()
+            request_headers.update(auth_headers)
+
+        if headers:
+            request_headers.update(headers)
+
+        with httpx.Client(
+                timeout=self.config.timeout,
+                follow_redirects=True,
+        ) as client:
             try:
                 response = client.request(
                     method=method,
                     url=url,
+                    headers=request_headers,
                     params=params,
                     data=data,
                     json=json_data,
-                    headers=headers,
+                    files=files,
                 )
                 response.raise_for_status()
 
@@ -215,114 +197,135 @@ class BaseClient:
 
             return self._parse_response_data(response, response_model)
 
-    async def get(
+    # HTTP method helpers
+    async def _get(
             self,
             path: str,
             params: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """Make a GET request."""
-        return await self.request("GET", path, params=params, headers=headers, response_model=response_model)
+        return await self.request("GET", path, params=params, headers=headers, response_model=response_model,
+                                  require_auth=require_auth)
 
-    def get_sync(
+    def _get_sync(
             self,
             path: str,
             params: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """Make a synchronous GET request."""
-        return self.request_sync("GET", path, params=params, headers=headers, response_model=response_model)
+        return self.request_sync("GET", path, params=params, headers=headers, response_model=response_model,
+                                 require_auth=require_auth)
 
-    async def post(
+    async def _post(
             self,
             path: str,
             data: Optional[Dict[str, Any]] = None,
             json_data: Optional[Dict[str, Any]] = None,
+            files: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """Make a POST request."""
-        return await self.request("POST", path, data=data, json_data=json_data, headers=headers,
-                                  response_model=response_model)
+        return await self.request("POST", path, data=data, json_data=json_data, files=files, headers=headers,
+                                  response_model=response_model, require_auth=require_auth)
 
-    def post_sync(
+    def _post_sync(
             self,
             path: str,
             data: Optional[Dict[str, Any]] = None,
             json_data: Optional[Dict[str, Any]] = None,
+            files: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """Make a synchronous POST request."""
-        return self.request_sync("POST", path, data=data, json_data=json_data, headers=headers,
-                                 response_model=response_model)
+        return self.request_sync("POST", path, data=data, json_data=json_data, files=files, headers=headers,
+                                 response_model=response_model, require_auth=require_auth)
 
-    async def put(
+    async def _put(
             self,
             path: str,
             data: Optional[Dict[str, Any]] = None,
             json_data: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """Make a PUT request."""
         return await self.request("PUT", path, data=data, json_data=json_data, headers=headers,
-                                  response_model=response_model)
+                                  response_model=response_model, require_auth=require_auth)
 
-    def put_sync(
+    def _put_sync(
             self,
             path: str,
             data: Optional[Dict[str, Any]] = None,
             json_data: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """Make a synchronous PUT request."""
         return self.request_sync("PUT", path, data=data, json_data=json_data, headers=headers,
-                                 response_model=response_model)
+                                 response_model=response_model, require_auth=require_auth)
 
-    async def patch(
+    async def _patch(
             self,
             path: str,
             data: Optional[Dict[str, Any]] = None,
             json_data: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """Make a PATCH request."""
         return await self.request("PATCH", path, data=data, json_data=json_data, headers=headers,
-                                  response_model=response_model)
+                                  response_model=response_model, require_auth=require_auth)
 
-    def patch_sync(
+    def _patch_sync(
             self,
             path: str,
             data: Optional[Dict[str, Any]] = None,
             json_data: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """Make a synchronous PATCH request."""
         return self.request_sync("PATCH", path, data=data, json_data=json_data, headers=headers,
-                                 response_model=response_model)
+                                 response_model=response_model, require_auth=require_auth)
 
-    async def delete(
+    async def _delete(
             self,
             path: str,
             params: Optional[Dict[str, Any]] = None,
+            data: Optional[Dict[str, Any]] = None,
+            json_data: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """Make a DELETE request."""
-        return await self.request("DELETE", path, params=params, headers=headers, response_model=response_model)
+        return await self.request("DELETE", path, params=params, data=data, json_data=json_data, headers=headers,
+                                  response_model=response_model, require_auth=require_auth)
 
-    def delete_sync(
+    def _delete_sync(
             self,
             path: str,
             params: Optional[Dict[str, Any]] = None,
+            data: Optional[Dict[str, Any]] = None,
+            json_data: Optional[Dict[str, Any]] = None,
             headers: Optional[Dict[str, str]] = None,
             response_model: Optional[Type[T]] = None,
+            require_auth: bool = True,
     ) -> Union[Dict[str, Any], List[Dict[str, Any]], T]:
         """Make a synchronous DELETE request."""
-        return self.request_sync("DELETE", path, params=params, headers=headers, response_model=response_model)
+        return self.request_sync("DELETE", path, params=params, data=data, json_data=json_data, headers=headers,
+                                 response_model=response_model, require_auth=require_auth)

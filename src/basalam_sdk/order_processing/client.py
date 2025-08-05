@@ -1,23 +1,24 @@
 """
-Client for the Basalam Order Processing Service.
+Client for the Basalam OrderEnum Processing Service.
 
 This module provides a client for interacting with Basalam's order processing service.
 """
 
 import logging
-from typing import Dict, Optional, Any
+from typing import Optional
 
 from .models import (
-    OrderResponse,
     OrdersResponse,
-    ItemResponse,
-    ItemsResponse,
+    CustomerItemResponse,
+    CustomerItemsResponse,
     ParcelResponse,
     OrderStatsResponse,
     ResourceStats,
     OrderFilter,
     ItemFilter,
     OrderParcelFilter,
+    ParcelsResponse, Order,
+    ParcelHintsResponse,
 )
 from ..base_client import BaseClient
 
@@ -26,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 class OrderProcessingService(BaseClient):
     """
-    Client for the Basalam Order Processing Service API.
+    Client for the Basalam OrderEnum Processing Service API.
 
     This client provides methods for interacting with customer orders,
     vendor orders, and order statistics.
@@ -36,10 +37,10 @@ class OrderProcessingService(BaseClient):
         """
         Initialize the order processing service client.
         """
-        super().__init__(service_name="order-processing", **kwargs)
+        super().__init__(service="order-processing", **kwargs)
 
     # -------------------------------------------------------------------------
-    # Customer Order endpoints
+    # Customer OrderEnum endpoints
     # -------------------------------------------------------------------------
 
     async def get_customer_orders(
@@ -57,7 +58,16 @@ class OrderProcessingService(BaseClient):
         """
         endpoint = "/v3/customer-orders"
         filters = filters or OrderFilter()
-        params = filters.dict(exclude_none=True)
+        params = filters.model_dump(exclude_none=True)
+
+        # Handle field mapping for API compatibility
+        if "items_title" in params:
+            params["items.title"] = params.pop("items_title")
+        if "parcel_estimate_send_at" in params:
+            params["parcel.estimate_send_at"] = params.pop("parcel_estimate_send_at")
+        if "parcel_statuses" in params:
+            params["parcel.statuses"] = params.pop("parcel_statuses")
+
         response = await self._get(endpoint, params=params)
         return OrdersResponse(**response)
 
@@ -66,7 +76,7 @@ class OrderProcessingService(BaseClient):
             filters: Optional[OrderFilter] = None
     ) -> OrdersResponse:
         """
-        Get a list of customer orders (synchronous version).
+        Get a list of orders (synchronous version).
 
         Args:
             filters: Optional filters to apply to the query.
@@ -76,13 +86,22 @@ class OrderProcessingService(BaseClient):
         """
         endpoint = "/v3/customer-orders"
         filters = filters or OrderFilter()
-        params = filters.dict(exclude_none=True)
+        params = filters.model_dump(exclude_none=True)
+
+        # Handle field mapping for API compatibility
+        if "items_title" in params:
+            params["items.title"] = params.pop("items_title")
+        if "parcel_estimate_send_at" in params:
+            params["parcel.estimate_send_at"] = params.pop("parcel_estimate_send_at")
+        if "parcel_statuses" in params:
+            params["parcel.statuses"] = params.pop("parcel_statuses")
+
         response = self._get_sync(endpoint, params=params)
         return OrdersResponse(**response)
 
-    async def get_customer_order(self, order_id: int) -> OrderResponse:
+    async def get_customer_order(self, order_id: int) -> Order:
         """
-        Get details of a specific customer order.
+        Get details of a specific order.
 
         Args:
             order_id: The ID of the order to retrieve.
@@ -92,11 +111,11 @@ class OrderProcessingService(BaseClient):
         """
         endpoint = f"/v3/customer-orders/{order_id}"
         response = await self._get(endpoint)
-        return OrderResponse(**response)
+        return Order(**response)
 
-    def get_customer_order_sync(self, order_id: int) -> OrderResponse:
+    def get_customer_order_sync(self, order_id: int) -> Order:
         """
-        Get details of a specific customer order (synchronous version).
+        Get details of a specific order (synchronous version).
 
         Args:
             order_id: The ID of the order to retrieve.
@@ -106,201 +125,227 @@ class OrderProcessingService(BaseClient):
         """
         endpoint = f"/v3/customer-orders/{order_id}"
         response = self._get_sync(endpoint)
-        return OrderResponse(**response)
+        return Order(**response)
 
-    async def get_customer_items(
+    async def get_customer_order_parcel_hints(self, order_id: int) -> ParcelHintsResponse:
+        """
+        Get parcel hints for a specific customer order.
+
+        Args:
+            order_id: The ID of the order to retrieve parcel hints for.
+
+        Returns:
+            The response containing the parcel hints.
+        """
+        endpoint = f"/v3/customer-orders/{order_id}/parcel-hints"
+        response = await self._get(endpoint)
+        return ParcelHintsResponse(**response)
+
+    def get_customer_order_parcel_hints_sync(self, order_id: int) -> ParcelHintsResponse:
+        """
+        Get parcel hints for a specific customer order (synchronous version).
+
+        Args:
+            order_id: The ID of the order to retrieve parcel hints for.
+
+        Returns:
+            The response containing the parcel hints.
+        """
+        endpoint = f"/v3/customer-orders/{order_id}/parcel-hints"
+        response = self._get_sync(endpoint)
+        return ParcelHintsResponse(**response)
+
+    async def get_customer_order_items(
             self,
             filters: Optional[ItemFilter] = None
-    ) -> ItemsResponse:
+    ) -> CustomerItemsResponse:
         """
-        Get a list of customer order items.
-        """
-        endpoint = "/customer-items"
-        filters = filters or ItemFilter()
+        Get a list of order items.
 
-        params = {}
-        if filters.ids:
-            params["ids"] = ",".join(str(id) for id in filters.ids)
-        if filters.order_ids:
-            params["order_ids"] = ",".join(str(id) for id in filters.order_ids)
-        if filters.customer_ids:
-            params["customer_ids"] = ",".join(str(id) for id in filters.customer_ids)
-        if filters.product_ids:
-            params["product_ids"] = ",".join(str(id) for id in filters.product_ids)
-        if filters.vendor_ids:
-            params["vendor_ids"] = ",".join(str(id) for id in filters.vendor_ids)
-        if filters.created_at_gte:
-            params["created_at[gte]"] = filters.created_at_gte
-        if filters.created_at_lte:
-            params["created_at[lte]"] = filters.created_at_lte
-        if filters.sort:
-            params["sort"] = filters.sort
-        if filters.per_page:
-            params["per_page"] = filters.per_page
-        if filters.cursor:
-            params["cursor"] = filters.cursor
+        Args:
+            filters: Optional filters to apply to the query.
+
+        Returns:
+            The response containing the list of items.
+        """
+        endpoint = "/v3/customer-items"
+        filters = filters or ItemFilter()
+        params = filters.model_dump(exclude_none=True)
 
         response = await self._get(endpoint, params=params)
-        return self._parse_response(response, ItemsResponse)
+        return CustomerItemsResponse(**response)
 
-    def get_customer_items_sync(
+    def get_customer_order_items_sync(
             self,
             filters: Optional[ItemFilter] = None
-    ) -> ItemsResponse:
+    ) -> CustomerItemsResponse:
         """
-        Get a list of customer order items (synchronous version).
-        """
-        endpoint = "/customer-items"
-        filters = filters or ItemFilter()
+        Get a list of order items (synchronous version).
 
-        params = {}
-        if filters.ids:
-            params["ids"] = ",".join(str(id) for id in filters.ids)
-        if filters.order_ids:
-            params["order_ids"] = ",".join(str(id) for id in filters.order_ids)
-        if filters.customer_ids:
-            params["customer_ids"] = ",".join(str(id) for id in filters.customer_ids)
-        if filters.product_ids:
-            params["product_ids"] = ",".join(str(id) for id in filters.product_ids)
-        if filters.vendor_ids:
-            params["vendor_ids"] = ",".join(str(id) for id in filters.vendor_ids)
-        if filters.created_at_gte:
-            params["created_at[gte]"] = filters.created_at_gte
-        if filters.created_at_lte:
-            params["created_at[lte]"] = filters.created_at_lte
-        if filters.sort:
-            params["sort"] = filters.sort
-        if filters.per_page:
-            params["per_page"] = filters.per_page
-        if filters.cursor:
-            params["cursor"] = filters.cursor
+        Args:
+            filters: Optional filters to apply to the query.
+
+        Returns:
+            The response containing the list of items.
+        """
+        endpoint = "/v3/customer-items"
+        filters = filters or ItemFilter()
+        params = filters.model_dump(exclude_none=True)
 
         response = self._get_sync(endpoint, params=params)
-        return self._parse_response(response, ItemsResponse)
+        return CustomerItemsResponse(**response)
 
-    async def get_customer_item(self, item_id: int) -> ItemResponse:
+    async def get_customer_order_item(self, item_id: int) -> CustomerItemResponse:
         """
-        Get details of a specific customer order item.
+        Get details of a specific order item.
+
+        Args:
+            item_id: The ID of the item to retrieve.
+
+        Returns:
+            The response containing the item details.
         """
-        endpoint = f"/customer-items/{item_id}"
+        endpoint = f"/v3/customer-items/{item_id}"
         response = await self._get(endpoint)
-        return self._parse_response(response, ItemResponse)
+        return CustomerItemResponse(**response)
 
-    def get_customer_item_sync(self, item_id: int) -> ItemResponse:
+    def get_customer_order_item_sync(self, item_id: int) -> CustomerItemResponse:
         """
-        Get details of a specific customer order item (synchronous version).
+        Get details of a specific order item (synchronous version).
+
+        Args:
+            item_id: The ID of the item to retrieve.
+
+        Returns:
+            The response containing the item details.
         """
-        endpoint = f"/customer-items/{item_id}"
+        endpoint = f"/v3/customer-items/{item_id}"
         response = self._get_sync(endpoint)
-        return self._parse_response(response, ItemResponse)
+        return CustomerItemResponse(**response)
 
     # -------------------------------------------------------------------------
     # Vendor Parcel endpoints
     # -------------------------------------------------------------------------
 
-    async def get_vendor_parcels(
+    async def get_vendor_orders_parcels(
             self,
             filters: Optional[OrderParcelFilter] = None
-    ) -> Dict[str, Any]:  # Return type is complex and varies
+    ) -> ParcelsResponse:
         """
-        Get a list of vendor parcels/orders.
+        Get a list of orders parcels.
+
+        Args:
+            filters: Optional filters to apply to the query.
+
+        Returns:
+            The response containing the list of parcels.
         """
-        endpoint = "/vendor-parcels"
+        endpoint = "/v3/vendor-parcels"
         filters = filters or OrderParcelFilter()
 
         params = {}
-        if filters.ids:
-            params["ids"] = ",".join(str(id) for id in filters.ids)
-        if filters.customer_ids:
-            params["items.customer_ids"] = ",".join(str(id) for id in filters.customer_ids)
-        if filters.vendor_ids:
-            params["items.vendor_ids"] = ",".join(str(id) for id in filters.vendor_ids)
-        if filters.product_ids:
-            params["items.product_ids"] = ",".join(str(id) for id in filters.product_ids)
-        if filters.order_ids:
-            params["items.order_ids"] = ",".join(str(id) for id in filters.order_ids)
-        if filters.statuses:
-            params["statuses"] = ",".join(str(status.value) for status in filters.statuses)
-        if filters.estimate_send_at_gte:
-            params["estimate_send_at[gte]"] = filters.estimate_send_at_gte
-        if filters.estimate_send_at_lte:
-            params["estimate_send_at[lte]"] = filters.estimate_send_at_lte
-        if filters.created_at_gte:
-            params["created_at[gte]"] = filters.created_at_gte
-        if filters.created_at_lte:
-            params["created_at[lte]"] = filters.created_at_lte
-        if filters.sort:
-            params["sort"] = filters.sort
-        if filters.per_page:
-            params["per_page"] = filters.per_page
+        if filters.created_at:
+            params["created_at"] = filters.created_at
         if filters.cursor:
             params["cursor"] = filters.cursor
+        if filters.estimate_send_at:
+            params["estimate_send_at"] = filters.estimate_send_at
+        if filters.ids:
+            params["ids"] = filters.ids
+        if filters.items_customer_ids:
+            params["items.customer_ids"] = filters.items_customer_ids
+        if filters.items_order_ids:
+            params["items.order_ids"] = filters.items_order_ids
+        if filters.items_product_ids:
+            params["items.product_ids"] = filters.items_product_ids
+        if filters.items_vendor_ids:
+            params["items.vendor_ids"] = filters.items_vendor_ids
+        if filters.per_page:
+            params["per_page"] = filters.per_page
+        if filters.sort:
+            params["sort"] = filters.sort
+        if filters.statuses:
+            params["statuses"] = ",".join(str(status.value) for status in filters.statuses)
 
         response = await self._get(endpoint, params=params)
-        return response
+        return ParcelsResponse(**response)
 
-    def get_vendor_parcels_sync(
+    def get_vendor_orders_parcels_sync(
             self,
             filters: Optional[OrderParcelFilter] = None
-    ) -> Dict[str, Any]:  # Return type is complex and varies
+    ) -> ParcelsResponse:
         """
-        Get a list of vendor parcels/orders (synchronous version).
+        Get a list of orders parcels (synchronous version).
+
+        Args:
+            filters: Optional filters to apply to the query.
+
+        Returns:
+            The response containing the list of parcels.
         """
-        endpoint = "/vendor-parcels"
+        endpoint = "/v3/vendor-parcels"
         filters = filters or OrderParcelFilter()
 
         params = {}
-        if filters.ids:
-            params["ids"] = ",".join(str(id) for id in filters.ids)
-        if filters.customer_ids:
-            params["items.customer_ids"] = ",".join(str(id) for id in filters.customer_ids)
-        if filters.vendor_ids:
-            params["items.vendor_ids"] = ",".join(str(id) for id in filters.vendor_ids)
-        if filters.product_ids:
-            params["items.product_ids"] = ",".join(str(id) for id in filters.product_ids)
-        if filters.order_ids:
-            params["items.order_ids"] = ",".join(str(id) for id in filters.order_ids)
-        if filters.statuses:
-            params["statuses"] = ",".join(str(status.value) for status in filters.statuses)
-        if filters.estimate_send_at_gte:
-            params["estimate_send_at[gte]"] = filters.estimate_send_at_gte
-        if filters.estimate_send_at_lte:
-            params["estimate_send_at[lte]"] = filters.estimate_send_at_lte
-        if filters.created_at_gte:
-            params["created_at[gte]"] = filters.created_at_gte
-        if filters.created_at_lte:
-            params["created_at[lte]"] = filters.created_at_lte
-        if filters.sort:
-            params["sort"] = filters.sort
-        if filters.per_page:
-            params["per_page"] = filters.per_page
+        if filters.created_at:
+            params["created_at"] = filters.created_at
         if filters.cursor:
             params["cursor"] = filters.cursor
+        if filters.estimate_send_at:
+            params["estimate_send_at"] = filters.estimate_send_at
+        if filters.ids:
+            params["ids"] = filters.ids
+        if filters.items_customer_ids:
+            params["items.customer_ids"] = filters.items_customer_ids
+        if filters.items_order_ids:
+            params["items.order_ids"] = filters.items_order_ids
+        if filters.items_product_ids:
+            params["items.product_ids"] = filters.items_product_ids
+        if filters.items_vendor_ids:
+            params["items.vendor_ids"] = filters.items_vendor_ids
+        if filters.per_page:
+            params["per_page"] = filters.per_page
+        if filters.sort:
+            params["sort"] = filters.sort
+        if filters.statuses:
+            params["statuses"] = ",".join(str(status.value) for status in filters.statuses)
 
         response = self._get_sync(endpoint, params=params)
-        return response
+        return ParcelsResponse(**response)
 
-    async def get_vendor_parcel(self, parcel_id: int) -> ParcelResponse:
+    async def get_order_parcel(self, parcel_id: int) -> ParcelResponse:
         """
-        Get details of a specific vendor parcel/order.
+        Get details of a specific order parcel.
+
+        Args:
+            parcel_id: The ID of the parcel to retrieve.
+
+        Returns:
+            The response containing the parcel details.
         """
-        endpoint = f"/vendor-parcels/{parcel_id}"
+        endpoint = f"/v3/vendor-parcels/{parcel_id}"
         response = await self._get(endpoint)
-        return self._parse_response(response, ParcelResponse)
+        return ParcelResponse(**response)
 
-    def get_vendor_parcel_sync(self, parcel_id: int) -> ParcelResponse:
+    def get_order_parcel_sync(self, parcel_id: int) -> ParcelResponse:
         """
-        Get details of a specific vendor parcel/order (synchronous version).
+        Get details of a specific order parcel (synchronous version).
+
+        Args:
+            parcel_id: The ID of the parcel to retrieve.
+
+        Returns:
+            The response containing the parcel details.
         """
-        endpoint = f"/vendor-parcels/{parcel_id}"
+        endpoint = f"/v3/vendor-parcels/{parcel_id}"
         response = self._get_sync(endpoint)
-        return self._parse_response(response, ParcelResponse)
+        return ParcelResponse(**response)
 
     # -------------------------------------------------------------------------
-    # Order Statistics endpoints
+    # OrderEnum Statistics endpoints
     # -------------------------------------------------------------------------
 
-    async def get_order_stats(
+    async def get_orders_stats(
             self,
             resource_count: ResourceStats,
             vendor_id: Optional[int] = None,
@@ -311,27 +356,38 @@ class OrderProcessingService(BaseClient):
     ) -> OrderStatsResponse:
         """
         Get order statistics.
+
+        Args:
+            resource_count: The type of statistics to retrieve.
+            vendor_id: Optional vendor ID to filter by.
+            product_id: Optional product ID to filter by.
+            customer_id: Optional customer ID to filter by.
+            coupon_code: Optional coupon code to filter by.
+            cache_control: Optional cache control header.
+
+        Returns:
+            The response containing the order statistics.
         """
-        endpoint = "/orders-calculate-stats"
+        endpoint = "/v3/orders-calculate-stats"
 
         params = {"resource_count": resource_count.value}
-        if vendor_id:
+        if vendor_id is not None:
             params["vendor_id"] = vendor_id
-        if product_id:
+        if product_id is not None:
             params["product_id"] = product_id
-        if customer_id:
+        if customer_id is not None:
             params["customer_id"] = customer_id
-        if coupon_code:
+        if coupon_code is not None:
             params["coupon_code"] = coupon_code
 
         headers = {}
-        if cache_control:
+        if cache_control is not None:
             headers["Cache-Control"] = cache_control
 
         response = await self._get(endpoint, params=params, headers=headers)
-        return self._parse_response(response, OrderStatsResponse)
+        return OrderStatsResponse(**response)
 
-    def get_order_stats_sync(
+    def get_orders_stats_sync(
             self,
             resource_count: ResourceStats,
             vendor_id: Optional[int] = None,
@@ -342,22 +398,33 @@ class OrderProcessingService(BaseClient):
     ) -> OrderStatsResponse:
         """
         Get order statistics (synchronous version).
+
+        Args:
+            resource_count: The type of statistics to retrieve.
+            vendor_id: Optional vendor ID to filter by.
+            product_id: Optional product ID to filter by.
+            customer_id: Optional customer ID to filter by.
+            coupon_code: Optional coupon code to filter by.
+            cache_control: Optional cache control header.
+
+        Returns:
+            The response containing the order statistics.
         """
-        endpoint = "/orders-calculate-stats"
+        endpoint = "/v3/orders-calculate-stats"
 
         params = {"resource_count": resource_count.value}
-        if vendor_id:
+        if vendor_id is not None:
             params["vendor_id"] = vendor_id
-        if product_id:
+        if product_id is not None:
             params["product_id"] = product_id
-        if customer_id:
+        if customer_id is not None:
             params["customer_id"] = customer_id
-        if coupon_code:
+        if coupon_code is not None:
             params["coupon_code"] = coupon_code
 
         headers = {}
-        if cache_control:
+        if cache_control is not None:
             headers["Cache-Control"] = cache_control
 
         response = self._get_sync(endpoint, params=params, headers=headers)
-        return self._parse_response(response, OrderStatsResponse)
+        return OrderStatsResponse(**response)

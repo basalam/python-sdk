@@ -9,12 +9,13 @@ from typing import Dict, List, Optional, Union, Any
 
 from .models import (
     BalanceFilter,
-    BooleanResponse,
+    CanRollbackRefundResponse,
     CreditCreationResponse,
     HistoryPaginationResponse,
     RefundRequest,
     RollbackRefundRequest,
     SpendCreditRequest,
+    SpendSpecificCreditRequest,
     SpendResponse,
 )
 from ..base_client import BaseClient
@@ -34,7 +35,7 @@ class WalletService(BaseClient):
         """
         Initialize the wallet service client.
         """
-        super().__init__(service_name="wallet", **kwargs)
+        super().__init__(service="wallet", **kwargs)
 
     # -------------------------------------------------------------------------
     # Balance endpoints
@@ -47,7 +48,7 @@ class WalletService(BaseClient):
             x_operator_id: Optional[int] = None
     ) -> Dict[str, Any]:
         """
-        Get a user's balance.
+        Get a user's balances.
 
         Args:
             user_id: The ID of the user.
@@ -62,8 +63,8 @@ class WalletService(BaseClient):
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
-        payload = {"filters": [filter.__dict__ for filter in (filters or [BalanceFilter()])]}
-        response = await self._post(endpoint, json=payload, headers=headers)
+        payload = {"filters": [filter.model_dump(exclude_none=True) for filter in (filters or [BalanceFilter()])]}
+        response = await self._post(endpoint, json_data=payload, headers=headers)
         return response
 
     def get_balance_sync(
@@ -73,7 +74,7 @@ class WalletService(BaseClient):
             x_operator_id: Optional[int] = None
     ) -> Dict[str, Any]:
         """
-        Get a user's balance (synchronous version).
+        Get a user's balances (synchronous version).
 
         Args:
             user_id: The ID of the user.
@@ -88,11 +89,11 @@ class WalletService(BaseClient):
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
-        payload = {"filters": [filter.__dict__ for filter in (filters or [BalanceFilter()])]}
-        response = self._post_sync(endpoint, json=payload, headers=headers)
+        payload = {"filters": [filter.model_dump(exclude_none=True) for filter in (filters or [BalanceFilter()])]}
+        response = self._post_sync(endpoint, json_data=payload, headers=headers)
         return response
 
-    async def get_history(
+    async def get_transactions(
             self,
             user_id: int,
             page: int = 1,
@@ -118,9 +119,9 @@ class WalletService(BaseClient):
 
         params = {"page": page, "per_page": per_page}
         response = await self._get(endpoint, params=params, headers=headers)
-        return self._parse_response(response, HistoryPaginationResponse)
+        return HistoryPaginationResponse(**response)
 
-    def get_history_sync(
+    def get_transactions_sync(
             self,
             user_id: int,
             page: int = 1,
@@ -146,20 +147,21 @@ class WalletService(BaseClient):
 
         params = {"page": page, "per_page": per_page}
         response = self._get_sync(endpoint, params=params, headers=headers)
-        return self._parse_response(response, HistoryPaginationResponse)
+        print('yoyoyoyoyoyooyoyoy \n', response)
+        return HistoryPaginationResponse(**response)
 
     # -------------------------------------------------------------------------
     # Credit spending endpoints
     # -------------------------------------------------------------------------
 
-    async def spend_credit(
+    async def create_expense(
             self,
             user_id: int,
             request: SpendCreditRequest,
             x_operator_id: Optional[int] = None
     ) -> SpendResponse:
         """
-        Spend credit from a user's balance.
+        Create an expense from a user's balance.
 
         Args:
             user_id: The ID of the user.
@@ -174,17 +176,71 @@ class WalletService(BaseClient):
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
-        response = await self._post(endpoint, json=request.__dict__, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return SpendResponse(**response)
 
-    def spend_credit_sync(
+    async def create_expense_from_credit(
+            self,
+            user_id: int,
+            credit_id: int,
+            request: SpendSpecificCreditRequest,
+            x_operator_id: Optional[int] = None
+    ) -> SpendResponse:
+        """
+        Create an expense from a specific credit.
+
+        Args:
+            user_id: The ID of the user.
+            credit_id: The ID of the credit to spend from.
+            request: The spend credit request.
+            x_operator_id: Optional operator ID for the request.
+
+        Returns:
+            The spend response.
+        """
+        endpoint = f"/v2/user/{user_id}/credit/{credit_id}/spend"
+        headers = {}
+        if x_operator_id is not None:
+            headers["x-operator-id"] = str(x_operator_id)
+
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return SpendResponse(**response)
+
+    def create_expense_from_credit_sync(
+            self,
+            user_id: int,
+            credit_id: int,
+            request: SpendSpecificCreditRequest,
+            x_operator_id: Optional[int] = None
+    ) -> SpendResponse:
+        """
+        Create an expense from a specific credit (synchronous version).
+
+        Args:
+            user_id: The ID of the user.
+            credit_id: The ID of the credit to spend from.
+            request: The spend credit request.
+            x_operator_id: Optional operator ID for the request.
+
+        Returns:
+            The spend response.
+        """
+        endpoint = f"/v2/user/{user_id}/credit/{credit_id}/spend"
+        headers = {}
+        if x_operator_id is not None:
+            headers["x-operator-id"] = str(x_operator_id)
+
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return SpendResponse(**response)
+
+    def create_expense_sync(
             self,
             user_id: int,
             request: SpendCreditRequest,
             x_operator_id: Optional[int] = None
     ) -> SpendResponse:
         """
-        Spend credit from a user's balance (synchronous version).
+        Create an expense from a user's balance (synchronous version).
 
         Args:
             user_id: The ID of the user.
@@ -199,116 +255,116 @@ class WalletService(BaseClient):
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
-        response = self._post_sync(endpoint, json=request.__dict__, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return SpendResponse(**response)
 
-    async def get_spend(
+    async def get_expense(
             self,
             user_id: int,
-            spend_id: int,
+            expense_id: int,
             x_operator_id: Optional[int] = None
     ) -> SpendResponse:
         """
-        Get details of a specific spend.
+        Get details of a specific expense.
 
         Args:
             user_id: The ID of the user.
-            spend_id: The ID of the spend.
+            expense_id: The ID of the expense.
             x_operator_id: Optional operator ID for the request.
 
         Returns:
-            The spend details.
+            The expense details.
         """
-        endpoint = f"/v2/user/{user_id}/spend/{spend_id}"
+        endpoint = f"/v2/user/{user_id}/spend/{expense_id}"
         headers = {}
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
         response = await self._get(endpoint, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        return SpendResponse(**response)
 
-    def get_spend_sync(
+    def get_expense_sync(
             self,
             user_id: int,
-            spend_id: int,
+            expense_id: int,
             x_operator_id: Optional[int] = None
     ) -> SpendResponse:
         """
-        Get details of a specific spend (synchronous version).
+        Get details of a specific expense (synchronous version).
 
         Args:
             user_id: The ID of the user.
-            spend_id: The ID of the spend.
+            expense_id: The ID of the expense.
             x_operator_id: Optional operator ID for the request.
 
         Returns:
-            The spend details.
+            The expense details.
         """
-        endpoint = f"/v2/user/{user_id}/spend/{spend_id}"
+        endpoint = f"/v2/user/{user_id}/spend/{expense_id}"
         headers = {}
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
         response = self._get_sync(endpoint, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        return SpendResponse(**response)
 
-    async def rollback_spend(
+    async def delete_expense(
             self,
             user_id: int,
-            spend_id: int,
+            expense_id: int,
             rollback_reason_id: int,
             x_operator_id: Optional[int] = None
     ) -> SpendResponse:
         """
-        Rollback a spend.
+        Delete an expense.
 
         Args:
             user_id: The ID of the user.
-            spend_id: The ID of the spend to rollback.
+            expense_id: The ID of the expense to delete.
             rollback_reason_id: The reason ID for the rollback.
             x_operator_id: Optional operator ID for the request.
 
         Returns:
             The rollback response.
         """
-        endpoint = f"/v2/user/{user_id}/spend/{spend_id}"
+        endpoint = f"/v2/user/{user_id}/spend/{expense_id}"
         headers = {}
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
         payload = {"rollback_reason_id": rollback_reason_id}
-        response = await self._delete(endpoint, json=payload, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        response = await self._delete(endpoint, json_data=payload, headers=headers)
+        return SpendResponse(**response)
 
-    def rollback_spend_sync(
+    def delete_expense_sync(
             self,
             user_id: int,
-            spend_id: int,
+            expense_id: int,
             rollback_reason_id: int,
             x_operator_id: Optional[int] = None
     ) -> SpendResponse:
         """
-        Rollback a spend (synchronous version).
+        Delete an expense (synchronous version).
 
         Args:
             user_id: The ID of the user.
-            spend_id: The ID of the spend to rollback.
+            expense_id: The ID of the expense to delete.
             rollback_reason_id: The reason ID for the rollback.
             x_operator_id: Optional operator ID for the request.
 
         Returns:
             The rollback response.
         """
-        endpoint = f"/v2/user/{user_id}/spend/{spend_id}"
+        endpoint = f"/v2/user/{user_id}/spend/{expense_id}"
         headers = {}
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
         payload = {"rollback_reason_id": rollback_reason_id}
-        response = self._delete_sync(endpoint, json=payload, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        response = self._delete_sync(endpoint, json_data=payload, headers=headers)
+        return SpendResponse(**response)
 
-    async def get_spend_by_ref(
+    async def get_expense_by_ref(
             self,
             user_id: int,
             reason_id: int,
@@ -316,7 +372,7 @@ class WalletService(BaseClient):
             x_operator_id: Optional[int] = None
     ) -> SpendResponse:
         """
-        Get spend details by reference.
+        Get expense details by reference.
 
         Args:
             user_id: The ID of the user.
@@ -325,7 +381,7 @@ class WalletService(BaseClient):
             x_operator_id: Optional operator ID for the request.
 
         Returns:
-            The spend details.
+            The expense details.
         """
         endpoint = f"/v2/user/{user_id}/spend/by-ref/{reason_id}/{reference_id}"
         headers = {}
@@ -333,9 +389,9 @@ class WalletService(BaseClient):
             headers["x-operator-id"] = str(x_operator_id)
 
         response = await self._get(endpoint, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        return SpendResponse(**response)
 
-    def get_spend_by_ref_sync(
+    def get_expense_by_ref_sync(
             self,
             user_id: int,
             reason_id: int,
@@ -343,7 +399,7 @@ class WalletService(BaseClient):
             x_operator_id: Optional[int] = None
     ) -> SpendResponse:
         """
-        Get spend details by reference (synchronous version).
+        Get expense details by reference (synchronous version).
 
         Args:
             user_id: The ID of the user.
@@ -352,7 +408,7 @@ class WalletService(BaseClient):
             x_operator_id: Optional operator ID for the request.
 
         Returns:
-            The spend details.
+            The expense details.
         """
         endpoint = f"/v2/user/{user_id}/spend/by-ref/{reason_id}/{reference_id}"
         headers = {}
@@ -360,9 +416,9 @@ class WalletService(BaseClient):
             headers["x-operator-id"] = str(x_operator_id)
 
         response = self._get_sync(endpoint, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        return SpendResponse(**response)
 
-    async def rollback_spend_by_ref(
+    async def delete_expense_by_ref(
             self,
             user_id: int,
             reason_id: int,
@@ -371,7 +427,7 @@ class WalletService(BaseClient):
             x_operator_id: Optional[int] = None
     ) -> SpendResponse:
         """
-        Rollback a spend by reference.
+        Delete an expense by reference.
 
         Args:
             user_id: The ID of the user.
@@ -389,10 +445,10 @@ class WalletService(BaseClient):
             headers["x-operator-id"] = str(x_operator_id)
 
         payload = {"rollback_reason_id": rollback_reason_id}
-        response = await self._delete(endpoint, json=payload, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        response = await self._delete(endpoint, json_data=payload, headers=headers)
+        return SpendResponse(**response)
 
-    def rollback_spend_by_ref_sync(
+    def delete_expense_by_ref_sync(
             self,
             user_id: int,
             reason_id: int,
@@ -401,7 +457,7 @@ class WalletService(BaseClient):
             x_operator_id: Optional[int] = None
     ) -> SpendResponse:
         """
-        Rollback a spend by reference (synchronous version).
+        Delete an expense by reference (synchronous version).
 
         Args:
             user_id: The ID of the user.
@@ -419,20 +475,20 @@ class WalletService(BaseClient):
             headers["x-operator-id"] = str(x_operator_id)
 
         payload = {"rollback_reason_id": rollback_reason_id}
-        response = self._delete_sync(endpoint, json=payload, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        response = self._delete_sync(endpoint, json_data=payload, headers=headers)
+        return SpendResponse(**response)
 
     # -------------------------------------------------------------------------
     # Refund endpoints
     # -------------------------------------------------------------------------
 
-    async def refund(
+    async def create_refund(
             self,
             request: RefundRequest,
             x_operator_id: Optional[int] = None
     ) -> Union[CreditCreationResponse, SpendResponse]:
         """
-        Process a refund.
+        Create a refund.
 
         Args:
             request: The refund request.
@@ -446,22 +502,22 @@ class WalletService(BaseClient):
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
-        response = await self._post(endpoint, json=request.__dict__, headers=headers)
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
 
         # The API can return either a CreditCreationResponse or a SpendResponse
         # Try to parse as CreditCreationResponse first, then fallback to SpendResponse
         try:
-            return self._parse_response(response, CreditCreationResponse)
+            return CreditCreationResponse(**response)
         except:
-            return self._parse_response(response, SpendResponse)
+            return SpendResponse(**response)
 
-    def refund_sync(
+    def create_refund_sync(
             self,
             request: RefundRequest,
             x_operator_id: Optional[int] = None
     ) -> Union[CreditCreationResponse, SpendResponse]:
         """
-        Process a refund (synchronous version).
+        Create a refund (synchronous version).
 
         Args:
             request: The refund request.
@@ -475,21 +531,21 @@ class WalletService(BaseClient):
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
-        response = self._post_sync(endpoint, json=request.__dict__, headers=headers)
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
 
         # The API can return either a CreditCreationResponse or a SpendResponse
         # Try to parse as CreditCreationResponse first, then fallback to SpendResponse
         try:
-            return self._parse_response(response, CreditCreationResponse)
+            return CreditCreationResponse(**response)
         except:
-            return self._parse_response(response, SpendResponse)
+            return SpendResponse(**response)
 
     async def can_rollback_refund(
             self,
             refund_reason: int,
             refund_reference_id: int,
             x_operator_id: Optional[int] = None
-    ) -> bool:
+    ) -> CanRollbackRefundResponse:
         """
         Check if a refund can be rolled back.
 
@@ -499,7 +555,7 @@ class WalletService(BaseClient):
             x_operator_id: Optional operator ID for the request.
 
         Returns:
-            True if the refund can be rolled back, False otherwise.
+            Response containing status and message.
         """
         endpoint = "/v2/can-rollback-refund"
         headers = {}
@@ -510,15 +566,15 @@ class WalletService(BaseClient):
             "refund_reason": refund_reason,
             "refund_reference_id": refund_reference_id
         }
-        response = await self._post(endpoint, json=payload, headers=headers)
-        return self._parse_response(response, BooleanResponse).status
+        response = await self._post(endpoint, json_data=payload, headers=headers)
+        return CanRollbackRefundResponse(**response)
 
     def can_rollback_refund_sync(
             self,
             refund_reason: int,
             refund_reference_id: int,
             x_operator_id: Optional[int] = None
-    ) -> bool:
+    ) -> CanRollbackRefundResponse:
         """
         Check if a refund can be rolled back (synchronous version).
 
@@ -528,7 +584,7 @@ class WalletService(BaseClient):
             x_operator_id: Optional operator ID for the request.
 
         Returns:
-            True if the refund can be rolled back, False otherwise.
+            Response containing status and message.
         """
         endpoint = "/v2/can-rollback-refund"
         headers = {}
@@ -539,8 +595,8 @@ class WalletService(BaseClient):
             "refund_reason": refund_reason,
             "refund_reference_id": refund_reference_id
         }
-        response = self._post_sync(endpoint, json=payload, headers=headers)
-        return self._parse_response(response, BooleanResponse).status
+        response = self._post_sync(endpoint, json_data=payload, headers=headers)
+        return CanRollbackRefundResponse(**response)
 
     async def rollback_refund(
             self,
@@ -562,8 +618,8 @@ class WalletService(BaseClient):
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
-        response = await self._delete(endpoint, json=request.__dict__, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        response = await self._delete(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return SpendResponse(**response)
 
     def rollback_refund_sync(
             self,
@@ -585,5 +641,5 @@ class WalletService(BaseClient):
         if x_operator_id is not None:
             headers["x-operator-id"] = str(x_operator_id)
 
-        response = self._delete_sync(endpoint, json=request.__dict__, headers=headers)
-        return self._parse_response(response, SpendResponse)
+        response = self._delete_sync(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return SpendResponse(**response)

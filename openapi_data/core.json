@@ -8103,6 +8103,55 @@
         ],
         "title": "VariantValueResponse"
       },
+      "VendorLegalDataSchema": {
+        "properties": {
+          "is_legal": {
+            "type": "boolean",
+            "title": "Is Legal"
+          },
+          "economic_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Economic Number"
+          },
+          "national_id": {
+            "type": "string",
+            "title": "National Id"
+          },
+          "legal_name": {
+            "type": "string",
+            "title": "Legal Name"
+          },
+          "registration_number": {
+            "type": "string",
+            "title": "Registration Number"
+          },
+          "establishment_announcement_file": {
+            "type": "integer",
+            "title": "Establishment Announcement File"
+          },
+          "last_change_announcement_file": {
+            "type": "integer",
+            "title": "Last Change Announcement File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "is_legal",
+          "national_id",
+          "legal_name",
+          "registration_number",
+          "establishment_announcement_file",
+          "last_change_announcement_file"
+        ],
+        "title": "VendorLegalDataSchema"
+      },
       "VendorOfUserResponse": {
         "properties": {
           "id": {
@@ -9811,6 +9860,16 @@
             ],
             "title": "Video Id"
           },
+          "legal_data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VendorLegalDataSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "identifier": {
             "type": "string",
             "title": "Identifier"
@@ -9986,6 +10045,16 @@
               }
             ],
             "title": "Video Id"
+          },
+          "legal_data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VendorLegalDataSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "about_your_life": {
             "anyOf": [
@@ -10209,6 +10278,17 @@
               }
             ],
             "title": "Identifier"
+          },
+          "info_verification_status": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Info Verification Status"
           }
         },
         "type": "object",

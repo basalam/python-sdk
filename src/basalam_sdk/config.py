@@ -8,6 +8,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, Optional
 
+from .version import get_user_agent
+
 
 class Environment(str, Enum):
     """Available environments for the Basalam API."""
@@ -46,11 +48,11 @@ class BasalamConfig:
     AUTH_URLS = {
         Environment.PRODUCTION: {
             "authorize": "https://basalam.com/accounts/sso",
-            "token": "https://basalam.com/oauth/token",
+            "token": "https://auth.basalam.com/oauth/token",
         },
         Environment.DEVELOPMENT: {
             "authorize": "https://basalam.dev/accounts/sso",
-            "token": "https://basalam.dev/oauth/token",
+            "token": "https://auth.basalam.dev/oauth/token",
         },
     }
 
@@ -108,6 +110,14 @@ class BasalamConfig:
     ):
         """
         Initialize the configuration.
+
+        Args:
+            environment: The environment to use (production or development).
+            api_version: The API version to use.
+            timeout: Request timeout in seconds.
+            user_agent: Custom User-Agent string to append to SDK User-Agent.
+            custom_base_url: Custom base URL to override environment default.
+            custom_auth_urls: Custom authentication URLs.
         """
         self.environment = Environment(environment)
         self.api_version = api_version
@@ -123,7 +133,9 @@ class BasalamConfig:
 
         # Initialize service URLs
         self.service_urls = self._initialize_service_urls()
-        self.user_agent = user_agent or f"BasalamSDK/Python/{api_version}"
+
+        # Generate User-Agent with SDK information
+        self.user_agent = get_user_agent(user_agent)
 
     def _initialize_service_urls(self) -> Dict[str, str]:
         """
@@ -139,14 +151,22 @@ class BasalamConfig:
     def get_service_url(self, service: str) -> str:
         """
         Get the base URL for a service.
+
+        Args:
+            service: The service name.
+
+        Returns:
+            The base URL for the service.
         """
         return self.service_urls.get(service, self.base_url)
 
     def get_headers(self) -> Dict[str, str]:
         """
         Get default headers for API requests.
+
+        Returns:
+            Dictionary of default headers including User-Agent.
         """
         return {
             "User-Agent": self.user_agent,
-            "Accept": "application/json",
         }

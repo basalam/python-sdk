@@ -1,23 +1,30 @@
 """
 Core service client for the Basalam API.
 """
-from typing import List, Optional, Dict, Any, Union
+import asyncio
+import copy
+from typing import List, Dict, Optional, Any, Union, BinaryIO
 
-from .models import Product, Category, User, UserInfo, CreateVendorSchema, UpdateVendorSchema, PublicVendorResponse, \
-    PrivateVendorResponse, ShippingMethodResponse, ShippingMethodListResponse, UpdateShippingMethodSchema, \
-    ProductResponse, ProductListResponse, ProductStatusInputEnum, \
-    UpdateVendorStatusSchema, UpdateVendorStatusResponse, ChangeVendorMobileRequestSchema, \
-    ChangeVendorMobileConfirmSchema, OkResponse, VendorBulkActionRequestSchema, CreateBulkUpdateResponse, \
-    BulkUpdateListResponse, UnsuccessfulBulkUpdateProducts, PrivateUserResponse, ConfirmCurrentUserMobileConfirmSchema, \
-    ChangeUserMobileRequestSchema, ChangeUserMobileConfirmSchema, UserCardsSchema, UserCardsOtpSchema, \
-    UserVerifyBankInformationSchema, BankInformationResponse, UpdateUserBankInformationSchema, UserVerificationSchema, \
-    BulkUpdateProductSchema, \
-    AttributesResponse, CategoryResponse, CategoriesResponse, UpdateProductVariantsSchema, \
-    BatchResponse, CategoryLV12Response, CategoryListResponse, \
-    CityResponse, NavigationResponse, PrivateProductListResponse
+from .models import (
+    CreateVendorSchema, UpdateVendorSchema, PublicVendorResponse, PrivateVendorResponse,
+    ShippingMethodResponse, ShippingMethodListResponse, UpdateShippingMethodSchema,
+    ProductListResponse, GetVendorProductsSchema, GetProductsQuerySchema,
+    UpdateVendorStatusSchema, UpdateVendorStatusResponse, ChangeVendorMobileRequestSchema,
+    ChangeVendorMobileConfirmSchema, ResultResponse, UnsuccessfulBulkUpdateProducts,
+    PrivateUserResponse, ConfirmCurrentUserMobileConfirmSchema,
+    ChangeUserMobileRequestSchema, ChangeUserMobileConfirmSchema, UserCardsSchema, UserCardsOtpSchema,
+    UserVerifyBankInformationSchema, UpdateUserBankInformationSchema, UserVerificationSchema,
+    AttributesResponse, CategoryResponse, CategoriesResponse, UpdateProductVariationSchema, ProductRequestSchema,
+    ProductResponseSchema, BatchUpdateProductsRequest, UpdateProductResponseItem,
+    BulkProductsUpdateRequestSchema, BulkProductsUpdateResponseSchema, BulkProductsUpdatesListResponse,
+    BulkProductsUpdatesCountResponse, ProductShelfResponse, CreateDiscountRequestSchema,
+    DeleteDiscountRequestSchema
+)
 from ..auth import BaseAuth
 from ..base_client import BaseClient
 from ..config import BasalamConfig
+from ..upload.client import UploadService
+from ..upload.models import UserUploadFileTypeEnum
 
 
 class CoreService(BaseClient):
@@ -49,7 +56,7 @@ class CoreService(BaseClient):
             The created vendor resource.
         """
         endpoint = f"/v3/users/{user_id}/vendors"
-        response = await self._post(endpoint, json=request.dict())
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return PublicVendorResponse(**response)
 
     def create_vendor_sync(
@@ -68,7 +75,7 @@ class CoreService(BaseClient):
             The created vendor resource.
         """
         endpoint = f"/v3/users/{user_id}/vendors"
-        response = self._post_sync(endpoint, json=request.dict())
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return PublicVendorResponse(**response)
 
     async def update_vendor(
@@ -87,7 +94,7 @@ class CoreService(BaseClient):
             The updated vendor resource.
         """
         endpoint = f"/v3/vendors/{vendor_id}"
-        response = await self._patch(endpoint, json=request.dict())
+        response = await self._patch(endpoint, json_data=request.model_dump(exclude_none=True))
         return PublicVendorResponse(**response)
 
     def update_vendor_sync(
@@ -106,7 +113,7 @@ class CoreService(BaseClient):
             The updated vendor resource.
         """
         endpoint = f"/v3/vendors/{vendor_id}"
-        response = self._patch_sync(endpoint, json=request.dict())
+        response = self._patch_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return PublicVendorResponse(**response)
 
     async def get_vendor(
@@ -130,7 +137,7 @@ class CoreService(BaseClient):
             headers["Prefer"] = prefer
 
         response = await self._get(endpoint, headers=headers)
-        if prefer == "return=representation":
+        if prefer == "return=full":
             return PrivateVendorResponse(**response)
         return PublicVendorResponse(**response)
 
@@ -155,7 +162,7 @@ class CoreService(BaseClient):
             headers["Prefer"] = prefer
 
         response = self._get_sync(endpoint, headers=headers)
-        if prefer == "return=representation":
+        if prefer == "return=full":
             return PrivateVendorResponse(**response)
         return PublicVendorResponse(**response)
 
@@ -253,7 +260,7 @@ class CoreService(BaseClient):
         response = self._get_sync(endpoint, params=params)
         return ShippingMethodListResponse(**response)
 
-    async def get_vendor_shipping_methods(
+    async def get_working_shipping_methods(
             self,
             vendor_id: int
     ) -> List[ShippingMethodResponse]:
@@ -270,7 +277,7 @@ class CoreService(BaseClient):
         response = await self._get(endpoint)
         return [ShippingMethodResponse(**item) for item in response]
 
-    def get_vendor_shipping_methods_sync(
+    def get_working_shipping_methods_sync(
             self,
             vendor_id: int
     ) -> List[ShippingMethodResponse]:
@@ -287,7 +294,7 @@ class CoreService(BaseClient):
         response = self._get_sync(endpoint)
         return [ShippingMethodResponse(**item) for item in response]
 
-    async def update_vendor_shipping_methods(
+    async def update_shipping_methods(
             self,
             vendor_id: int,
             request: UpdateShippingMethodSchema
@@ -303,10 +310,10 @@ class CoreService(BaseClient):
             List of updated shipping methods.
         """
         endpoint = f"/v3/vendors/{vendor_id}/shipping-methods"
-        response = await self._put(endpoint, json=request.dict())
+        response = await self._put(endpoint, json_data=request.model_dump(exclude_none=True))
         return [ShippingMethodResponse(**item) for item in response]
 
-    def update_vendor_shipping_methods_sync(
+    def update_shipping_methods_sync(
             self,
             vendor_id: int,
             request: UpdateShippingMethodSchema
@@ -322,96 +329,87 @@ class CoreService(BaseClient):
             List of updated shipping methods.
         """
         endpoint = f"/v3/vendors/{vendor_id}/shipping-methods"
-        response = self._put_sync(endpoint, json=request.dict())
+        response = self._put_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return [ShippingMethodResponse(**item) for item in response]
 
     async def get_vendor_products(
             self,
             vendor_id: int,
-            title: Optional[str] = None,
-            category: Optional[List[int]] = None,
-            statuses: Optional[List[ProductStatusInputEnum]] = None,
-            stock_gte: Optional[int] = None,
-            stock_lte: Optional[int] = None,
-            preparation_day_gte: Optional[int] = None,
-            preparation_day_lte: Optional[int] = None,
-            price_gte: Optional[int] = None,
-            price_lte: Optional[int] = None,
-            ids: Optional[List[int]] = None,
-            skus: Optional[List[str]] = None,
-            illegal_free_shipping_for_iran: Optional[int] = None,
-            illegal_free_shipping_for_same_city: Optional[int] = None,
-            page: int = 1,
-            per_page: int = 10,
-            variants_flatting: bool = True,
-            is_wholesale: Optional[bool] = None,
-            sort: Optional[str] = None
+            query_params: Optional[GetVendorProductsSchema] = None
     ) -> ProductListResponse:
         """
         Get vendor products.
 
         Args:
             vendor_id: The ID of the vendor.
-            title: Optional title to filter by.
-            category: Optional list of category IDs to filter by.
-            statuses: Optional list of statuses to filter by.
-            stock_gte: Optional minimum stock to filter by.
-            stock_lte: Optional maximum stock to filter by.
-            preparation_day_gte: Optional minimum preparation days to filter by.
-            preparation_day_lte: Optional maximum preparation days to filter by.
-            price_gte: Optional minimum price to filter by.
-            price_lte: Optional maximum price to filter by.
-            ids: Optional list of product IDs to filter by.
-            skus: Optional list of SKUs to filter by.
-            illegal_free_shipping_for_iran: Optional flag for Iran shipping.
-            illegal_free_shipping_for_same_city: Optional flag for same city shipping.
-            page: Page number for pagination.
-            per_page: Number of items per page.
-            variants_flatting: Whether to flatten variants.
-            is_wholesale: Optional flag for wholesale products.
-            sort: Optional sort parameter.
+            query_params: Optional query parameters for filtering and pagination.
 
         Returns:
             The response containing the list of products.
         """
         endpoint = f"/v3/vendors/{vendor_id}/products"
-        params = {
-            "page": page,
-            "per_page": per_page,
-            "variants_flatting": variants_flatting
-        }
-        if title is not None:
-            params["title"] = title
-        if category is not None:
-            params["category"] = category
-        if statuses is not None:
-            params["statuses"] = statuses
-        if stock_gte is not None:
-            params["stock[gte]"] = stock_gte
-        if stock_lte is not None:
-            params["stock[lte]"] = stock_lte
-        if preparation_day_gte is not None:
-            params["preparation_day[gte]"] = preparation_day_gte
-        if preparation_day_lte is not None:
-            params["preparation_day[lte]"] = preparation_day_lte
-        if price_gte is not None:
-            params["price[gte]"] = price_gte
-        if price_lte is not None:
-            params["price[lte]"] = price_lte
-        if ids is not None:
-            params["ids"] = ids
-        if skus is not None:
-            params["skus"] = skus
-        if illegal_free_shipping_for_iran is not None:
-            params["illegal_free_shipping_for_iran"] = illegal_free_shipping_for_iran
-        if illegal_free_shipping_for_same_city is not None:
-            params["illegal_free_shipping_for_same_city"] = illegal_free_shipping_for_same_city
-        if is_wholesale is not None:
-            params["is_wholesale"] = is_wholesale
-        if sort is not None:
-            params["sort"] = sort
+        params = {}
+        if query_params:
+            params = query_params.model_dump(exclude_none=True)
+            if "stock_gte" in params:
+                params["stock[gte]"] = params.pop("stock_gte")
+
+            if "stock_lte" in params:
+                params["stock[lte]"] = params.pop("stock_lte")
+
+            if "preparation_day_gte" in params:
+                params["preparation_day[gte]"] = params.pop("preparation_day_gte")
+
+            if "preparation_day_lte" in params:
+                params["preparation_day[lte]"] = params.pop("preparation_day_lte")
+
+            if "price_gte" in params:
+                params["price[gte]"] = params.pop("price_gte")
+
+            if "price_lte" in params:
+                params["price[lte]"] = params.pop("price_lte")
 
         response = await self._get(endpoint, params=params)
+        return ProductListResponse(**response)
+
+    def get_vendor_products_sync(
+            self,
+            vendor_id: int,
+            query_params: Optional[GetVendorProductsSchema] = None
+    ) -> ProductListResponse:
+        """
+        Get vendor products (synchronous version).
+
+        Args:
+            vendor_id: The ID of the vendor.
+            query_params: Optional query parameters for filtering and pagination.
+
+        Returns:
+            The response containing the list of products.
+        """
+        endpoint = f"/v3/vendors/{vendor_id}/products"
+        params = {}
+        if query_params:
+            params = query_params.model_dump(exclude_none=True)
+            if "stock_gte" in params:
+                params["stock[gte]"] = params.pop("stock_gte")
+
+            if "stock_lte" in params:
+                params["stock[lte]"] = params.pop("stock_lte")
+
+            if "preparation_day_gte" in params:
+                params["preparation_day[gte]"] = params.pop("preparation_day_gte")
+
+            if "preparation_day_lte" in params:
+                params["preparation_day[lte]"] = params.pop("preparation_day_lte")
+
+            if "price_gte" in params:
+                params["price[gte]"] = params.pop("price_gte")
+
+            if "price_lte" in params:
+                params["price[lte]"] = params.pop("price_lte")
+
+        response = self._get_sync(endpoint, params=params)
         return ProductListResponse(**response)
 
     async def update_vendor_status(
@@ -430,7 +428,7 @@ class CoreService(BaseClient):
             The updated vendor status response.
         """
         endpoint = f"/v3/vendors/{vendor_id}/status"
-        response = await self._patch(endpoint, json=request.dict())
+        response = await self._patch(endpoint, json_data=request.model_dump(exclude_none=True))
         return UpdateVendorStatusResponse(**response)
 
     def update_vendor_status_sync(
@@ -449,131 +447,460 @@ class CoreService(BaseClient):
             The updated vendor status response.
         """
         endpoint = f"/v3/vendors/{vendor_id}/status"
-        response = self._patch_sync(endpoint, json=request.dict())
+        response = self._patch_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return UpdateVendorStatusResponse(**response)
 
-    async def change_vendor_mobile_request(
+    async def create_vendor_mobile_change_request(
             self,
             vendor_id: int,
             request: ChangeVendorMobileRequestSchema
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Request a change of vendor mobile number.
+        Create a vendor mobile change request.
 
         Args:
             vendor_id: The ID of the vendor.
             request: The mobile change request.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/vendors/{vendor_id}/change-mobile-request"
-        response = await self._post(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
+        return ResultResponse(**response)
 
-    def change_vendor_mobile_request_sync(
+    def create_vendor_mobile_change_request_sync(
             self,
             vendor_id: int,
             request: ChangeVendorMobileRequestSchema
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Request a change of vendor mobile number (synchronous version).
+        Create a vendor mobile change request (synchronous version).
 
         Args:
             vendor_id: The ID of the vendor.
             request: The mobile change request.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/vendors/{vendor_id}/change-mobile-request"
-        response = self._post_sync(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return ResultResponse(**response)
 
-    async def change_vendor_mobile_confirm(
+    async def create_vendor_mobile_change_confirmation(
             self,
             vendor_id: int,
             request: ChangeVendorMobileConfirmSchema
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Confirm a change of vendor mobile number.
+        Create a vendor mobile confirmation.
 
         Args:
             vendor_id: The ID of the vendor.
             request: The mobile change confirmation request.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/vendors/{vendor_id}/change-mobile-confirm"
-        response = await self._post(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
+        return ResultResponse(**response)
 
-    def change_vendor_mobile_confirm_sync(
+    def create_vendor_mobile_change_confirmation_sync(
             self,
             vendor_id: int,
             request: ChangeVendorMobileConfirmSchema
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Confirm a change of vendor mobile number (synchronous version).
+        Create a vendor mobile confirmation (synchronous version).
 
         Args:
             vendor_id: The ID of the vendor.
             request: The mobile change confirmation request.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/vendors/{vendor_id}/change-mobile-confirm"
-        response = self._post_sync(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return ResultResponse(**response)
 
-    async def create_bulk_update_product_request(
+    async def create_product(
             self,
             vendor_id: int,
-            request: VendorBulkActionRequestSchema
-    ) -> CreateBulkUpdateResponse:
+            request: ProductRequestSchema,
+            photo_files: Optional[List[BinaryIO]] = None,
+            video_file: Optional[BinaryIO] = None
+    ) -> ProductResponseSchema:
         """
-        Create a bulk update product request.
+        Create a new product for a vendor with optional automatic file upload.
+
+        This method can automatically upload photo and video files, then creates the product
+        with the uploaded file IDs merged with any existing IDs in the request.
 
         Args:
             vendor_id: The ID of the vendor.
-            request: The bulk update request.
+            request: The product creation request.
+            photo_files: Optional list of photo files to upload.
+            video_file: Optional video file to upload.
 
         Returns:
-            The created bulk update request response.
+            The created product resource.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/bulk-update-product-request"
-        response = await self._post(endpoint, json=request.dict())
-        return CreateBulkUpdateResponse(**response)
+        # Create a copy of the request to avoid modifying the original
+        enhanced_request = copy.deepcopy(request)
 
-    def create_bulk_update_product_request_sync(
+        # If files are provided, upload them first
+        if photo_files or video_file:
+            # Create upload service instance
+            upload_service = UploadService(auth=self.auth, config=self.config)
+
+            # Initialize existing IDs
+            existing_photo_ids = enhanced_request.photos or []
+            if enhanced_request.photo is not None:
+                existing_photo_ids.append(enhanced_request.photo)
+
+            existing_video_id = enhanced_request.video
+
+            # Upload photo files if provided
+            uploaded_photo_ids = []
+            if photo_files:
+                photo_upload_tasks = []
+                for photo_file in photo_files:
+                    task = upload_service.upload_file(
+                        file=photo_file,
+                        file_type=UserUploadFileTypeEnum.PRODUCT_PHOTO,
+                        custom_unique_name=None,
+                        expire_minutes=None
+                    )
+                    photo_upload_tasks.append(task)
+
+                # Execute all photo uploads concurrently
+                photo_responses = await asyncio.gather(*photo_upload_tasks)
+                uploaded_photo_ids = [response.id for response in photo_responses]
+
+            # Upload video file if provided
+            uploaded_video_id = None
+            if video_file:
+                video_response = await upload_service.upload_file(
+                    file=video_file,
+                    file_type=UserUploadFileTypeEnum.PRODUCT_VIDEO,
+                    custom_unique_name=None,
+                    expire_minutes=None
+                )
+                uploaded_video_id = video_response.id
+
+            # Merge photo IDs
+            all_photo_ids = existing_photo_ids + uploaded_photo_ids
+
+            # Set photo/photos fields based on total count
+            # The photo field is always required when there are photos
+            # First photo goes to photo field, remaining photos go to photos field
+            if len(all_photo_ids) == 0:
+                enhanced_request.photo = None
+                enhanced_request.photos = None
+            elif len(all_photo_ids) == 1:
+                enhanced_request.photo = all_photo_ids[0]
+                enhanced_request.photos = None
+            else:
+                enhanced_request.photo = all_photo_ids[0]  # First photo in photo field
+                enhanced_request.photos = all_photo_ids[1:]  # Remaining photos in photos field
+
+            # Set video field
+            if uploaded_video_id is not None:
+                enhanced_request.video = uploaded_video_id
+            elif existing_video_id is not None:
+                enhanced_request.video = existing_video_id
+
+        # Create the product with enhanced request
+        endpoint = f"/v4/vendors/{vendor_id}/products"
+        response = await self._post(endpoint, json_data=enhanced_request.model_dump(exclude_none=True))
+        return ProductResponseSchema(**response)
+
+    def create_product_sync(
             self,
             vendor_id: int,
-            request: VendorBulkActionRequestSchema
-    ) -> CreateBulkUpdateResponse:
+            request: ProductRequestSchema,
+            photo_files: Optional[List[BinaryIO]] = None,
+            video_file: Optional[BinaryIO] = None
+    ) -> ProductResponseSchema:
         """
-        Create a bulk update product request (synchronous version).
+        Create a new product for a vendor with optional automatic file upload (synchronous version).
+
+        This method can automatically upload photo and video files, then creates the product
+        with the uploaded file IDs merged with any existing IDs in the request.
 
         Args:
             vendor_id: The ID of the vendor.
-            request: The bulk update request.
+            request: The product creation request.
+            photo_files: Optional list of photo files to upload.
+            video_file: Optional video file to upload.
 
         Returns:
-            The created bulk update request response.
+            The created product resource.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/bulk-update-product-request"
-        response = self._post_sync(endpoint, json=request.dict())
-        return CreateBulkUpdateResponse(**response)
+        # Create a copy of the request to avoid modifying the original
+        enhanced_request = copy.deepcopy(request)
 
-    async def get_bulk_update_requests(
+        # If files are provided, upload them first
+        if photo_files or video_file:
+            # Create upload service instance
+            upload_service = UploadService(auth=self.auth, config=self.config)
+
+            # Initialize existing IDs
+            existing_photo_ids = enhanced_request.photos or []
+            if enhanced_request.photo is not None:
+                existing_photo_ids.append(enhanced_request.photo)
+
+            existing_video_id = enhanced_request.video
+
+            # Upload photo files if provided
+            uploaded_photo_ids = []
+            if photo_files:
+                for photo_file in photo_files:
+                    photo_response = upload_service.upload_file_sync(
+                        file=photo_file,
+                        file_type=UserUploadFileTypeEnum.PRODUCT_PHOTO,
+                        custom_unique_name=None,
+                        expire_minutes=None
+                    )
+                    uploaded_photo_ids.append(photo_response.id)
+
+            # Upload video file if provided
+            uploaded_video_id = None
+            if video_file:
+                video_response = upload_service.upload_file_sync(
+                    file=video_file,
+                    file_type=UserUploadFileTypeEnum.PRODUCT_VIDEO,
+                    custom_unique_name=None,
+                    expire_minutes=None
+                )
+                uploaded_video_id = video_response.id
+
+            # Merge photo IDs
+            all_photo_ids = existing_photo_ids + uploaded_photo_ids
+
+            # Set photo/photos fields based on total count
+            # The photo field is always required when there are photos
+            # First photo goes to photo field, remaining photos go to photos field
+            if len(all_photo_ids) == 0:
+                enhanced_request.photo = None
+                enhanced_request.photos = None
+            elif len(all_photo_ids) == 1:
+                enhanced_request.photo = all_photo_ids[0]
+                enhanced_request.photos = None
+            else:
+                enhanced_request.photo = all_photo_ids[0]  # First photo in photo field
+                enhanced_request.photos = all_photo_ids[1:]  # Remaining photos in photos field
+
+            # Set video field
+            if uploaded_video_id is not None:
+                enhanced_request.video = uploaded_video_id
+            elif existing_video_id is not None:
+                enhanced_request.video = existing_video_id
+
+        # Create the product with enhanced request
+        endpoint = f"/v4/vendors/{vendor_id}/products"
+        response = self._post_sync(endpoint, json_data=enhanced_request.model_dump(exclude_none=True))
+        return ProductResponseSchema(**response)
+
+    async def get_product(
+            self,
+            product_id: int,
+            prefer: Optional[str] = "return=minimal"
+    ) -> ProductResponseSchema:
+        """
+        Get a product (v4).
+
+        Args:
+            product_id: The ID of the product.
+            prefer: Optional header to control response type.
+
+        Returns:
+            The product resource.
+        """
+        endpoint = f"/v4/products/{product_id}"
+        headers = {}
+        if prefer is not None:
+            headers["Prefer"] = prefer
+
+        response = await self._get(endpoint, headers=headers)
+        return ProductResponseSchema(**response)
+
+    def get_product_sync(
+            self,
+            product_id: int,
+            prefer: Optional[str] = "return=minimal"
+    ) -> ProductResponseSchema:
+        """
+        Get a product (v4) (synchronous version).
+
+        Args:
+            product_id: The ID of the product.
+            prefer: Optional header to control response type.
+
+        Returns:
+            The product resource.
+        """
+        endpoint = f"/v4/products/{product_id}"
+        headers = {}
+        if prefer is not None:
+            headers["Prefer"] = prefer
+
+        response = self._get_sync(endpoint, headers=headers)
+        return ProductResponseSchema(**response)
+
+    async def get_products(
+            self,
+            query_params: Optional[GetProductsQuerySchema] = None,
+            prefer: Optional[str] = "return=minimal"
+    ) -> ProductListResponse:
+        """
+        Get products list.
+
+        Args:
+            query_params: Query parameters for filtering products.
+            prefer: Optional header to control response type.
+
+        Returns:
+            The response containing the list of products.
+        """
+        endpoint = "/v3/products"
+        params = {}
+        headers = {}
+
+        if query_params is not None:
+            # Convert the model to dict and exclude None values
+            params = query_params.model_dump(exclude_none=True)
+
+        if prefer is not None:
+            headers["Prefer"] = prefer
+
+        response = await self._get(endpoint, params=params, headers=headers)
+        return ProductListResponse(**response)
+
+    def get_products_sync(
+            self,
+            query_params: Optional[GetProductsQuerySchema] = None,
+            prefer: Optional[str] = "return=minimal"
+    ) -> ProductListResponse:
+        """
+        Get products list (synchronous version).
+
+        Args:
+            query_params: Query parameters for filtering products.
+            prefer: Optional header to control response type.
+
+        Returns:
+            The response containing the list of products.
+        """
+        endpoint = "/v3/products"
+        params = {}
+        headers = {}
+
+        if query_params is not None:
+            # Convert the model to dict and exclude None values
+            params = query_params.model_dump(exclude_none=True)
+
+        if prefer is not None:
+            headers["Prefer"] = prefer
+
+        response = self._get_sync(endpoint, params=params, headers=headers)
+        return ProductListResponse(**response)
+
+    async def create_products_bulk_action_request(
+            self,
+            vendor_id: int,
+            request: BulkProductsUpdateRequestSchema,
+    ) -> BulkProductsUpdateResponseSchema:
+        """
+        Create a vendor product update request.
+
+        Args:
+            vendor_id: The ID of the vendor
+            request: The bulk update request
+
+        Returns:
+            BulkProductsUpdateResponseSchema: The bulk update response
+        """
+        endpoint = f"/v4/vendors/{vendor_id}/bulk-update-product-request"
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
+        return BulkProductsUpdateResponseSchema(**response)
+
+    def create_products_bulk_action_request_sync(
+            self,
+            vendor_id: int,
+            request: BulkProductsUpdateRequestSchema,
+    ) -> BulkProductsUpdateResponseSchema:
+        """
+        Create a vendor product update request (synchronous).
+
+        Args:
+            vendor_id: The ID of the vendor
+            request: The bulk update request
+
+        Returns:
+            BulkProductsUpdateResponseSchema: The bulk update response
+        """
+        endpoint = f"/v4/vendors/{vendor_id}/bulk-update-product-request"
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return BulkProductsUpdateResponseSchema(**response)
+
+    async def update_product_variation(
+            self,
+            product_id: int,
+            variation_id: int,
+            request: UpdateProductVariationSchema,
+    ) -> ProductResponseSchema:
+        """
+        Update a product variation.
+
+        Args:
+            product_id: The ID of the product
+            variation_id: The ID of the variation to update
+            request: The variation update request
+
+        Returns:
+            ProductResponseSchema: The updated product with the modified variation
+        """
+        response = await self._patch(
+            f"/v4/products/{product_id}/variations/{variation_id}",
+            json_data=request.model_dump(exclude_none=True),
+        )
+        return ProductResponseSchema(**response)
+
+    def update_product_variation_sync(
+            self,
+            product_id: int,
+            variation_id: int,
+            request: UpdateProductVariationSchema,
+    ) -> ProductResponseSchema:
+        """
+        Update a product variation (synchronous).
+
+        Args:
+            product_id: The ID of the product
+            variation_id: The ID of the variation to update
+            request: The variation update request
+
+        Returns:
+            ProductResponseSchema: The updated product with the modified variation
+        """
+        response = self._patch_sync(
+            f"/v4/products/{product_id}/variations/{variation_id}",
+            json_data=request.model_dump(exclude_none=True),
+        )
+        return ProductResponseSchema(**response)
+
+    async def get_products_bulk_action_requests(
             self,
             vendor_id: int,
             page: int = 1,
             per_page: int = 30
-    ) -> BulkUpdateListResponse:
+    ) -> BulkProductsUpdatesListResponse:
         """
-        Get list of bulk update requests for a vendor.
+        Get list of vendor product updates.
 
         Args:
             vendor_id: The ID of the vendor.
@@ -589,16 +916,16 @@ class CoreService(BaseClient):
             "per_page": per_page
         }
         response = await self._get(endpoint, params=params)
-        return BulkUpdateListResponse(**response)
+        return BulkProductsUpdatesListResponse(**response)
 
-    def get_bulk_update_requests_sync(
+    def get_products_bulk_action_requests_sync(
             self,
             vendor_id: int,
             page: int = 1,
             per_page: int = 30
-    ) -> BulkUpdateListResponse:
+    ) -> BulkProductsUpdatesListResponse:
         """
-        Get list of bulk update requests for a vendor (synchronous version).
+        Get list of vendor product updates (synchronous version).
 
         Args:
             vendor_id: The ID of the vendor.
@@ -614,16 +941,50 @@ class CoreService(BaseClient):
             "per_page": per_page
         }
         response = self._get_sync(endpoint, params=params)
-        return BulkUpdateListResponse(**response)
+        return BulkProductsUpdatesListResponse(**response)
 
-    async def get_unsuccessful_bulk_update_products(
+    async def get_products_bulk_action_requests_count(
+            self,
+            vendor_id: int
+    ) -> BulkProductsUpdatesCountResponse:
+        """
+        Get count of vendor bulk products updates.
+
+        Args:
+            vendor_id: The ID of the vendor.
+
+        Returns:
+            The count of bulk update requests by type.
+        """
+        endpoint = f"/v3/vendors/{vendor_id}/bulk-update-product-request/count"
+        response = await self._get(endpoint)
+        return BulkProductsUpdatesCountResponse(**response)
+
+    def get_products_bulk_action_requests_count_sync(
+            self,
+            vendor_id: int
+    ) -> BulkProductsUpdatesCountResponse:
+        """
+        Get count of vendor bulk products updates (synchronous version).
+
+        Args:
+            vendor_id: The ID of the vendor.
+
+        Returns:
+            The count of bulk update requests by type.
+        """
+        endpoint = f"/v3/vendors/{vendor_id}/bulk-update-product-request/count"
+        response = self._get_sync(endpoint)
+        return BulkProductsUpdatesCountResponse(**response)
+
+    async def get_products_unsuccessful_bulk_action_requests(
             self,
             request_id: int,
             page: int = 1,
             per_page: int = 20
     ) -> UnsuccessfulBulkUpdateProducts:
         """
-        Get list of unsuccessful products from a bulk update request.
+        Get list of unsuccessful products from a product update request.
 
         Args:
             request_id: The ID of the bulk update request.
@@ -641,14 +1002,14 @@ class CoreService(BaseClient):
         response = await self._get(endpoint, params=params)
         return UnsuccessfulBulkUpdateProducts(**response)
 
-    def get_unsuccessful_bulk_update_products_sync(
+    def get_products_unsuccessful_bulk_action_requests_sync(
             self,
             request_id: int,
             page: int = 1,
             per_page: int = 20
     ) -> UnsuccessfulBulkUpdateProducts:
         """
-        Get list of unsuccessful products from a bulk update request (synchronous version).
+        Get list of unsuccessful products from a product update request (synchronous version).
 
         Args:
             request_id: The ID of the bulk update request.
@@ -665,6 +1026,116 @@ class CoreService(BaseClient):
         }
         response = self._get_sync(endpoint, params=params)
         return UnsuccessfulBulkUpdateProducts(**response)
+
+    async def get_product_shelves(
+            self,
+            product_id: int
+    ) -> List[ProductShelfResponse]:
+        """
+        Get product shelves.
+
+        Args:
+            product_id: The ID of the product.
+
+        Returns:
+            List of product shelves.
+        """
+        endpoint = f"/v3/products/{product_id}/shelves"
+        response = await self._get(endpoint)
+        return [ProductShelfResponse(**item) for item in response]
+
+    def get_product_shelves_sync(
+            self,
+            product_id: int
+    ) -> List[ProductShelfResponse]:
+        """
+        Get product shelves (synchronous version).
+
+        Args:
+            product_id: The ID of the product.
+
+        Returns:
+            List of product shelves.
+        """
+        endpoint = f"/v3/products/{product_id}/shelves"
+        response = self._get_sync(endpoint)
+        return [ProductShelfResponse(**item) for item in response]
+
+    async def create_discount(
+            self,
+            vendor_id: int,
+            request: CreateDiscountRequestSchema
+    ) -> Dict[str, Any]:
+        """
+        Create a discount for vendor products.
+
+        Args:
+            vendor_id: The ID of the vendor.
+            request: The discount creation request.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v3/vendors/{vendor_id}/discounts"
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
+
+    def create_discount_sync(
+            self,
+            vendor_id: int,
+            request: CreateDiscountRequestSchema
+    ) -> Dict[str, Any]:
+        """
+        Create a discount for vendor products (synchronous version).
+
+        Args:
+            vendor_id: The ID of the vendor.
+            request: The discount creation request.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v3/vendors/{vendor_id}/discounts"
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
+
+    async def delete_discount(
+            self,
+            vendor_id: int,
+            request: DeleteDiscountRequestSchema
+    ) -> Dict[str, Any]:
+        """
+        Delete a discount for vendor products.
+
+        Args:
+            vendor_id: The ID of the vendor.
+            request: The discount deletion request.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v3/vendors/{vendor_id}/discounts"
+        response = await self._delete(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
+
+    def delete_discount_sync(
+            self,
+            vendor_id: int,
+            request: DeleteDiscountRequestSchema
+    ) -> Dict[str, Any]:
+        """
+        Delete a discount for vendor products (synchronous version).
+
+        Args:
+            vendor_id: The ID of the vendor.
+            request: The discount deletion request.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v3/vendors/{vendor_id}/discounts"
+        response = self._delete_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
 
     async def get_current_user(self) -> PrivateUserResponse:
         """
@@ -688,206 +1159,206 @@ class CoreService(BaseClient):
         response = self._get_sync(endpoint)
         return PrivateUserResponse(**response)
 
-    async def confirm_current_user_mobile_request(
+    async def create_user_mobile_confirmation_request(
             self,
             user_id: int
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Request confirmation of current user mobile number.
+        Create a user mobile confirmation request.
 
         Args:
             user_id: The ID of the user.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/users/{user_id}/confirm-mobile-request"
         response = await self._post(endpoint)
-        return OkResponse(**response)
+        return ResultResponse(**response)
 
-    def confirm_current_user_mobile_request_sync(
+    def create_user_mobile_confirmation_request_sync(
             self,
             user_id: int
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Request confirmation of current user mobile number (synchronous version).
+        Create a user mobile confirmation request (synchronous version).
 
         Args:
             user_id: The ID of the user.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/users/{user_id}/confirm-mobile-request"
         response = self._post_sync(endpoint)
-        return OkResponse(**response)
+        return ResultResponse(**response)
 
-    async def confirm_current_user_mobile(
+    async def verify_user_mobile_confirmation_request(
             self,
             user_id: int,
             request: ConfirmCurrentUserMobileConfirmSchema
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Confirm current user mobile number.
+        Create a user mobile confirmation.
 
         Args:
             user_id: The ID of the user.
             request: The mobile confirmation request.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/users/{user_id}/confirm-mobile"
-        response = await self._post(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
+        return ResultResponse(**response)
 
-    def confirm_current_user_mobile_sync(
+    def verify_user_mobile_confirmation_request_sync(
             self,
             user_id: int,
             request: ConfirmCurrentUserMobileConfirmSchema
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Confirm current user mobile number (synchronous version).
+        Create a user mobile confirmation (synchronous version).
 
         Args:
             user_id: The ID of the user.
             request: The mobile confirmation request.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/users/{user_id}/confirm-mobile"
-        response = self._post_sync(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return ResultResponse(**response)
 
-    async def change_user_mobile_request(
+    async def create_user_mobile_change_request(
             self,
             user_id: int,
             request: ChangeUserMobileRequestSchema
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Request a change of user mobile number.
+        Create a user mobile change request.
 
         Args:
             user_id: The ID of the user.
             request: The mobile change request.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/users/{user_id}/change-mobile-request"
-        response = await self._post(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
+        return ResultResponse(**response)
 
-    def change_user_mobile_request_sync(
+    def create_user_mobile_change_request_sync(
             self,
             user_id: int,
             request: ChangeUserMobileRequestSchema
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Request a change of user mobile number (synchronous version).
+        Create a user mobile change request (synchronous version).
 
         Args:
             user_id: The ID of the user.
             request: The mobile change request.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/users/{user_id}/change-mobile-request"
-        response = self._post_sync(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return ResultResponse(**response)
 
-    async def change_user_mobile_confirm(
+    async def verify_user_mobile_change_request(
             self,
             user_id: int,
             request: ChangeUserMobileConfirmSchema
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Confirm a change of user mobile number.
+        Create a user mobile change confirmation.
 
         Args:
             user_id: The ID of the user.
             request: The mobile change confirmation request.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/users/{user_id}/change-mobile-confirm"
-        response = await self._post(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
+        return ResultResponse(**response)
 
-    def change_user_mobile_confirm_sync(
+    def verify_user_mobile_change_request_sync(
             self,
             user_id: int,
             request: ChangeUserMobileConfirmSchema
-    ) -> OkResponse:
+    ) -> ResultResponse:
         """
-        Confirm a change of user mobile number (synchronous version).
+        Create a user mobile change confirmation (synchronous version).
 
         Args:
             user_id: The ID of the user.
             request: The mobile change confirmation request.
 
         Returns:
-            The success response.
+            The result response.
         """
         endpoint = f"/v3/users/{user_id}/change-mobile-confirm"
-        response = self._post_sync(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return ResultResponse(**response)
 
-    async def get_user_bank_information(
+    async def get_user_bank_accounts(
             self,
             user_id: int,
             prefer: Optional[str] = "return=minimal"
-    ) -> List[BankInformationResponse]:
+    ) -> List[Dict[str, Any]]:
         """
-        Get user bank information.
+        Get user bank accounts.
 
         Args:
             user_id: The ID of the user.
             prefer: Optional header to control response format.
 
         Returns:
-            The list of bank information.
+            List of bank accounts data.
         """
         endpoint = f"/v3/users/{user_id}/bank-information"
         headers = {}
         if prefer is not None:
             headers["prefer"] = prefer
         response = await self._get(endpoint, headers=headers)
-        return [BankInformationResponse(**item) for item in response]
+        return response
 
-    def get_user_bank_information_sync(
+    def get_user_bank_accounts_sync(
             self,
             user_id: int,
             prefer: Optional[str] = "return=minimal"
-    ) -> List[BankInformationResponse]:
+    ) -> List[Dict[str, Any]]:
         """
-        Get user bank information (synchronous version).
+        Get user bank accounts (synchronous version).
 
         Args:
             user_id: The ID of the user.
             prefer: Optional header to control response format.
 
         Returns:
-            The list of bank information.
+            List of bank accounts data.
         """
         endpoint = f"/v3/users/{user_id}/bank-information"
         headers = {}
         if prefer is not None:
             headers["prefer"] = prefer
         response = self._get_sync(endpoint, headers=headers)
-        return [BankInformationResponse(**item) for item in response]
+        return response
 
-    async def create_user_bank_information(
+    async def create_user_bank_account(
             self,
             user_id: int,
             request: UserCardsSchema,
             prefer: Optional[str] = "return=minimal"
-    ) -> BankInformationResponse:
+    ) -> Dict[str, Any]:
         """
-        Create user bank information.
+        Create user bank accounts.
 
         Args:
             user_id: The ID of the user.
@@ -895,23 +1366,23 @@ class CoreService(BaseClient):
             prefer: Optional header to control response format.
 
         Returns:
-            The created bank information.
+            General JSON response containing the created bank information.
         """
         endpoint = f"/v3/users/{user_id}/bank-information"
         headers = {}
         if prefer is not None:
             headers["prefer"] = prefer
-        response = await self._post(endpoint, json=request.dict(), headers=headers)
-        return BankInformationResponse(**response)
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return response
 
-    def create_user_bank_information_sync(
+    def create_user_bank_account_sync(
             self,
             user_id: int,
             request: UserCardsSchema,
             prefer: Optional[str] = "return=minimal"
-    ) -> BankInformationResponse:
+    ) -> Dict[str, Any]:
         """
-        Create user bank information (synchronous version).
+        Create user bank accounts (synchronous version).
 
         Args:
             user_id: The ID of the user.
@@ -919,136 +1390,136 @@ class CoreService(BaseClient):
             prefer: Optional header to control response format.
 
         Returns:
-            The created bank information.
+            General JSON response containing the created bank information.
         """
         endpoint = f"/v3/users/{user_id}/bank-information"
         headers = {}
         if prefer is not None:
             headers["prefer"] = prefer
-        response = self._post_sync(endpoint, json=request.dict(), headers=headers)
-        return BankInformationResponse(**response)
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return response
 
-    async def verify_bank_information_otp(
+    async def verify_user_bank_account_otp(
             self,
             user_id: int,
             request: UserCardsOtpSchema
-    ) -> OkResponse:
+    ) -> Dict[str, Any]:
         """
-        Verify bank information OTP.
+        Verify user bank account OTP.
 
         Args:
             user_id: The ID of the user.
             request: The OTP verification request.
 
         Returns:
-            The success response.
+            General JSON response containing the verification result.
         """
         endpoint = f"/v3/users/{user_id}/bank-information/verify-otp"
-        response = await self._post(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
 
-    def verify_bank_information_otp_sync(
+    def verify_user_bank_account_otp_sync(
             self,
             user_id: int,
             request: UserCardsOtpSchema
-    ) -> OkResponse:
+    ) -> Dict[str, Any]:
         """
-        Verify bank information OTP (synchronous version).
+        Verify user bank account OTP (synchronous version).
 
         Args:
             user_id: The ID of the user.
             request: The OTP verification request.
 
         Returns:
-            The success response.
+            General JSON response containing the verification result.
         """
         endpoint = f"/v3/users/{user_id}/bank-information/verify-otp"
-        response = self._post_sync(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
 
-    async def verify_bank_information(
+    async def verify_user_bank_account(
             self,
             user_id: int,
             request: UserVerifyBankInformationSchema
-    ) -> OkResponse:
+    ) -> Dict[str, Any]:
         """
-        Verify bank information.
+        Verify user bank accounts.
 
         Args:
             user_id: The ID of the user.
             request: The bank information verification request.
 
         Returns:
-            The success response.
+            General JSON response containing the verification result.
         """
         endpoint = f"/v3/users/{user_id}/bank-information/verify"
-        response = await self._post(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
 
-    def verify_bank_information_sync(
+    def verify_user_bank_account_sync(
             self,
             user_id: int,
             request: UserVerifyBankInformationSchema
-    ) -> OkResponse:
+    ) -> Dict[str, Any]:
         """
-        Verify bank information (synchronous version).
+        Verify user bank accounts (synchronous version).
 
         Args:
             user_id: The ID of the user.
             request: The bank information verification request.
 
         Returns:
-            The success response.
+            General JSON response containing the verification result.
         """
         endpoint = f"/v3/users/{user_id}/bank-information/verify"
-        response = self._post_sync(endpoint, json=request.dict())
-        return OkResponse(**response)
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
 
-    async def delete_bank_information(
+    async def delete_user_bank_account(
             self,
             user_id: int,
             bank_account_id: int
-    ) -> OkResponse:
+    ) -> Dict[str, Any]:
         """
-        Delete bank information.
+        Delete user bank account.
 
         Args:
             user_id: The ID of the user.
             bank_account_id: The ID of the bank account.
 
         Returns:
-            The success response.
+            General JSON response containing the deletion result.
         """
         endpoint = f"/v3/users/{user_id}/bank-information/{bank_account_id}"
         response = await self._delete(endpoint)
-        return OkResponse(**response)
+        return response
 
-    def delete_bank_information_sync(
+    def delete_user_bank_account_sync(
             self,
             user_id: int,
             bank_account_id: int
-    ) -> OkResponse:
+    ) -> Dict[str, Any]:
         """
-        Delete bank information (synchronous version).
+        Delete user bank account (synchronous version).
 
         Args:
             user_id: The ID of the user.
             bank_account_id: The ID of the bank account.
 
         Returns:
-            The success response.
+            General JSON response containing the deletion result.
         """
         endpoint = f"/v3/users/{user_id}/bank-information/{bank_account_id}"
         response = self._delete_sync(endpoint)
-        return OkResponse(**response)
+        return response
 
-    async def update_bank_information(
+    async def update_user_bank_account(
             self,
             bank_account_id: int,
             request: UpdateUserBankInformationSchema,
     ) -> Dict[str, Any]:
         """
-        Update bank information for a specific bank account.
+        Update bank account for a specific bank account.
 
         Args:
             bank_account_id: The ID of the bank account to update
@@ -1057,19 +1528,19 @@ class CoreService(BaseClient):
         Returns:
             Dict[str, Any]: The updated bank information
         """
-        response = await self._client.patch(
+        response = await self._patch(
             f"/v3/bank-information/{bank_account_id}",
-            json=request.dict(exclude_none=True),
+            json_data=request.model_dump(exclude_none=True),
         )
-        return response.json()
+        return response
 
-    def update_bank_information_sync(
+    def update_user_bank_account_sync(
             self,
             bank_account_id: int,
             request: UpdateUserBankInformationSchema,
     ) -> Dict[str, Any]:
         """
-        Update bank information for a specific bank account (synchronous).
+        Update bank account for a specific bank account (synchronous).
 
         Args:
             bank_account_id: The ID of the bank account to update
@@ -1078,19 +1549,19 @@ class CoreService(BaseClient):
         Returns:
             Dict[str, Any]: The updated bank information
         """
-        response = self._client_sync.patch(
+        response = self._patch_sync(
             f"/v3/bank-information/{bank_account_id}",
-            json=request.dict(exclude_none=True),
+            json_data=request.model_dump(exclude_none=True),
         )
-        return response.json()
+        return response
 
-    async def user_verification_request(
+    async def update_user_verification(
             self,
             user_id: int,
             request: UserVerificationSchema,
     ) -> PrivateUserResponse:
         """
-        Submit a user verification request.
+        Update user verification.
 
         Args:
             user_id: The ID of the user to verify
@@ -1099,19 +1570,19 @@ class CoreService(BaseClient):
         Returns:
             PrivateUserResponse: The updated user information
         """
-        response = await self._client.patch(
+        response = await self._patch(
             f"/v3/users/{user_id}/verification-request",
-            json=request.dict(exclude_none=True),
+            json_data=request.model_dump(exclude_none=True),
         )
-        return PrivateUserResponse(**response.json())
+        return PrivateUserResponse(**response)
 
-    def user_verification_request_sync(
+    def update_user_verification_sync(
             self,
             user_id: int,
             request: UserVerificationSchema,
     ) -> PrivateUserResponse:
         """
-        Submit a user verification request (synchronous).
+        Update user verification (synchronous).
 
         Args:
             user_id: The ID of the user to verify
@@ -1120,11 +1591,11 @@ class CoreService(BaseClient):
         Returns:
             PrivateUserResponse: The updated user information
         """
-        response = self._client_sync.patch(
+        response = self._patch_sync(
             f"/v3/users/{user_id}/verification-request",
-            json=request.dict(exclude_none=True),
+            json_data=request.model_dump(exclude_none=True),
         )
-        return PrivateUserResponse(**response.json())
+        return PrivateUserResponse(**response)
 
     async def get_category_attributes(
             self,
@@ -1153,11 +1624,11 @@ class CoreService(BaseClient):
         if vendor_id is not None:
             params["vendor_id"] = vendor_id
 
-        response = await self._client.get(
+        response = await self._get(
             f"/v3/categories/{category_id}/attributes",
             params=params,
         )
-        return AttributesResponse(**response.json())
+        return AttributesResponse(**response)
 
     def get_category_attributes_sync(
             self,
@@ -1186,11 +1657,11 @@ class CoreService(BaseClient):
         if vendor_id is not None:
             params["vendor_id"] = vendor_id
 
-        response = self._client_sync.get(
+        response = self._get_sync(
             f"/v3/categories/{category_id}/attributes",
             params=params,
         )
-        return AttributesResponse(**response.json())
+        return AttributesResponse(**response)
 
     async def get_categories(self) -> CategoriesResponse:
         """
@@ -1199,8 +1670,8 @@ class CoreService(BaseClient):
         Returns:
             CategoriesResponse: The list of categories
         """
-        response = await self._client.get("/v3/categories")
-        return CategoriesResponse(**response.json())
+        response = await self._get("/v3/categories")
+        return CategoriesResponse(**response)
 
     def get_categories_sync(self) -> CategoriesResponse:
         """
@@ -1209,8 +1680,8 @@ class CoreService(BaseClient):
         Returns:
             CategoriesResponse: The list of categories
         """
-        response = self._client_sync.get("/v3/categories")
-        return CategoriesResponse(**response.json())
+        response = self._get_sync("/v3/categories")
+        return CategoriesResponse(**response)
 
     async def get_category(self, category_id: int) -> CategoryResponse:
         """
@@ -1220,10 +1691,10 @@ class CoreService(BaseClient):
             category_id: The ID of the category
 
         Returns:
-            CategoryResponse: The category details
+            CategoryResponse: The category details with hierarchical structure
         """
-        response = await self._client.get(f"/v3/categories/{category_id}")
-        return CategoryResponse(**response.json())
+        response = await self._get(f"/v3/categories/{category_id}")
+        return CategoryResponse(**response)
 
     def get_category_sync(self, category_id: int) -> CategoryResponse:
         """
@@ -1233,249 +1704,224 @@ class CoreService(BaseClient):
             category_id: The ID of the category
 
         Returns:
-            CategoryResponse: The category details
+            CategoryResponse: The category details with hierarchical structure
         """
-        response = self._client_sync.get(f"/v3/categories/{category_id}")
-        return CategoryResponse(**response.json())
+        response = self._get_sync(f"/v3/categories/{category_id}")
+        return CategoryResponse(**response)
 
-    async def update_product_variation(
-            self,
-            product_id: int,
-            variation_id: int,
-            request: UpdateProductVariantsSchema,
-    ) -> ProductResponse:
-        """
-        Update a product variation.
-
-        Args:
-            product_id: The ID of the product
-            variation_id: The ID of the variation to update
-            request: The variation update request
-
-        Returns:
-            ProductResponse: The updated product with the modified variation
-        """
-        response = await self._client.patch(
-            f"/v4/products/{product_id}/variations/{variation_id}",
-            json=request.dict(exclude_none=True),
-        )
-        return ProductResponse(**response.json())
-
-    def update_product_variation_sync(
-            self,
-            product_id: int,
-            variation_id: int,
-            request: UpdateProductVariantsSchema,
-    ) -> ProductResponse:
-        """
-        Update a product variation (synchronous).
-
-        Args:
-            product_id: The ID of the product
-            variation_id: The ID of the variation to update
-            request: The variation update request
-
-        Returns:
-            ProductResponse: The updated product with the modified variation
-        """
-        response = self._client_sync.patch(
-            f"/v4/products/{product_id}/variations/{variation_id}",
-            json=request.dict(exclude_none=True),
-        )
-        return ProductResponse(**response.json())
-
-    async def create_vendor_bulk_action_request(
+    async def update_bulk_products(
             self,
             vendor_id: int,
-            request: BulkUpdateProductSchema,
-    ) -> List[BatchResponse]:
+            request: BatchUpdateProductsRequest
+    ) -> List[UpdateProductResponseItem]:
         """
-        Create a bulk action request for a vendor's products.
+        Update products for a vendor (v4).
 
         Args:
-            vendor_id: The ID of the vendor
-            request: The bulk update request
+            vendor_id: The ID of the vendor.
+            request: The product update request.
 
         Returns:
-            List[BatchResponse]: The list of batch responses
+            List of update results for each product.
         """
-        response = await self._client.post(
-            f"/v4/vendors/{vendor_id}/bulk-update-product-request",
-            json=request.dict(exclude_none=True),
-        )
-        return [BatchResponse(**item) for item in response.json()]
+        endpoint = f"/v4/vendors/{vendor_id}/products"
+        response = await self._patch(endpoint, json_data=request.model_dump(exclude_none=True))
+        return [UpdateProductResponseItem(**item) for item in response]
 
-    def create_vendor_bulk_action_request_sync(
+    def update_bulk_products_sync(
             self,
             vendor_id: int,
-            request: BulkUpdateProductSchema,
-    ) -> List[BatchResponse]:
+            request: BatchUpdateProductsRequest
+    ) -> List[UpdateProductResponseItem]:
         """
-        Create a bulk action request for a vendor's products (synchronous).
+        Update products for a vendor (v4) (synchronous version).
 
         Args:
-            vendor_id: The ID of the vendor
-            request: The bulk update request
+            vendor_id: The ID of the vendor.
+            request: The product update request.
 
         Returns:
-            List[BatchResponse]: The list of batch responses
+            List of update results for each product.
         """
-        response = self._client_sync.post(
-            f"/v4/vendors/{vendor_id}/bulk-update-product-request",
-            json=request.dict(exclude_none=True),
-        )
-        return [BatchResponse(**item) for item in response.json()]
+        endpoint = f"/v4/vendors/{vendor_id}/products"
+        response = self._patch_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return [UpdateProductResponseItem(**item) for item in response]
 
-    async def get_category_list(self) -> List[CategoryListResponse]:
-        """
-        Get a list of categories.
-
-        Returns:
-            List[CategoryListResponse]: The list of categories
-        """
-        response = await self._client.get("/v3/categories/list")
-        return [CategoryListResponse(**item) for item in response.json()]
-
-    def get_category_list_sync(self) -> List[CategoryListResponse]:
-        """
-        Get a list of categories (synchronous).
-
-        Returns:
-            List[CategoryListResponse]: The list of categories
-        """
-        response = self._client_sync.get("/v3/categories/list")
-        return [CategoryListResponse(**item) for item in response.json()]
-
-    async def get_category_lv12(self) -> List[CategoryLV12Response]:
-        """
-        Get a list of categories with level 1 and 2.
-
-        Returns:
-            List[CategoryLV12Response]: The list of categories with their children
-        """
-        response = await self._client.get("/v3/categories/lv12")
-        return [CategoryLV12Response(**item) for item in response.json()]
-
-    def get_category_lv12_sync(self) -> List[CategoryLV12Response]:
-        """
-        Get a list of categories with level 1 and 2 (synchronous).
-
-        Returns:
-            List[CategoryLV12Response]: The list of categories with their children
-        """
-        response = self._client_sync.get("/v3/categories/lv12")
-        return [CategoryLV12Response(**item) for item in response.json()]
-
-    async def get_cities(self) -> List[CityResponse]:
-        """
-        Get a list of cities.
-
-        Returns:
-            List[CityResponse]: The list of cities
-        """
-        response = await self._client.get("/v3/cities")
-        return [CityResponse(**item) for item in response.json()]
-
-    def get_cities_sync(self) -> List[CityResponse]:
-        """
-        Get a list of cities (synchronous).
-
-        Returns:
-            List[CityResponse]: The list of cities
-        """
-        response = self._client_sync.get("/v3/cities")
-        return [CityResponse(**item) for item in response.json()]
-
-    async def get_navigation(self) -> List[NavigationResponse]:
-        """
-        Get the navigation structure.
-
-        Returns:
-            List[NavigationResponse]: The navigation structure
-        """
-        response = await self._client.get("/v3/navigation")
-        return [NavigationResponse(**item) for item in response.json()]
-
-    def get_navigation_sync(self) -> List[NavigationResponse]:
-        """
-        Get the navigation structure (synchronous).
-
-        Returns:
-            List[NavigationResponse]: The navigation structure
-        """
-        response = self._client_sync.get("/v3/navigation")
-        return [NavigationResponse(**item) for item in response.json()]
-
-    async def get_private_product_list(
+    async def update_product(
             self,
-            user_id: int,
-            page: Optional[int] = None,
-            per_page: Optional[int] = None,
-            status: Optional[str] = None,
-            category_id: Optional[int] = None,
-            search: Optional[str] = None,
-            sort: Optional[str] = None,
-            order: Optional[str] = None,
-    ) -> PrivateProductListResponse:
-        """Get private product list.
+            product_id: int,
+            request: ProductRequestSchema,
+            photo_files: Optional[List[BinaryIO]] = None,
+            video_file: Optional[BinaryIO] = None
+    ) -> ProductResponseSchema:
+        """
+        Update a product with optional automatic file upload.
+
+        This method can automatically upload photo and video files, then updates the product
+        with the uploaded file IDs merged with any existing IDs in the request.
 
         Args:
-            user_id: The ID of the user
-            page: The page number
-            per_page: The number of items per page
-            status: The status of the products
-            category_id: The ID of the category
-            search: The search query
-            sort: The sort field
-            order: The sort order
+            product_id: The ID of the product.
+            request: The product update request.
+            photo_files: Optional list of photo files to upload.
+            video_file: Optional video file to upload.
 
         Returns:
-            PrivateProductListResponse: The private product list
+            The updated product resource.
         """
-        params = {
-            "page": page,
-            "per_page": per_page,
-            "status": status,
-            "category_id": category_id,
-            "search": search,
-            "sort": sort,
-            "order": order,
-        }
-        return await self._get(f"/v3/users/{user_id}/products", PrivateProductListResponse, params=params)
+        # Create a copy of the request to avoid modifying the original
+        enhanced_request = copy.deepcopy(request)
 
-    def get_private_product_list_sync(
+        # If files are provided, upload them first
+        if photo_files or video_file:
+            # Create upload service instance
+            upload_service = UploadService(auth=self.auth, config=self.config)
+
+            # Initialize existing IDs
+            existing_photo_ids = enhanced_request.photos or []
+            if enhanced_request.photo is not None:
+                existing_photo_ids.append(enhanced_request.photo)
+
+            existing_video_id = enhanced_request.video
+
+            # Upload photo files if provided
+            uploaded_photo_ids = []
+            if photo_files:
+                photo_upload_tasks = []
+                for photo_file in photo_files:
+                    task = upload_service.upload_file(
+                        file=photo_file,
+                        file_type=UserUploadFileTypeEnum.PRODUCT_PHOTO,
+                        custom_unique_name=None,
+                        expire_minutes=None
+                    )
+                    photo_upload_tasks.append(task)
+
+                # Execute all photo uploads concurrently
+                photo_responses = await asyncio.gather(*photo_upload_tasks)
+                uploaded_photo_ids = [response.id for response in photo_responses]
+
+            # Upload video file if provided
+            uploaded_video_id = None
+            if video_file:
+                video_response = await upload_service.upload_file(
+                    file=video_file,
+                    file_type=UserUploadFileTypeEnum.PRODUCT_VIDEO,
+                    custom_unique_name=None,
+                    expire_minutes=None
+                )
+                uploaded_video_id = video_response.id
+
+            # Merge photo IDs
+            all_photo_ids = existing_photo_ids + uploaded_photo_ids
+
+            # Set photo/photos fields based on total count
+            # The photo field is always required when there are photos
+            # First photo goes to photo field, remaining photos go to photos field
+            if len(all_photo_ids) == 0:
+                enhanced_request.photo = None
+                enhanced_request.photos = None
+            elif len(all_photo_ids) == 1:
+                enhanced_request.photo = all_photo_ids[0]
+                enhanced_request.photos = None
+            else:
+                enhanced_request.photo = all_photo_ids[0]  # First photo in photo field
+                enhanced_request.photos = all_photo_ids[1:]  # Remaining photos in photos field
+
+            # Set video field
+            if uploaded_video_id is not None:
+                enhanced_request.video = uploaded_video_id
+            elif existing_video_id is not None:
+                enhanced_request.video = existing_video_id
+
+        # Update the product with enhanced request
+        endpoint = f"/v4/products/{product_id}"
+        response = await self._patch(endpoint, json_data=enhanced_request.model_dump(exclude_none=True))
+        return ProductResponseSchema(**response)
+
+    def update_product_sync(
             self,
-            user_id: int,
-            page: Optional[int] = None,
-            per_page: Optional[int] = None,
-            status: Optional[str] = None,
-            category_id: Optional[int] = None,
-            search: Optional[str] = None,
-            sort: Optional[str] = None,
-            order: Optional[str] = None,
-    ) -> PrivateProductListResponse:
-        """Get private product list synchronously.
+            product_id: int,
+            request: ProductRequestSchema,
+            photo_files: Optional[List[BinaryIO]] = None,
+            video_file: Optional[BinaryIO] = None
+    ) -> ProductResponseSchema:
+        """
+        Update a product with optional automatic file upload (synchronous version).
+
+        This method can automatically upload photo and video files, then updates the product
+        with the uploaded file IDs merged with any existing IDs in the request.
 
         Args:
-            user_id: The ID of the user
-            page: The page number
-            per_page: The number of items per page
-            status: The status of the products
-            category_id: The ID of the category
-            search: The search query
-            sort: The sort field
-            order: The sort order
+            product_id: The ID of the product.
+            request: The product update request.
+            photo_files: Optional list of photo files to upload.
+            video_file: Optional video file to upload.
 
         Returns:
-            PrivateProductListResponse: The private product list
+            The updated product resource.
         """
-        params = {
-            "page": page,
-            "per_page": per_page,
-            "status": status,
-            "category_id": category_id,
-            "search": search,
-            "sort": sort,
-            "order": order,
-        }
-        return self._get_sync(f"/v3/users/{user_id}/products", PrivateProductListResponse, params=params)
+        # Create a copy of the request to avoid modifying the original
+        enhanced_request = copy.deepcopy(request)
+
+        # If files are provided, upload them first
+        if photo_files or video_file:
+            # Create upload service instance
+            upload_service = UploadService(auth=self.auth, config=self.config)
+
+            # Initialize existing IDs
+            existing_photo_ids = enhanced_request.photos or []
+            if enhanced_request.photo is not None:
+                existing_photo_ids.append(enhanced_request.photo)
+
+            existing_video_id = enhanced_request.video
+
+            # Upload photo files if provided
+            uploaded_photo_ids = []
+            if photo_files:
+                for photo_file in photo_files:
+                    photo_response = upload_service.upload_file_sync(
+                        file=photo_file,
+                        file_type=UserUploadFileTypeEnum.PRODUCT_PHOTO,
+                        custom_unique_name=None,
+                        expire_minutes=None
+                    )
+                    uploaded_photo_ids.append(photo_response.id)
+
+            # Upload video file if provided
+            uploaded_video_id = None
+            if video_file:
+                video_response = upload_service.upload_file_sync(
+                    file=video_file,
+                    file_type=UserUploadFileTypeEnum.PRODUCT_VIDEO,
+                    custom_unique_name=None,
+                    expire_minutes=None
+                )
+                uploaded_video_id = video_response.id
+
+            # Merge photo IDs
+            all_photo_ids = existing_photo_ids + uploaded_photo_ids
+
+            # Set photo/photos fields based on total count
+            # The photo field is always required when there are photos
+            # First photo goes to photo field, remaining photos go to photos field
+            if len(all_photo_ids) == 0:
+                enhanced_request.photo = None
+                enhanced_request.photos = None
+            elif len(all_photo_ids) == 1:
+                enhanced_request.photo = all_photo_ids[0]
+                enhanced_request.photos = None
+            else:
+                enhanced_request.photo = all_photo_ids[0]  # First photo in photo field
+                enhanced_request.photos = all_photo_ids[1:]  # Remaining photos in photos field
+
+            # Set video field
+            if uploaded_video_id is not None:
+                enhanced_request.video = uploaded_video_id
+            elif existing_video_id is not None:
+                enhanced_request.video = existing_video_id
+
+        # Update the product with enhanced request
+        endpoint = f"/v4/products/{product_id}"
+        response = self._patch_sync(endpoint, json_data=enhanced_request.model_dump(exclude_none=True))
+        return ProductResponseSchema(**response)

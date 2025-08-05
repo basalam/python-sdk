@@ -22,6 +22,10 @@ class BasalamClient:
 
     This client provides access to all Basalam services through a unified interface.
     It automatically configures and instantiates service-specific clients.
+
+    You can access service methods in two ways:
+    1. Through service attributes: client.webhook.get_webhooks_sync()
+    2. Directly from client: client.get_webhooks_sync()
     """
 
     def __init__(
@@ -44,6 +48,42 @@ class BasalamClient:
         self.upload = UploadService(auth=auth, config=self.config)
         self.chat = ChatService(auth=auth, config=self.config)
         self.webhook = WebhookService(auth=auth, config=self.config)
+
+        # Store services for dynamic method lookup
+        self._services = [
+            self.core,
+            self.wallet,
+            self.order,
+            self.order_processing,
+            self.search,
+            self.upload,
+            self.chat,
+            self.webhook,
+        ]
+
+    def __getattr__(self, name: str):
+        """
+        Dynamically delegate method calls to the appropriate service.
+
+        This allows calling service methods directly from the client:
+        client.get_webhooks_sync() instead of client.webhook.get_webhooks_sync()
+
+        Args:
+            name: The method name being called
+
+        Returns:
+            The method from the appropriate service
+
+        Raises:
+            AttributeError: If the method is not found in any service
+        """
+        # Search through all services for the method
+        for service in self._services:
+            if hasattr(service, name):
+                return getattr(service, name)
+
+        # If method not found in any service, raise AttributeError
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
     async def __aenter__(self):
         """Async context manager enter."""

@@ -18,7 +18,7 @@ from .models import (
     RegisterClientRequest,
     UnRegisterClientRequest,
     UnRegisterClientResponse,
-    WebhookRegisteredOnListResource
+    WebhookRegisteredOnListResource, ClientResource
 )
 from ..base_client import BaseClient
 
@@ -28,11 +28,11 @@ class WebhookService(BaseClient):
 
     def __init__(self, **kwargs):
         """Initialize the webhook service client."""
-        super().__init__(service_name="webhook", **kwargs)
+        super().__init__(service="webhook", **kwargs)
 
-    async def get_services(self) -> ServiceListResource:
+    async def get_webhook_services(self) -> ServiceListResource:
         """
-        Get a list of services.
+        Get a list of webhook services.
 
         Returns:
             The response containing the list of services.
@@ -41,9 +41,9 @@ class WebhookService(BaseClient):
         response = await self._get(endpoint)
         return ServiceListResource(**response)
 
-    def get_services_sync(self) -> ServiceListResource:
+    def get_webhook_services_sync(self) -> ServiceListResource:
         """
-        Get a list of services (synchronous version).
+        Get a list of webhook services (synchronous version).
 
         Returns:
             The response containing the list of services.
@@ -52,9 +52,9 @@ class WebhookService(BaseClient):
         response = self._get_sync(endpoint)
         return ServiceListResource(**response)
 
-    async def create_service(self, request: CreateServiceRequest) -> ServiceResource:
+    async def create_webhook_service(self, request: CreateServiceRequest) -> ServiceResource:
         """
-        Create a new service.
+        Create a new webhook service.
 
         Args:
             request: The service creation request.
@@ -63,12 +63,12 @@ class WebhookService(BaseClient):
             The created service resource.
         """
         endpoint = "/v1/services"
-        response = await self._post(endpoint, json=request.dict())
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return ServiceResource(**response)
 
-    def create_service_sync(self, request: CreateServiceRequest) -> ServiceResource:
+    def create_webhook_service_sync(self, request: CreateServiceRequest) -> ServiceResource:
         """
-        Create a new service (synchronous version).
+        Create a new webhook service (synchronous version).
 
         Args:
             request: The service creation request.
@@ -77,7 +77,7 @@ class WebhookService(BaseClient):
             The created service resource.
         """
         endpoint = "/v1/services"
-        response = self._post_sync(endpoint, json=request.dict())
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return ServiceResource(**response)
 
     async def get_webhooks(
@@ -141,7 +141,7 @@ class WebhookService(BaseClient):
             The created webhook resource.
         """
         endpoint = "/v1/webhooks"
-        response = await self._post(endpoint, json=request.dict())
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return WebhookResource(**response)
 
     def create_webhook_sync(self, request: CreateWebhookRequest) -> WebhookResource:
@@ -155,7 +155,7 @@ class WebhookService(BaseClient):
             The created webhook resource.
         """
         endpoint = "/v1/webhooks"
-        response = self._post_sync(endpoint, json=request.dict())
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return WebhookResource(**response)
 
     async def get_webhook_events(self) -> EventListResource:
@@ -252,7 +252,7 @@ class WebhookService(BaseClient):
             The updated webhook resource.
         """
         endpoint = f"/v1/webhooks/{webhook_id}"
-        response = await self._patch(endpoint, json=request.dict(exclude_none=True))
+        response = await self._patch(endpoint, json_data=request.model_dump(exclude_none=True))
         return WebhookResource(**response)
 
     def update_webhook_sync(
@@ -271,7 +271,7 @@ class WebhookService(BaseClient):
             The updated webhook resource.
         """
         endpoint = f"/v1/webhooks/{webhook_id}"
-        response = self._patch_sync(endpoint, json=request.dict(exclude_none=True))
+        response = self._patch_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return WebhookResource(**response)
 
     async def delete_webhook(self, webhook_id: int) -> DeleteWebhookResponse:
@@ -330,7 +330,7 @@ class WebhookService(BaseClient):
         response = self._get_sync(endpoint)
         return WebhookLogListResource(**response)
 
-    async def register_client(self, request: RegisterClientRequest) -> ClientResource:
+    async def register_webhook(self, request: RegisterClientRequest) -> ClientResource:
         """
         Register a client to a webhook.
 
@@ -341,10 +341,10 @@ class WebhookService(BaseClient):
             The created client resource.
         """
         endpoint = "/v1/customers/webhooks"
-        response = await self._post(endpoint, json=request.dict())
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return ClientResource(**response)
 
-    def register_client_sync(self, request: RegisterClientRequest) -> ClientResource:
+    def register_webhook_sync(self, request: RegisterClientRequest) -> ClientResource:
         """
         Register a client to a webhook (synchronous version).
 
@@ -355,12 +355,12 @@ class WebhookService(BaseClient):
             The created client resource.
         """
         endpoint = "/v1/customers/webhooks"
-        response = self._post_sync(endpoint, json=request.dict())
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return ClientResource(**response)
 
-    async def unregister_client(self, request: UnRegisterClientRequest) -> UnRegisterClientResponse:
+    async def unregister_webhook(self, request: UnRegisterClientRequest) -> UnRegisterClientResponse:
         """
-        Unregister a client from a webhook.
+        Unregister a customer from a webhook.
 
         Args:
             request: The unregistration request.
@@ -369,12 +369,12 @@ class WebhookService(BaseClient):
             The unregistration response.
         """
         endpoint = "/v1/customers/webhooks"
-        response = await self._delete(endpoint, json=request.dict(exclude_none=True))
+        response = await self._delete(endpoint, json_data=request.model_dump(exclude_none=True))
         return UnRegisterClientResponse(**response)
 
-    def unregister_client_sync(self, request: UnRegisterClientRequest) -> UnRegisterClientResponse:
+    def unregister_webhook_sync(self, request: UnRegisterClientRequest) -> UnRegisterClientResponse:
         """
-        Unregister a client from a webhook (synchronous version).
+        Unregister a customer from a webhook (synchronous version).
 
         Args:
             request: The unregistration request.
@@ -383,7 +383,7 @@ class WebhookService(BaseClient):
             The unregistration response.
         """
         endpoint = "/v1/customers/webhooks"
-        response = self._delete_sync(endpoint, json=request.dict(exclude_none=True))
+        response = self._delete_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return UnRegisterClientResponse(**response)
 
     async def get_registered_webhooks(

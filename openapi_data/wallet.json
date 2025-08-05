@@ -144,7 +144,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/api__routes__v2__responses__HistoryPaginationResponse"
+                  "$ref": "#/components/schemas/HistoryPaginationResponse"
                 }
               }
             }
@@ -217,7 +217,89 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/api__routes__v2__responses__SpendResponse"
+                  "$ref": "#/components/schemas/SpendResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/user/{user_id}/credit/{credit_id}/spend": {
+      "post": {
+        "tags": [
+          "OpenAPI \u2014 Balance"
+        ],
+        "summary": "Spend Specific Credit",
+        "operationId": "spend_specific_credit_v2_user__user_id__credit__credit_id__spend_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "credit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Credit Id"
+            }
+          },
+          {
+            "name": "x-operator-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Operator-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_spend_specific_credit_v2_user__user_id__credit__credit_id__spend_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpendResponse"
                 }
               }
             }
@@ -289,7 +371,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/api__routes__v2__responses__SpendResponse"
+                  "$ref": "#/components/schemas/SpendResponse"
                 }
               }
             }
@@ -369,7 +451,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/api__routes__v2__responses__SpendResponse"
+                  "$ref": "#/components/schemas/SpendResponse"
                 }
               }
             }
@@ -450,7 +532,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/api__routes__v2__responses__SpendResponse"
+                  "$ref": "#/components/schemas/SpendResponse"
                 }
               }
             }
@@ -530,7 +612,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/api__routes__v2__responses__SpendResponse"
+                  "$ref": "#/components/schemas/SpendResponse"
                 }
               }
             }
@@ -596,10 +678,10 @@
                 "schema": {
                   "anyOf": [
                     {
-                      "$ref": "#/components/schemas/api__routes__v2__responses__CreditCreationResponse"
+                      "$ref": "#/components/schemas/CreditCreationResponse"
                     },
                     {
-                      "$ref": "#/components/schemas/api__routes__v2__responses__SpendResponse"
+                      "$ref": "#/components/schemas/SpendResponse"
                     }
                   ],
                   "title": "Response Refund V2 Refund Post"
@@ -730,7 +812,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/api__routes__v2__responses__SpendResponse"
+                  "$ref": "#/components/schemas/SpendResponse"
                 }
               }
             }
@@ -1024,6 +1106,61 @@
         ],
         "title": "Body_spend_credit_v2_user__user_id__spend_post"
       },
+      "Body_spend_specific_credit_v2_user__user_id__credit__credit_id__spend_post": {
+        "properties": {
+          "reason_id": {
+            "type": "integer",
+            "title": "Reason Id"
+          },
+          "reference_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Reference Id"
+          },
+          "amount": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Amount"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "settleable": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Settleable"
+          },
+          "references": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "References"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason_id",
+          "reference_id",
+          "amount",
+          "description"
+        ],
+        "title": "Body_spend_specific_credit_v2_user__user_id__credit__credit_id__spend_post"
+      },
       "BooleanResponse": {
         "properties": {
           "status": {
@@ -1047,6 +1184,98 @@
           "status"
         ],
         "title": "BooleanResponse"
+      },
+      "CreditCreationResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "client_id": {
+            "type": "integer",
+            "title": "Client Id"
+          },
+          "reference_id": {
+            "type": "integer",
+            "title": "Reference Id"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReasonResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "title": "Amount"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "credits": {
+            "items": {
+              "$ref": "#/components/schemas/api__routes__v2__responses__CreditResponse"
+            },
+            "type": "array",
+            "title": "Credits"
+          },
+          "references": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ReferenceResponse"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "References"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "client_id",
+          "reference_id",
+          "user_id",
+          "reason",
+          "amount",
+          "description",
+          "created_at",
+          "credits",
+          "references"
+        ],
+        "title": "CreditCreationResponse"
       },
       "CreditItemResponse": {
         "properties": {
@@ -1214,6 +1443,52 @@
           "references"
         ],
         "title": "HistoryItemResponse"
+      },
+      "HistoryPaginationResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryItemResponse"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "per_page": {
+            "type": "integer",
+            "title": "Per Page"
+          },
+          "current_page": {
+            "type": "integer",
+            "title": "Current Page"
+          },
+          "last_page": {
+            "type": "integer",
+            "title": "Last Page"
+          },
+          "from_": {
+            "type": "integer",
+            "title": "From"
+          },
+          "to": {
+            "type": "integer",
+            "title": "To"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "total",
+          "per_page",
+          "current_page",
+          "last_page",
+          "from_",
+          "to"
+        ],
+        "title": "HistoryPaginationResponse"
       },
       "HistorySpendItemResponse": {
         "properties": {
@@ -1465,7 +1740,8 @@
           81,
           82,
           83,
-          84
+          84,
+          85
         ],
         "title": "ReferenceTypeEnum"
       },
@@ -1495,6 +1771,147 @@
           535
         ],
         "title": "SalamPayUsingCreditReasonEnum"
+      },
+      "SpendItemResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "amount": {
+            "type": "integer",
+            "title": "Amount"
+          },
+          "references": {
+            "items": {
+              "$ref": "#/components/schemas/ReferenceResponse"
+            },
+            "type": "array",
+            "title": "References"
+          },
+          "credit": {
+            "$ref": "#/components/schemas/api__routes__v2__responses__CreditResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "amount",
+          "references",
+          "credit"
+        ],
+        "title": "SpendItemResponse"
+      },
+      "SpendResponse": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "deleted_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deleted At"
+          },
+          "amount": {
+            "type": "integer",
+            "title": "Amount"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "reference_id": {
+            "type": "integer",
+            "title": "Reference Id"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/ReasonResponse"
+          },
+          "rollback_reason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReasonResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SpendItemResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "references": {
+            "items": {
+              "$ref": "#/components/schemas/ReferenceResponse"
+            },
+            "type": "array",
+            "title": "References"
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "amount",
+          "user_id",
+          "reference_id",
+          "reason",
+          "rollback_reason",
+          "items",
+          "references"
+        ],
+        "title": "SpendResponse"
       },
       "ValidationError": {
         "properties": {
@@ -1528,98 +1945,6 @@
           "type"
         ],
         "title": "ValidationError"
-      },
-      "api__routes__v2__responses__CreditCreationResponse": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "client_id": {
-            "type": "integer",
-            "title": "Client Id"
-          },
-          "reference_id": {
-            "type": "integer",
-            "title": "Reference Id"
-          },
-          "user_id": {
-            "type": "integer",
-            "title": "User Id"
-          },
-          "reason": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ReasonResponse"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "amount": {
-            "type": "integer",
-            "title": "Amount"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "created_at": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Created At"
-          },
-          "credits": {
-            "items": {
-              "$ref": "#/components/schemas/api__routes__v2__responses__CreditResponse"
-            },
-            "type": "array",
-            "title": "Credits"
-          },
-          "references": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/ReferenceResponse"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "References"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "client_id",
-          "reference_id",
-          "user_id",
-          "reason",
-          "amount",
-          "description",
-          "created_at",
-          "credits",
-          "references"
-        ],
-        "title": "CreditCreationResponse"
       },
       "api__routes__v2__responses__CreditResponse": {
         "properties": {
@@ -1739,193 +2064,6 @@
           "references"
         ],
         "title": "CreditResponse"
-      },
-      "api__routes__v2__responses__HistoryPaginationResponse": {
-        "properties": {
-          "data": {
-            "items": {
-              "$ref": "#/components/schemas/HistoryItemResponse"
-            },
-            "type": "array",
-            "title": "Data"
-          },
-          "total": {
-            "type": "integer",
-            "title": "Total"
-          },
-          "per_page": {
-            "type": "integer",
-            "title": "Per Page"
-          },
-          "current_page": {
-            "type": "integer",
-            "title": "Current Page"
-          },
-          "last_page": {
-            "type": "integer",
-            "title": "Last Page"
-          },
-          "from_": {
-            "type": "integer",
-            "title": "From"
-          },
-          "to": {
-            "type": "integer",
-            "title": "To"
-          }
-        },
-        "type": "object",
-        "required": [
-          "data",
-          "total",
-          "per_page",
-          "current_page",
-          "last_page",
-          "from_",
-          "to"
-        ],
-        "title": "HistoryPaginationResponse"
-      },
-      "api__routes__v2__responses__SpendItemResponse": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "amount": {
-            "type": "integer",
-            "title": "Amount"
-          },
-          "references": {
-            "items": {
-              "$ref": "#/components/schemas/ReferenceResponse"
-            },
-            "type": "array",
-            "title": "References"
-          },
-          "credit": {
-            "$ref": "#/components/schemas/api__routes__v2__responses__CreditResponse"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "amount",
-          "references",
-          "credit"
-        ],
-        "title": "SpendItemResponse"
-      },
-      "api__routes__v2__responses__SpendResponse": {
-        "properties": {
-          "id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Id"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "title": "Created At"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time",
-            "title": "Updated At"
-          },
-          "deleted_at": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Deleted At"
-          },
-          "amount": {
-            "type": "integer",
-            "title": "Amount"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "user_id": {
-            "type": "integer",
-            "title": "User Id"
-          },
-          "client_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Client Id"
-          },
-          "reference_id": {
-            "type": "integer",
-            "title": "Reference Id"
-          },
-          "reason": {
-            "$ref": "#/components/schemas/ReasonResponse"
-          },
-          "rollback_reason": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ReasonResponse"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/api__routes__v2__responses__SpendItemResponse"
-            },
-            "type": "array",
-            "title": "Items"
-          },
-          "references": {
-            "items": {
-              "$ref": "#/components/schemas/ReferenceResponse"
-            },
-            "type": "array",
-            "title": "References"
-          }
-        },
-        "type": "object",
-        "required": [
-          "created_at",
-          "updated_at",
-          "amount",
-          "user_id",
-          "reference_id",
-          "reason",
-          "rollback_reason",
-          "items",
-          "references"
-        ],
-        "title": "SpendResponse"
       }
     }
   }

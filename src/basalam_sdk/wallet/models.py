@@ -5,29 +5,17 @@ This module contains data models for the Wallet Service API.
 """
 
 from datetime import datetime
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel
-
-
-class ValidationError(BaseModel):
-    """Validation error model."""
-    loc: List[Union[str, int]]
-    msg: str
-    type: str
-
-
-class HTTPValidationError(BaseModel):
-    """HTTP validation error model."""
-    detail: List[ValidationError]
 
 
 class BalanceFilter(BaseModel):
     """Filter for balance requests."""
     cash: Optional[bool] = None
     settleable: Optional[bool] = None
-    vendor: bool = True
-    customer: bool = True
+    vendor: Optional[bool] = None
+    customer: Optional[bool] = None
 
 
 class ReasonResponse(BaseModel):
@@ -39,8 +27,14 @@ class ReasonResponse(BaseModel):
 class ReferenceResponse(BaseModel):
     """Reference response model."""
     reference_type_id: int
-    title: Optional[str] = None
-    slug: Optional[str] = None
+    title: str
+    slug: str
+    reference_id: int
+
+
+class ReferenceRequest(BaseModel):
+    """Reference response model."""
+    reference_type_id: int
     reference_id: int
 
 
@@ -58,6 +52,16 @@ class SpendCreditRequest(BaseModel):
     amount: int
     description: str
     types: Optional[List[int]] = None
+    settleable: Optional[bool] = None
+    references: Optional[Dict[str, int]] = None
+
+
+class SpendSpecificCreditRequest(BaseModel):
+    """Spend from specific credit request model."""
+    reason_id: int
+    reference_id: int
+    amount: int
+    description: str
     settleable: Optional[bool] = None
     references: Optional[Dict[str, int]] = None
 
@@ -89,19 +93,19 @@ class SpendItemResponse(BaseModel):
 
 class SpendResponse(BaseModel):
     """Spend response model."""
+    id: Optional[int] = None
     created_at: datetime
     updated_at: datetime
+    deleted_at: Optional[datetime] = None
     amount: int
+    description: Optional[str] = None
     user_id: int
+    client_id: Optional[int] = None
     reference_id: int
     reason: ReasonResponse
-    rollback_reason: Optional[ReasonResponse] = None
+    rollback_reason: ReasonResponse
     items: List[SpendItemResponse]
     references: List[ReferenceResponse]
-    id: Optional[int] = None
-    deleted_at: Optional[datetime] = None
-    description: Optional[str] = None
-    client_id: Optional[int] = None
 
 
 class CreditCreationResponse(BaseModel):
@@ -118,17 +122,49 @@ class CreditCreationResponse(BaseModel):
     references: Optional[List[ReferenceResponse]] = None
 
 
+class HistoryCreditItemResponse(BaseModel):
+    """History credit item response model."""
+    id: int
+    amount: int
+    remained_amount: int
+    created_at: datetime
+    expire_at: Optional[datetime] = None
+    type: CreditTypeResponse
+
+
+class NewHistoryCreditResponse(BaseModel):
+    """New history credit response model."""
+    amount: Optional[int] = None
+    remained_amount: Optional[int] = None
+    created_at: Optional[datetime] = None
+    items: Optional[List[HistoryCreditItemResponse]] = None
+
+
+class HistorySpendItemResponse(BaseModel):
+    """History spend item response model."""
+    id: int
+    amount: int
+
+
+class HistorySpendResponse(BaseModel):
+    """History spend response model."""
+    id: Optional[int] = None
+    created_at: Optional[datetime] = None
+    amount: Optional[int] = None
+    items: Optional[List[HistorySpendItemResponse]] = None
+
+
 class HistoryItemResponse(BaseModel):
     """History item response model."""
     time: datetime
     amount: int
     subtotal: int
-    description: Optional[str] = None
+    description: str
     main_reference_id: int
-    references: List[ReferenceResponse]
     reason: Optional[ReasonResponse] = None
-    related_credit: Optional[Any] = None  # NewHistoryCreditResponse
-    related_spend: Optional[Any] = None  # HistorySpendResponse
+    references: List[ReferenceResponse]
+    related_credit: Optional[NewHistoryCreditResponse] = None
+    related_spend: Optional[HistorySpendResponse] = None
 
 
 class HistoryPaginationResponse(BaseModel):
@@ -150,7 +186,7 @@ class RefundRequest(BaseModel):
     reference_id: int
     amount: int
     description: Optional[str] = None
-    references: Optional[List[Dict[str, int]]] = None
+    references: Optional[List[ReferenceRequest]] = None
 
 
 class RollbackRefundRequest(BaseModel):
@@ -160,9 +196,10 @@ class RollbackRefundRequest(BaseModel):
     refund_reference_id: int
     reference_id: int
     description: Optional[str] = None
-    references: Optional[List[Dict[str, int]]] = None
+    references: Optional[List[ReferenceRequest]] = None
 
 
-class BooleanResponse(BaseModel):
-    """Boolean response model."""
+class CanRollbackRefundResponse(BaseModel):
+    """Can rollback refund response model."""
     status: bool
+    message: str

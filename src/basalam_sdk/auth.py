@@ -7,6 +7,7 @@ It supports both synchronous and asynchronous operations with comprehensive erro
 Available authentication methods:
 - ClientCredentials: For server-to-server API calls
 - AuthorizationCode: For user-authorized applications
+- PersonalToken: For applications that already have access and refresh tokens
 
 For more information, see:
 - https://developers.basalam.com/authorization
@@ -31,7 +32,9 @@ class Scope(str, Enum):
 
     See https://developers.basalam.com/scopes for more details.
     """
-    # Order processing
+    ALL = "*"
+
+    # OrderEnum processing
     ORDER_PROCESSING = "order-processing"
 
     # Vendor profile scopes
@@ -62,33 +65,13 @@ class Scope(str, Enum):
     CUSTOMER_CHAT_READ = "customer.chat.read"
     CUSTOMER_CHAT_WRITE = "customer.chat.write"
 
-    @classmethod
-    def get_entity_scopes(cls, entity: str) -> Set[str]:
-        """
-        Get all scopes for a specific entity.
-        """
-        return {scope.value for scope in cls if scope.value.startswith(f"{entity}.")}
 
-    @classmethod
-    def get_read_scopes(cls) -> Set[str]:
-        """
-        Get all read scopes.
-        """
-        return {scope.value for scope in cls if scope.value.endswith(".read")}
-
-    @classmethod
-    def get_write_scopes(cls) -> Set[str]:
-        """
-        Get all write scopes.
-        """
-        return {scope.value for scope in cls if scope.value.endswith(".write")}
-
-    @classmethod
-    def get_feature_scopes(cls, feature: str) -> Set[str]:
-        """
-        Get all scopes for a specific feature.
-        """
-        return {scope.value for scope in cls if f".{feature}." in scope.value}
+class GrantType(str, Enum):
+    """
+    Available OAuth grant types for Basalam API.
+    """
+    CLIENT_CREDENTIALS = "client_credentials"
+    AUTHORIZATION_CODE = "authorization_code"
 
 
 @dataclass
@@ -158,14 +141,14 @@ class BaseAuth(ABC):
         return self._token_info
 
     @abstractmethod
-    async def get_token(self) -> TokenInfo:
+    async def get_token(self, *args, **kwargs) -> TokenInfo:
         """
         Get a token asynchronously.
         """
         pass
 
     @abstractmethod
-    def get_token_sync(self) -> TokenInfo:
+    def get_token_sync(self, *args, **kwargs) -> TokenInfo:
         """
         Get a token synchronously.
         """
@@ -217,24 +200,6 @@ class BaseAuth(ABC):
             return False
         return self._token_info.has_scope(scope)
 
-    def validate_scopes(self, required_scopes: List[Union[str, Scope]]) -> None:
-        """
-        Validate that the token has all required scopes.
-        """
-        if not self._token_info:
-            raise BasalamAuthError("No token available")
-
-        missing_scopes = []
-        for scope in required_scopes:
-            if not self.has_scope(scope):
-                scope_value = scope.value if isinstance(scope, Scope) else scope
-                missing_scopes.append(scope_value)
-
-        if missing_scopes:
-            raise BasalamAuthError(
-                f"Missing required scopes: {', '.join(missing_scopes)}"
-            )
-
 
 class ClientCredentials(BaseAuth):
     """
@@ -250,7 +215,7 @@ class ClientCredentials(BaseAuth):
             self,
             client_id: str,
             client_secret: str,
-            scopes: Optional[Union[str, List[Union[str, Scope]]]] = '*',
+            scopes: Optional[Union[str, List[Union[str, Scope]]]] = ['*'],
             config: Optional[BasalamConfig] = None,
     ):
         """
@@ -272,7 +237,7 @@ class ClientCredentials(BaseAuth):
         else:
             self.scope = scopes
 
-    async def get_token(self) -> TokenInfo:
+    async def get_token(self, *args, **kwargs) -> TokenInfo:
         """
         Get an access token using client credentials flow asynchronously.
         """
@@ -281,7 +246,7 @@ class ClientCredentials(BaseAuth):
 
         async with httpx.AsyncClient(timeout=self.config.timeout) as client:
             data = {
-                "grant_type": "client_credentials",
+                "grant_type": GrantType.CLIENT_CREDENTIALS.value,
                 "client_id": self.client_id,
                 "client_secret": self.client_secret,
                 "scope": self.scope
@@ -305,7 +270,7 @@ class ClientCredentials(BaseAuth):
             except httpx.HTTPError as e:
                 raise BasalamAuthError(f"Failed to get access token: {str(e)}")
 
-    def get_token_sync(self) -> TokenInfo:
+    def get_token_sync(self, *args, **kwargs) -> TokenInfo:
         """
         Get an access token using client credentials flow synchronously.
         """
@@ -314,7 +279,7 @@ class ClientCredentials(BaseAuth):
 
         with httpx.Client(timeout=self.config.timeout) as client:
             data = {
-                "grant_type": "client_credentials",
+                "grant_type": GrantType.CLIENT_CREDENTIALS.value,
                 "client_id": self.client_id,
                 "client_secret": self.client_secret,
                 "scope": self.scope
@@ -359,6 +324,81 @@ class ClientCredentials(BaseAuth):
         return self.get_token_sync()
 
 
+class PersonalToken(BaseAuth):
+    """
+    Personal token authentication flow.
+
+    This authentication method is suitable for applications that already have
+    access and refresh tokens and want to manage them directly.
+
+    For detailed examples, see: docs/personal_token_example.md
+    """
+
+    def __init__(
+            self,
+            token: str,
+            refresh_token: str = "",
+            token_type: str = "Bearer",
+            expires_in: int = 3600,
+            scope: Optional[str] = '*',
+            config: Optional[BasalamConfig] = None,
+    ):
+        """
+        Initialize personal token authentication.
+
+        Args:
+            token: The access token
+            refresh_token: The refresh token
+            token_type: The token type (default: "Bearer")
+            expires_in: Token expiration time in seconds (default: 3600)
+            scope: The granted scopes (default: '*')
+            config: Optional configuration
+        """
+        super().__init__(config)
+        self.refresh_token_value = refresh_token
+
+        # Create initial token info
+        self._token_info = TokenInfo(
+            access_token=token,
+            token_type=token_type,
+            expires_in=expires_in,
+            refresh_token=refresh_token,
+            scope=scope,
+        )
+
+    async def get_token(self, *args, **kwargs) -> TokenInfo:
+        """
+        Get the current access token asynchronously.
+        """
+        return self._token_info
+
+    def get_token_sync(self, *args, **kwargs) -> TokenInfo:
+        """
+        Get the current access token synchronously.
+        """
+        return self._token_info
+
+    async def refresh_token(self) -> TokenInfo:
+        """
+        Refresh the access token asynchronously.
+
+        Note: Personal Token flow doesn't support automatic token refresh.
+        You need to provide a new token manually.
+        """
+        print("Token refresh not supported for PersonalToken authentication. Please provide a new token manually.")
+        return self._token_info
+
+    def refresh_token_sync(self) -> TokenInfo:
+        """
+        Refresh the access token synchronously.
+
+        Note: Personal Token flow doesn't support automatic token refresh.
+        You need to provide a new token manually.
+        """
+        print("Token refresh not supported for PersonalToken authentication. Please provide a new token manually.")
+        return self._token_info
+
+
 class AuthorizationCode(BaseAuth):
     """
     Authorization code authentication flow.
@@ -374,7 +414,7 @@ class AuthorizationCode(BaseAuth):
             client_id: str,
             client_secret: str,
             redirect_uri: str,
-            scopes: Optional[Union[str, List[Union[str, Scope]]]] = None,
+            scopes: Optional[Union[str, List[Union[str, Scope]]]] = ['*'],
             config: Optional[BasalamConfig] = None,
     ):
         """
@@ -403,7 +443,6 @@ class AuthorizationCode(BaseAuth):
         """
         params = {
             "client_id": self.client_id,
-            "response_type": "code",
             "redirect_uri": self.redirect_uri
         }
 
@@ -416,17 +455,29 @@ class AuthorizationCode(BaseAuth):
         # Build the URL
         return f"{self.config.authorize_url}?{urlencode(params)}"
 
-    async def exchange_code(self, code: str) -> TokenInfo:
+    async def get_token(self, code: Optional[str] = None, *args, **kwargs) -> TokenInfo:
         """
-        Exchange an authorization code for an access token asynchronously.
+        Get a token asynchronously.
+        If token is already available and not expired, returns it.
+        If code is provided, exchanges it for a new token.
         """
+        # If token is available and not expired, return it
+        if self._token_info and not self._token_info.is_expired:
+            return self._token_info
+
+        # If no code provided and no token available, raise error
+        if not code:
+            if not self._token_info:
+                raise BasalamAuthError("No token available. You must provide an authorization code.")
+            return self._token_info
+
         async with httpx.AsyncClient(timeout=self.config.timeout) as client:
             data = {
-                "grant_type": "authorization_code",
+                "grant_type": GrantType.AUTHORIZATION_CODE.value,
                 "client_id": self.client_id,
                 "client_secret": self.client_secret,
-                "code": code,
                 "redirect_uri": self.redirect_uri,
+                "code": code,
             }
 
             try:
@@ -447,17 +498,29 @@ class AuthorizationCode(BaseAuth):
             except httpx.HTTPError as e:
                 raise BasalamAuthError(f"Failed to exchange authorization code: {str(e)}")
 
-    def exchange_code_sync(self, code: str) -> TokenInfo:
+    def get_token_sync(self, code: Optional[str] = None, *args, **kwargs) -> TokenInfo:
         """
-        Exchange an authorization code for an access token synchronously.
+        Get a token synchronously.
+        If token is already available and not expired, returns it.
+        If code is provided, exchanges it for a new token.
         """
+        # If token is available and not expired, return it
+        if self._token_info and not self._token_info.is_expired:
+            return self._token_info
+
+        # If no code provided and no token available, raise error
+        if not code:
+            if not self._token_info:
+                raise BasalamAuthError("No token available. You must provide an authorization code.")
+            return self._token_info
+
         with httpx.Client(timeout=self.config.timeout) as client:
             data = {
-                "grant_type": "authorization_code",
+                "grant_type": GrantType.AUTHORIZATION_CODE.value,
                 "client_id": self.client_id,
                 "client_secret": self.client_secret,
-                "code": code,
                 "redirect_uri": self.redirect_uri,
+                "code": code,
             }
 
             try:
@@ -480,100 +543,18 @@ class AuthorizationCode(BaseAuth):
 
     async def refresh_token(self) -> TokenInfo:
         """
-        Refresh the access token using the refresh token asynchronously.
+        Refresh token functionality is not available in this implementation.
         """
-        if not self._token_info or not self._token_info.refresh_token:
-            raise BasalamAuthError("No refresh token available")
-
-        async with httpx.AsyncClient(timeout=self.config.timeout) as client:
-            data = {
-                "grant_type": "refresh_token",
-                "client_id": self.client_id,
-                "client_secret": self.client_secret,
-                "refresh_token": self._token_info.refresh_token,
-            }
-
-            try:
-                response = await client.post(self.config.token_url, data=data)
-                response.raise_for_status()
-
-                # Parse and store the token data
-                token_data = response.json()
-
-                # Create a new token info
-                previous_refresh_token = self._token_info.refresh_token
-                self._token_info = TokenInfo(
-                    access_token=token_data["access_token"],
-                    token_type=token_data.get("token_type", "Bearer"),
-                    expires_in=token_data.get("expires_in", 3600),
-                    # Some servers might not include the refresh token in the response
-                    # In that case, keep using the previous refresh token
-                    refresh_token=token_data.get("refresh_token", previous_refresh_token),
-                    scope=token_data.get("scope", self._token_info.scope),
-                )
-
-                return self._token_info
-            except httpx.HTTPError as e:
-                raise BasalamAuthError(f"Failed to refresh token: {str(e)}")
+        print("Refresh token functionality is not available for this authorization code implementation.")
+        if not self._token_info:
+            raise BasalamAuthError("No token available. You must first exchange an authorization code.")
+        return self._token_info
 
     def refresh_token_sync(self) -> TokenInfo:
         """
-        Refresh the access token using the refresh token synchronously.
+        Refresh token functionality is not available in this implementation.
         """
-        if not self._token_info or not self._token_info.refresh_token:
-            raise BasalamAuthError("No refresh token available")
-
-        with httpx.Client(timeout=self.config.timeout) as client:
-            data = {
-                "grant_type": "refresh_token",
-                "client_id": self.client_id,
-                "client_secret": self.client_secret,
-                "refresh_token": self._token_info.refresh_token,
-            }
-
-            try:
-                response = client.post(self.config.token_url, data=data)
-                response.raise_for_status()
-
-                # Parse and store the token data
-                token_data = response.json()
-
-                # Create a new token info
-                previous_refresh_token = self._token_info.refresh_token
-                self._token_info = TokenInfo(
-                    access_token=token_data["access_token"],
-                    token_type=token_data.get("token_type", "Bearer"),
-                    expires_in=token_data.get("expires_in", 3600),
-                    # Some servers might not include the refresh token in the response
-                    # In that case, keep using the previous refresh token
-                    refresh_token=token_data.get("refresh_token", previous_refresh_token),
-                    scope=token_data.get("scope", self._token_info.scope),
-                )
-
-                return self._token_info
-            except httpx.HTTPError as e:
-                raise BasalamAuthError(f"Failed to refresh token: {str(e)}")
-
-    async def get_token(self) -> TokenInfo:
-        """
-        Get a token asynchronously (uses refresh if available).
-        """
+        print("Refresh token functionality is not available for this authorization code implementation.")
         if not self._token_info:
             raise BasalamAuthError("No token available. You must first exchange an authorization code.")
-
-        if self._token_info.should_refresh and self._token_info.refresh_token:
-            return await self.refresh_token()
-
-        return self._token_info
-
-    def get_token_sync(self) -> TokenInfo:
-        """
-        Get a token synchronously.
-        """
-        if not self._token_info:
-            raise BasalamAuthError("No token available. You must first exchange an authorization code.")
-
-        if self._token_info.should_refresh and self._token_info.refresh_token:
-            return self.refresh_token_sync()
-
         return self._token_info

@@ -1,5 +1,5 @@
 """
-Order service client for the Basalam SDK.
+OrderEnum service client for the Basalam SDK.
 
 This module provides a client for interacting with Basalam's order service.
 """
@@ -12,7 +12,8 @@ from .models import (
     PaymentCallbackRequestModel,
     PaymentVerifyRequestModel,
     UnpaidInvoiceStatusEnum,
-    Order,
+    OrderEnum,
+    BasketResponse,
 )
 from ..base_client import BaseClient
 
@@ -21,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 class OrderService(BaseClient):
     """
-    Client for the Basalam Order Service API.
+    Client for the Basalam OrderEnum Service API.
 
     This client provides methods for managing payments and invoices.
     """
@@ -30,7 +31,37 @@ class OrderService(BaseClient):
         """
         Initialize the order service client.
         """
-        super().__init__(service_name="order", **kwargs)
+        super().__init__(service="order", **kwargs)
+
+    async def get_baskets(self, refresh: bool = False) -> BasketResponse:
+        """
+        Get active baskets.
+
+        Args:
+            refresh: Whether to refresh the basket data from the server.
+
+        Returns:
+            BasketResponse: The active basket data.
+        """
+        endpoint = "/v2/basket"
+        params = {"refresh": refresh}
+        response = await self._get(endpoint, params=params)
+        return BasketResponse(**response)
+
+    def get_baskets_sync(self, refresh: bool = False) -> BasketResponse:
+        """
+        Get active baskets (synchronous version).
+
+        Args:
+            refresh: Whether to refresh the basket data from the server.
+
+        Returns:
+            BasketResponse: The active basket data.
+        """
+        endpoint = "/v2/basket"
+        params = {"refresh": refresh}
+        response = self._get_sync(endpoint, params=params)
+        return BasketResponse(**response)
 
     async def get_product_variation_status(self, product_id: int) -> Dict[str, Any]:
         """
@@ -48,7 +79,7 @@ class OrderService(BaseClient):
         response = self._get_sync(endpoint)
         return response
 
-    async def create_payment(
+    async def create_invoice_payment(
             self,
             invoice_id: int,
             request: CreatePaymentRequestModel
@@ -57,10 +88,10 @@ class OrderService(BaseClient):
         Create payment for an invoice.
         """
         endpoint = f"/v2/invoice/{invoice_id}/payment"
-        response = await self._post(endpoint, json=request.dict())
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
-    def create_payment_sync(
+    def create_invoice_payment_sync(
             self,
             invoice_id: int,
             request: CreatePaymentRequestModel
@@ -69,7 +100,7 @@ class OrderService(BaseClient):
         Create payment for an invoice (synchronous version).
         """
         endpoint = f"/v2/invoice/{invoice_id}/payment"
-        response = self._post_sync(endpoint, json=request.dict())
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
     async def get_payable_invoices(
@@ -110,7 +141,7 @@ class OrderService(BaseClient):
             status: Optional[UnpaidInvoiceStatusEnum] = None,
             page: int = 1,
             per_page: int = 20,
-            sort: Order = Order.DESC
+            sort: OrderEnum = OrderEnum.DESC
     ) -> Dict[str, Any]:
         """
         Get unpaid invoices.
@@ -135,7 +166,7 @@ class OrderService(BaseClient):
             status: Optional[UnpaidInvoiceStatusEnum] = None,
             page: int = 1,
             per_page: int = 20,
-            sort: Order = Order.DESC
+            sort: OrderEnum = OrderEnum.DESC
     ) -> Dict[str, Any]:
         """
         Get unpaid invoices (synchronous version).
@@ -154,66 +185,50 @@ class OrderService(BaseClient):
         response = self._get_sync(endpoint, params=params)
         return response
 
-    async def payment_callback(
+    async def get_payment_callback(
             self,
-            pay_id: int,
+            payment_id: int,
             request: PaymentCallbackRequestModel
     ) -> Dict[str, Any]:
         """
-        Handle payment callback.
+        Get payment callback.
         """
-        endpoint = f"/v2/payment/{pay_id}/callback"
-        response = await self._get(endpoint, params=request.dict())
+        endpoint = f"/v2/payment/{payment_id}/callback"
+        response = await self._get(endpoint, params=request.model_dump(exclude_none=True))
         return response
 
-    def payment_callback_sync(
+    def get_payment_callback_sync(
             self,
-            pay_id: int,
+            payment_id: int,
             request: PaymentCallbackRequestModel
     ) -> Dict[str, Any]:
         """
-        Handle payment callback (synchronous version).
+        Get payment callback (synchronous version).
         """
-        endpoint = f"/v2/payment/{pay_id}/callback"
-        response = self._get_sync(endpoint, params=request.dict())
+        endpoint = f"/v2/payment/{payment_id}/callback"
+        response = self._get_sync(endpoint, params=request.model_dump(exclude_none=True))
         return response
 
-    async def verify_payment(
+    async def create_payment_callback(
             self,
-            pay_id: int,
+            payment_id: int,
             request: PaymentVerifyRequestModel
     ) -> Dict[str, Any]:
         """
-        Verify payment.
+        Create payment callback.
         """
-        endpoint = f"/v2/payment/{pay_id}/verify"
-        response = await self._post(endpoint, json=request.dict())
+        endpoint = f"/v2/payment/{payment_id}/callback"
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
-    def verify_payment_sync(
+    def create_payment_callback_sync(
             self,
-            pay_id: int,
+            payment_id: int,
             request: PaymentVerifyRequestModel
     ) -> Dict[str, Any]:
         """
-        Verify payment (synchronous version).
+        Create payment callback (synchronous version).
         """
-        endpoint = f"/v2/payment/{pay_id}/verify"
-        response = self._post_sync(endpoint, json=request.dict())
-        return response
-
-    async def get_payment_status(self, pay_id: int) -> Dict[str, Any]:
-        """
-        Get payment status.
-        """
-        endpoint = f"/v2/payment/{pay_id}/status"
-        response = await self._get(endpoint)
-        return response
-
-    def get_payment_status_sync(self, pay_id: int) -> Dict[str, Any]:
-        """
-        Get payment status (synchronous version).
-        """
-        endpoint = f"/v2/payment/{pay_id}/status"
-        response = self._get_sync(endpoint)
+        endpoint = f"/v2/payment/{payment_id}/callback"
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
