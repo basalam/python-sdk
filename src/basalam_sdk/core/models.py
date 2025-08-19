@@ -722,7 +722,7 @@ class ProductRevisionDataResponse(BaseModel):
     product_attribute: Optional[List[ProductAttributeResponse]] = None
     packaged_weight: Optional[int] = None
     net_weight: Optional[int] = None
-    net_weight_decimal: Optional[int] = None
+    net_weight_decimal: Optional[float] = None
     preparation_day: Optional[int] = None
     price: Optional[int] = None
     primary_price: Optional[int] = None
@@ -803,10 +803,10 @@ class ProductRequestSchema(BaseModel):
     description: Optional[str] = None
     order: Optional[int] = None
     category_id: int
-    status: ProductStatusInputEnum
+    status: ProductStatusInputEnum = ProductStatusInputEnum.PUBLISHED
     preparation_days: int = 1
     keywords: Optional[List[str]] = None
-    weight: Optional[int] = None
+    weight: Optional[float] = None
     package_weight: int
     primary_price: int
     stock: Optional[int] = None
@@ -816,7 +816,7 @@ class ProductRequestSchema(BaseModel):
     virtual: Optional[bool] = None
     variants: Optional[List[VariantRequestItem]] = None
     shipping_data: Optional[ShippingDataRequestItem] = None
-    unit_quantity: Optional[int] = None
+    unit_quantity: Optional[float] = None
     unit_type: Optional[UnitTypeInputEnum] = None
     sku: Optional[str] = None
     packaging_dimensions: Optional[PackagingDimensionsRequestItem] = None
@@ -843,7 +843,7 @@ class ProductItemResponse(BaseModel):
     primary_price: Optional[int] = None
     packaged_weight: Optional[int] = None
     preparation_day: Optional[int] = None
-    net_weight_decimal: Optional[int] = None
+    net_weight_decimal: Optional[float] = None
     location_deployment: Optional[LocationDeploymentResponseSchema] = None
     url: Optional[str] = None
     published: Optional[bool] = None
@@ -851,7 +851,7 @@ class ProductItemResponse(BaseModel):
     view_count: Optional[int] = None
     can_add_to_cart: Optional[bool] = None
     has_variation: Optional[bool] = None
-    unit_quantity: Optional[int] = None
+    unit_quantity: Optional[float] = None
     unit_type: Optional[UnitTypeResponse] = None
     discount: Optional[Dict[str, Any]] = None
     is_product_for_revision: Optional[bool] = None
@@ -911,7 +911,7 @@ class ProductResponseSchema(BaseModel):
     category_list: Optional[List[CategoryListItemResponseSchema]] = None
     inventory: Optional[int] = None
     net_weight: Optional[int] = None
-    net_weight_decimal: Optional[int] = None
+    net_weight_decimal: Optional[float] = None
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
     description: Optional[str] = None
@@ -938,7 +938,7 @@ class ProductResponseSchema(BaseModel):
     shipping_data: Optional[ShippingDataResponse] = None
     free_shipping: Optional[FreeShippingResponseSchema] = None
     allow_category_change: Optional[bool] = None
-    unit_quantity: Optional[int] = None
+    unit_quantity: Optional[float] = None
     unit_type: Optional[UnitTypeResponse] = None
     sku: Optional[str] = None
     discount: Optional[Dict[str, Any]] = None
