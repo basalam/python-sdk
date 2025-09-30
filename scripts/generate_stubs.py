@@ -53,10 +53,8 @@ def extract_methods_from_file(file_path):
 
                     # Filter public methods
                     if not method_name.startswith('_') and method_name != '__init__':
-                        # Clean up signature: remove self parameter
-                        clean_signature = re.sub(r'\(\s*self\s*,?\s*', '(', full_signature)
-                        clean_signature = re.sub(r'\(\s*\)', '()', clean_signature)
-                        methods.append((method_name, clean_signature))
+                        # Keep self parameter for instance methods
+                        methods.append((method_name, full_signature))
             else:
                 i += 1
 
