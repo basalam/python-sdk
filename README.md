@@ -396,15 +396,13 @@ order = await client.get_customer_order(order_id=123)
 
 **📖 [Full Wallet Service Documentation](docs/en/services/wallet.md)**
 
-Manage user balances, expenses, and refunds with the Wallet Service. This service provides comprehensive functionality
+Manage user balances and expenses with the Wallet Service. This service provides comprehensive functionality
 for handling user financial operations.
 
 **Key Features:**
 
 - Get user balance and transaction history
 - Create and manage expenses
-- Process refunds
-- Handle credit-specific operations
 
 **Methods:**
 
@@ -413,14 +411,10 @@ for handling user financial operations.
 | `get_balance()`                | Get user's balance                  | `user_id`, `filters`, `x_operator_id`                                         |
 | `get_transactions()`           | Get transaction history             | `user_id`, `page`, `per_page`, `x_operator_id`                                |
 | `create_expense()`             | Create an expense                   | `user_id`, `request`, `x_operator_id`                                         |
-| `create_expense_from_credit()` | Create expense from specific credit | `user_id`, `credit_id`, `request`, `x_operator_id`                            |
 | `get_expense()`                | Get expense details                 | `user_id`, `expense_id`, `x_operator_id`                                      |
 | `delete_expense()`             | Delete/rollback expense             | `user_id`, `expense_id`, `rollback_reason_id`, `x_operator_id`                |
 | `get_expense_by_ref()`         | Get expense by reference            | `user_id`, `reason_id`, `reference_id`, `x_operator_id`                       |
 | `delete_expense_by_ref()`      | Delete expense by reference         | `user_id`, `reason_id`, `reference_id`, `rollback_reason_id`, `x_operator_id` |
-| `create_refund()`              | Process a refund                    | `request`, `x_operator_id`                                                    |
-| `can_rollback_refund()`        | Check if refund can be rolled back  | `refund_reason`, `refund_reference_id`, `x_operator_id`                       |
-| `rollback_refund()`            | Rollback a refund                   | `request`, `x_operator_id`                                                    |
 
 **Example:**
 

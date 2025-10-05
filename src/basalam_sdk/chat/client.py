@@ -40,13 +40,13 @@ class ChatService(BaseClient):
         Returns:
             MessageResponse: The response from the API.
         """
-        endpoint = "/v3/messages"
         headers = {}
         if user_agent:
             headers["User-Agent"] = user_agent
         if x_client_info:
             headers["X-Client-Info"] = x_client_info
 
+        endpoint = f"/v1/chats/{request.chat_id}/messages"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
         return MessageResponse(**response)
 
@@ -67,7 +67,7 @@ class ChatService(BaseClient):
         Returns:
             MessageResponse: The response from the API.
         """
-        endpoint = "/v3/messages"
+        endpoint = f"/v1/chats/{request.chat_id}/messages"
         headers = {}
         if user_agent:
             headers["User-Agent"] = user_agent
@@ -96,7 +96,7 @@ class ChatService(BaseClient):
         Returns:
             CreateChatResponse: The response from the API.
         """
-        endpoint = "/v3/chats"
+        endpoint = "/v1/chats"
         headers = {}
         if x_creation_tags:
             headers["X-Creation-Tags"] = x_creation_tags
@@ -127,7 +127,7 @@ class ChatService(BaseClient):
         Returns:
             CreateChatResponse: The response from the API.
         """
-        endpoint = "/v3/chats"
+        endpoint = "/v1/chats"
         headers = {}
         if x_creation_tags:
             headers["X-Creation-Tags"] = x_creation_tags
@@ -141,20 +141,19 @@ class ChatService(BaseClient):
 
     async def get_messages(
             self,
-            request: GetMessagesRequest,
+            request: Optional[GetMessagesRequest] = None,
     ) -> GetMessagesResponse:
         """
         Get messages from a chat.
 
         Args:
-            request: The get messages request model containing chat_id and query parameters.
+            request: Optional request model containing query parameters (limit, order, cmp, message_id).
 
         Returns:
             GetMessagesResponse: The response containing the list of messages.
         """
-        endpoint = f"/v3/messages"
+        endpoint = f"/v1/chats/{request.chat_id}/messages"
         params = {
-            "chat_id": request.chat_id,
             "limit": request.limit,
             "order": request.order,
             "cmp": request.cmp
@@ -167,20 +166,19 @@ class ChatService(BaseClient):
 
     def get_messages_sync(
             self,
-            request: GetMessagesRequest,
+            request: Optional[GetMessagesRequest] = None,
     ) -> GetMessagesResponse:
         """
         Get messages from a chat (synchronous version).
 
         Args:
-            request: The get messages request model containing chat_id and query parameters.
+            request: Optional request model containing query parameters (limit, order, cmp, message_id).
 
         Returns:
             GetMessagesResponse: The response containing the list of messages.
         """
-        endpoint = f"/v3/messages"
+        endpoint = f"/v1/chats/{request.chat_id}/messages"
         params = {
-            "chat_id": request.chat_id,
             "limit": request.limit,
             "order": request.order,
             "cmp": request.cmp
@@ -204,7 +202,6 @@ class ChatService(BaseClient):
         Returns:
             ChatListResponse: The list of chats based on OpenAPI specification.
         """
-        endpoint = f"/v3/chats"
         params = {
             "limit": request.limit,
             "order_by": request.order_by.value
@@ -220,6 +217,7 @@ class ChatService(BaseClient):
         if request.filters is not None:
             params["filters"] = request.filters.value
 
+        endpoint = f"/v1/chats"
         response = await self._get(endpoint, params=params)
         return ChatListResponse(**response)
 
@@ -236,7 +234,6 @@ class ChatService(BaseClient):
         Returns:
             ChatListResponse: The list of chats based on OpenAPI specification.
         """
-        endpoint = f"/v3/chats"
         params = {
             "limit": request.limit,
             "order_by": request.order_by.value
@@ -252,5 +249,6 @@ class ChatService(BaseClient):
         if request.filters is not None:
             params["filters"] = request.filters.value
 
+        endpoint = f"/v1/chats"
         response = self._get_sync(endpoint, params=params)
         return ChatListResponse(**response)

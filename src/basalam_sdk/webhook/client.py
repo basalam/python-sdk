@@ -37,7 +37,7 @@ class WebhookService(BaseClient):
         Returns:
             The response containing the list of services.
         """
-        endpoint = "/v1/services"
+        endpoint = "/v1/webhooks/services"
         response = await self._get(endpoint)
         return ServiceListResource(**response)
 
@@ -48,7 +48,7 @@ class WebhookService(BaseClient):
         Returns:
             The response containing the list of services.
         """
-        endpoint = "/v1/services"
+        endpoint = "/v1/webhooks/services"
         response = self._get_sync(endpoint)
         return ServiceListResource(**response)
 
@@ -62,7 +62,7 @@ class WebhookService(BaseClient):
         Returns:
             The created service resource.
         """
-        endpoint = "/v1/services"
+        endpoint = "/v1/webhooks/services"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return ServiceResource(**response)
 
@@ -76,7 +76,7 @@ class WebhookService(BaseClient):
         Returns:
             The created service resource.
         """
-        endpoint = "/v1/services"
+        endpoint = "/v1/webhooks/services"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return ServiceResource(**response)
 

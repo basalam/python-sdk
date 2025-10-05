@@ -363,7 +363,7 @@ class OrderFilter(BaseModel):
     """Filter for customer orders requests."""
     coupon_code: Optional[str] = None
     cursor: Optional[str] = None
-    customer_ids: Optional[str] = None
+    customer_ids: Optional[List[str]] = None
     customer_name: Optional[str] = None
     ids: Optional[str] = None
     items_title: Optional[str] = None
@@ -418,7 +418,7 @@ class ItemFilter(BaseModel):
     per_page: Optional[int] = 10
     product_ids: Optional[str] = None
     sort: Optional[str] = "created_at:desc"
-    vendor_ids: Optional[str] = None
+    vendor_ids: Optional[List[str]] = None
 
 
 class Action(BaseModel):

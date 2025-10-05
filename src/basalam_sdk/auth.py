@@ -385,7 +385,6 @@ class PersonalToken(BaseAuth):
         Note: Personal Token flow doesn't support automatic token refresh.
         You need to provide a new token manually.
         """
-        print("Token refresh not supported for PersonalToken authentication. Please provide a new token manually.")
         return self._token_info
 
     def refresh_token_sync(self) -> TokenInfo:
@@ -395,7 +394,6 @@ class PersonalToken(BaseAuth):
         Note: Personal Token flow doesn't support automatic token refresh.
         You need to provide a new token manually.
         """
-        print("Token refresh not supported for PersonalToken authentication. Please provide a new token manually.")
         return self._token_info
 
 
@@ -545,7 +543,6 @@ class AuthorizationCode(BaseAuth):
         """
         Refresh token functionality is not available in this implementation.
         """
-        print("Refresh token functionality is not available for this authorization code implementation.")
         if not self._token_info:
             raise BasalamAuthError("No token available. You must first exchange an authorization code.")
         return self._token_info
@@ -554,7 +551,6 @@ class AuthorizationCode(BaseAuth):
         """
         Refresh token functionality is not available in this implementation.
         """
-        print("Refresh token functionality is not available for this authorization code implementation.")
         if not self._token_info:
             raise BasalamAuthError("No token available. You must first exchange an authorization code.")
         return self._token_info

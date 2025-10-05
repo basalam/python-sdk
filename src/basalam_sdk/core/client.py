@@ -55,7 +55,7 @@ class CoreService(BaseClient):
         Returns:
             The created vendor resource.
         """
-        endpoint = f"/v3/users/{user_id}/vendors"
+        endpoint = f"/v1/users/{user_id}/vendors"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return PublicVendorResponse(**response)
 
@@ -74,7 +74,7 @@ class CoreService(BaseClient):
         Returns:
             The created vendor resource.
         """
-        endpoint = f"/v3/users/{user_id}/vendors"
+        endpoint = f"/v1/users/{user_id}/vendors"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return PublicVendorResponse(**response)
 
@@ -93,7 +93,7 @@ class CoreService(BaseClient):
         Returns:
             The updated vendor resource.
         """
-        endpoint = f"/v3/vendors/{vendor_id}"
+        endpoint = f"/v1/vendors/{vendor_id}"
         response = await self._patch(endpoint, json_data=request.model_dump(exclude_none=True))
         return PublicVendorResponse(**response)
 
@@ -112,7 +112,7 @@ class CoreService(BaseClient):
         Returns:
             The updated vendor resource.
         """
-        endpoint = f"/v3/vendors/{vendor_id}"
+        endpoint = f"/v1/vendors/{vendor_id}"
         response = self._patch_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return PublicVendorResponse(**response)
 
@@ -131,7 +131,7 @@ class CoreService(BaseClient):
         Returns:
             The vendor resource.
         """
-        endpoint = f"/v3/vendors/{vendor_id}"
+        endpoint = f"/v1/vendors/{vendor_id}"
         headers = {}
         if prefer is not None:
             headers["Prefer"] = prefer
@@ -156,7 +156,7 @@ class CoreService(BaseClient):
         Returns:
             The vendor resource.
         """
-        endpoint = f"/v3/vendors/{vendor_id}"
+        endpoint = f"/v1/vendors/{vendor_id}"
         headers = {}
         if prefer is not None:
             headers["Prefer"] = prefer
@@ -173,8 +173,9 @@ class CoreService(BaseClient):
         Returns:
             List of default shipping methods.
         """
-        endpoint = "/v3/shipping-methods/defaults"
+        endpoint = "/v1/shipping-methods/defaults"
         response = await self._get(endpoint)
+        response = self._unwrap_response(response)
         return [ShippingMethodResponse(**item) for item in response]
 
     def get_default_shipping_methods_sync(self) -> List[ShippingMethodResponse]:
@@ -184,8 +185,9 @@ class CoreService(BaseClient):
         Returns:
             List of default shipping methods.
         """
-        endpoint = "/v3/shipping-methods/defaults"
+        endpoint = "/v1/shipping-methods/defaults"
         response = self._get_sync(endpoint)
+        response = self._unwrap_response(response)
         return [ShippingMethodResponse(**item) for item in response]
 
     async def get_shipping_methods(
@@ -209,7 +211,7 @@ class CoreService(BaseClient):
         Returns:
             The response containing the list of shipping methods.
         """
-        endpoint = "/v3/shipping-methods"
+        endpoint = "/v1/shipping-methods"
         params = {
             "page": page,
             "per_page": per_page
@@ -245,7 +247,7 @@ class CoreService(BaseClient):
         Returns:
             The response containing the list of shipping methods.
         """
-        endpoint = "/v3/shipping-methods"
+        endpoint = "/v1/shipping-methods"
         params = {
             "page": page,
             "per_page": per_page
@@ -273,8 +275,9 @@ class CoreService(BaseClient):
         Returns:
             List of working shipping methods.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/shipping-methods"
+        endpoint = f"/v1/vendors/{vendor_id}/shipping-methods"
         response = await self._get(endpoint)
+        response = self._unwrap_response(response)
         return [ShippingMethodResponse(**item) for item in response]
 
     def get_working_shipping_methods_sync(
@@ -290,8 +293,9 @@ class CoreService(BaseClient):
         Returns:
             List of working shipping methods.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/shipping-methods"
+        endpoint = f"/v1/vendors/{vendor_id}/shipping-methods"
         response = self._get_sync(endpoint)
+        response = self._unwrap_response(response)
         return [ShippingMethodResponse(**item) for item in response]
 
     async def update_shipping_methods(
@@ -309,8 +313,9 @@ class CoreService(BaseClient):
         Returns:
             List of updated shipping methods.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/shipping-methods"
+        endpoint = f"/v1/vendors/{vendor_id}/shipping-methods"
         response = await self._put(endpoint, json_data=request.model_dump(exclude_none=True))
+        response = self._unwrap_response(response)
         return [ShippingMethodResponse(**item) for item in response]
 
     def update_shipping_methods_sync(
@@ -328,8 +333,9 @@ class CoreService(BaseClient):
         Returns:
             List of updated shipping methods.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/shipping-methods"
+        endpoint = f"/v1/vendors/{vendor_id}/shipping-methods"
         response = self._put_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        response = self._unwrap_response(response)
         return [ShippingMethodResponse(**item) for item in response]
 
     async def get_vendor_products(
@@ -347,7 +353,7 @@ class CoreService(BaseClient):
         Returns:
             The response containing the list of products.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/products"
+        endpoint = f"/v1/vendors/{vendor_id}/products"
         params = {}
         if query_params:
             params = query_params.model_dump(exclude_none=True)
@@ -387,7 +393,7 @@ class CoreService(BaseClient):
         Returns:
             The response containing the list of products.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/products"
+        endpoint = f"/v1/vendors/{vendor_id}/products"
         params = {}
         if query_params:
             params = query_params.model_dump(exclude_none=True)
@@ -427,7 +433,7 @@ class CoreService(BaseClient):
         Returns:
             The updated vendor status response.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/status"
+        endpoint = f"/v1/vendors/{vendor_id}/status"
         response = await self._patch(endpoint, json_data=request.model_dump(exclude_none=True))
         return UpdateVendorStatusResponse(**response)
 
@@ -446,7 +452,7 @@ class CoreService(BaseClient):
         Returns:
             The updated vendor status response.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/status"
+        endpoint = f"/v1/vendors/{vendor_id}/status"
         response = self._patch_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return UpdateVendorStatusResponse(**response)
 
@@ -465,7 +471,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/change-mobile-request"
+        endpoint = f"/v1/vendors/{vendor_id}/mobile-change-requests"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return ResultResponse(**response)
 
@@ -484,7 +490,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/change-mobile-request"
+        endpoint = f"/v1/vendors/{vendor_id}/mobile-change-requests"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return ResultResponse(**response)
 
@@ -503,7 +509,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/change-mobile-confirm"
+        endpoint = f"/v1/vendors/{vendor_id}/mobile-change-confirmations"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return ResultResponse(**response)
 
@@ -522,7 +528,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/change-mobile-confirm"
+        endpoint = f"/v1/vendors/{vendor_id}/mobile-change-confirmations"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return ResultResponse(**response)
 
@@ -614,7 +620,7 @@ class CoreService(BaseClient):
                 enhanced_request.video = existing_video_id
 
         # Create the product with enhanced request
-        endpoint = f"/v4/vendors/{vendor_id}/products"
+        endpoint = f"/v1/vendors/{vendor_id}/products"
         response = await self._post(endpoint, json_data=enhanced_request.model_dump(exclude_none=True))
         return ProductResponseSchema(**response)
 
@@ -701,7 +707,7 @@ class CoreService(BaseClient):
                 enhanced_request.video = existing_video_id
 
         # Create the product with enhanced request
-        endpoint = f"/v4/vendors/{vendor_id}/products"
+        endpoint = f"/v1/vendors/{vendor_id}/products"
         response = self._post_sync(endpoint, json_data=enhanced_request.model_dump(exclude_none=True))
         return ProductResponseSchema(**response)
 
@@ -720,7 +726,7 @@ class CoreService(BaseClient):
         Returns:
             The product resource.
         """
-        endpoint = f"/v4/products/{product_id}"
+        endpoint = f"/v1/products/{product_id}"
         headers = {}
         if prefer is not None:
             headers["Prefer"] = prefer
@@ -743,7 +749,7 @@ class CoreService(BaseClient):
         Returns:
             The product resource.
         """
-        endpoint = f"/v4/products/{product_id}"
+        endpoint = f"/v1/products/{product_id}"
         headers = {}
         if prefer is not None:
             headers["Prefer"] = prefer
@@ -766,7 +772,7 @@ class CoreService(BaseClient):
         Returns:
             The response containing the list of products.
         """
-        endpoint = "/v3/products"
+        endpoint = "/v1/products"
         params = {}
         headers = {}
 
@@ -795,7 +801,7 @@ class CoreService(BaseClient):
         Returns:
             The response containing the list of products.
         """
-        endpoint = "/v3/products"
+        endpoint = "/v1/products"
         params = {}
         headers = {}
 
@@ -824,7 +830,7 @@ class CoreService(BaseClient):
         Returns:
             BulkProductsUpdateResponseSchema: The bulk update response
         """
-        endpoint = f"/v4/vendors/{vendor_id}/bulk-update-product-request"
+        endpoint = f"/v1/vendors/{vendor_id}/batch-jobs"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return BulkProductsUpdateResponseSchema(**response)
 
@@ -843,7 +849,7 @@ class CoreService(BaseClient):
         Returns:
             BulkProductsUpdateResponseSchema: The bulk update response
         """
-        endpoint = f"/v4/vendors/{vendor_id}/bulk-update-product-request"
+        endpoint = f"/v1/vendors/{vendor_id}/batch-jobs"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return BulkProductsUpdateResponseSchema(**response)
 
@@ -865,7 +871,7 @@ class CoreService(BaseClient):
             ProductResponseSchema: The updated product with the modified variation
         """
         response = await self._patch(
-            f"/v4/products/{product_id}/variations/{variation_id}",
+            f"/v1/products/{product_id}/variations/{variation_id}",
             json_data=request.model_dump(exclude_none=True),
         )
         return ProductResponseSchema(**response)
@@ -888,7 +894,7 @@ class CoreService(BaseClient):
             ProductResponseSchema: The updated product with the modified variation
         """
         response = self._patch_sync(
-            f"/v4/products/{product_id}/variations/{variation_id}",
+            f"/v1/products/{product_id}/variations/{variation_id}",
             json_data=request.model_dump(exclude_none=True),
         )
         return ProductResponseSchema(**response)
@@ -910,7 +916,7 @@ class CoreService(BaseClient):
         Returns:
             The list of bulk update requests.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/bulk-update-product-request"
+        endpoint = f"/v1/vendors/{vendor_id}/batch-jobs"
         params = {
             "page": page,
             "per_page": per_page
@@ -935,7 +941,7 @@ class CoreService(BaseClient):
         Returns:
             The list of bulk update requests.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/bulk-update-product-request"
+        endpoint = f"/v1/vendors/{vendor_id}/batch-jobs"
         params = {
             "page": page,
             "per_page": per_page
@@ -956,7 +962,7 @@ class CoreService(BaseClient):
         Returns:
             The count of bulk update requests by type.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/bulk-update-product-request/count"
+        endpoint = f"/v1/vendors/{vendor_id}/batch-jobs/count"
         response = await self._get(endpoint)
         return BulkProductsUpdatesCountResponse(**response)
 
@@ -973,7 +979,7 @@ class CoreService(BaseClient):
         Returns:
             The count of bulk update requests by type.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/bulk-update-product-request/count"
+        endpoint = f"/v1/vendors/{vendor_id}/batch-jobs/count"
         response = self._get_sync(endpoint)
         return BulkProductsUpdatesCountResponse(**response)
 
@@ -994,7 +1000,7 @@ class CoreService(BaseClient):
         Returns:
             The list of unsuccessful products.
         """
-        endpoint = f"/v3/bulk-update-product-request/{request_id}/unsuccessful_products"
+        endpoint = f"/v1/batch-jobs/{request_id}/failed-items"
         params = {
             "page": page,
             "per_page": per_page
@@ -1019,7 +1025,7 @@ class CoreService(BaseClient):
         Returns:
             The list of unsuccessful products.
         """
-        endpoint = f"/v3/bulk-update-product-request/{request_id}/unsuccessful_products"
+        endpoint = f"/v1/batch-jobs/{request_id}/failed-items"
         params = {
             "page": page,
             "per_page": per_page
@@ -1040,8 +1046,9 @@ class CoreService(BaseClient):
         Returns:
             List of product shelves.
         """
-        endpoint = f"/v3/products/{product_id}/shelves"
+        endpoint = f"/v1/products/{product_id}/shelves"
         response = await self._get(endpoint)
+        response = self._unwrap_response(response)
         return [ProductShelfResponse(**item) for item in response]
 
     def get_product_shelves_sync(
@@ -1057,8 +1064,9 @@ class CoreService(BaseClient):
         Returns:
             List of product shelves.
         """
-        endpoint = f"/v3/products/{product_id}/shelves"
+        endpoint = f"/v1/products/{product_id}/shelves"
         response = self._get_sync(endpoint)
+        response = self._unwrap_response(response)
         return [ProductShelfResponse(**item) for item in response]
 
     async def create_discount(
@@ -1076,7 +1084,7 @@ class CoreService(BaseClient):
         Returns:
             General response data.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/discounts"
+        endpoint = f"/v1/vendors/{vendor_id}/discounts"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
@@ -1095,7 +1103,7 @@ class CoreService(BaseClient):
         Returns:
             General response data.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/discounts"
+        endpoint = f"/v1/vendors/{vendor_id}/discounts"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
@@ -1114,7 +1122,7 @@ class CoreService(BaseClient):
         Returns:
             General response data.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/discounts"
+        endpoint = f"/v1/vendors/{vendor_id}/discounts"
         response = await self._delete(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
@@ -1133,7 +1141,7 @@ class CoreService(BaseClient):
         Returns:
             General response data.
         """
-        endpoint = f"/v3/vendors/{vendor_id}/discounts"
+        endpoint = f"/v1/vendors/{vendor_id}/discounts"
         response = self._delete_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
@@ -1144,7 +1152,7 @@ class CoreService(BaseClient):
         Returns:
             The current user information.
         """
-        endpoint = "/v3/users/me"
+        endpoint = "/v1/users/me"
         response = await self._get(endpoint)
         return PrivateUserResponse(**response)
 
@@ -1155,7 +1163,7 @@ class CoreService(BaseClient):
         Returns:
             The current user information.
         """
-        endpoint = "/v3/users/me"
+        endpoint = "/v1/users/me"
         response = self._get_sync(endpoint)
         return PrivateUserResponse(**response)
 
@@ -1172,7 +1180,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/users/{user_id}/confirm-mobile-request"
+        endpoint = f"/v1/users/{user_id}/mobile-verification-requests"
         response = await self._post(endpoint)
         return ResultResponse(**response)
 
@@ -1189,7 +1197,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/users/{user_id}/confirm-mobile-request"
+        endpoint = f"/v1/users/{user_id}/mobile-verification-requests"
         response = self._post_sync(endpoint)
         return ResultResponse(**response)
 
@@ -1208,7 +1216,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/users/{user_id}/confirm-mobile"
+        endpoint = f"/v1/users/{user_id}/mobile-verification-confirmations"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return ResultResponse(**response)
 
@@ -1227,7 +1235,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/users/{user_id}/confirm-mobile"
+        endpoint = f"/v1/users/{user_id}/mobile-verification-confirmations"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return ResultResponse(**response)
 
@@ -1246,7 +1254,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/users/{user_id}/change-mobile-request"
+        endpoint = f"/v1/users/{user_id}/mobile-change-requests"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return ResultResponse(**response)
 
@@ -1265,7 +1273,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/users/{user_id}/change-mobile-request"
+        endpoint = f"/v1/users/{user_id}/mobile-change-requests"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return ResultResponse(**response)
 
@@ -1284,7 +1292,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/users/{user_id}/change-mobile-confirm"
+        endpoint = f"/v1/users/{user_id}/mobile-change-confirmations"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return ResultResponse(**response)
 
@@ -1303,7 +1311,7 @@ class CoreService(BaseClient):
         Returns:
             The result response.
         """
-        endpoint = f"/v3/users/{user_id}/change-mobile-confirm"
+        endpoint = f"/v1/users/{user_id}/mobile-change-confirmations"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return ResultResponse(**response)
 
@@ -1322,11 +1330,12 @@ class CoreService(BaseClient):
         Returns:
             List of bank accounts data.
         """
-        endpoint = f"/v3/users/{user_id}/bank-information"
+        endpoint = f"/v1/users/{user_id}/bank-accounts"
         headers = {}
         if prefer is not None:
             headers["prefer"] = prefer
         response = await self._get(endpoint, headers=headers)
+        response = self._unwrap_response(response)
         return response
 
     def get_user_bank_accounts_sync(
@@ -1344,11 +1353,12 @@ class CoreService(BaseClient):
         Returns:
             List of bank accounts data.
         """
-        endpoint = f"/v3/users/{user_id}/bank-information"
+        endpoint = f"/v1/users/{user_id}/bank-accounts"
         headers = {}
         if prefer is not None:
             headers["prefer"] = prefer
         response = self._get_sync(endpoint, headers=headers)
+        response = self._unwrap_response(response)
         return response
 
     async def create_user_bank_account(
@@ -1368,7 +1378,7 @@ class CoreService(BaseClient):
         Returns:
             General JSON response containing the created bank information.
         """
-        endpoint = f"/v3/users/{user_id}/bank-information"
+        endpoint = f"/v1/users/{user_id}/bank-accounts"
         headers = {}
         if prefer is not None:
             headers["prefer"] = prefer
@@ -1392,7 +1402,7 @@ class CoreService(BaseClient):
         Returns:
             General JSON response containing the created bank information.
         """
-        endpoint = f"/v3/users/{user_id}/bank-information"
+        endpoint = f"/v1/users/{user_id}/bank-accounts"
         headers = {}
         if prefer is not None:
             headers["prefer"] = prefer
@@ -1414,7 +1424,7 @@ class CoreService(BaseClient):
         Returns:
             General JSON response containing the verification result.
         """
-        endpoint = f"/v3/users/{user_id}/bank-information/verify-otp"
+        endpoint = f"/v1/users/{user_id}/bank-accounts/verify-otp"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
@@ -1433,7 +1443,7 @@ class CoreService(BaseClient):
         Returns:
             General JSON response containing the verification result.
         """
-        endpoint = f"/v3/users/{user_id}/bank-information/verify-otp"
+        endpoint = f"/v1/users/{user_id}/bank-accounts/verify-otp"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
@@ -1452,7 +1462,7 @@ class CoreService(BaseClient):
         Returns:
             General JSON response containing the verification result.
         """
-        endpoint = f"/v3/users/{user_id}/bank-information/verify"
+        endpoint = f"/v1/users/{user_id}/bank-accounts/verify"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
@@ -1471,7 +1481,7 @@ class CoreService(BaseClient):
         Returns:
             General JSON response containing the verification result.
         """
-        endpoint = f"/v3/users/{user_id}/bank-information/verify"
+        endpoint = f"/v1/users/{user_id}/bank-accounts/verify"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
@@ -1490,7 +1500,7 @@ class CoreService(BaseClient):
         Returns:
             General JSON response containing the deletion result.
         """
-        endpoint = f"/v3/users/{user_id}/bank-information/{bank_account_id}"
+        endpoint = f"/v1/users/{user_id}/bank-accounts/{bank_account_id}"
         response = await self._delete(endpoint)
         return response
 
@@ -1509,7 +1519,7 @@ class CoreService(BaseClient):
         Returns:
             General JSON response containing the deletion result.
         """
-        endpoint = f"/v3/users/{user_id}/bank-information/{bank_account_id}"
+        endpoint = f"/v1/users/{user_id}/bank-accounts/{bank_account_id}"
         response = self._delete_sync(endpoint)
         return response
 
@@ -1529,7 +1539,7 @@ class CoreService(BaseClient):
             Dict[str, Any]: The updated bank information
         """
         response = await self._patch(
-            f"/v3/bank-information/{bank_account_id}",
+            f"/v1/users/{request.user_id}/bank-accounts/{bank_account_id}",
             json_data=request.model_dump(exclude_none=True),
         )
         return response
@@ -1550,7 +1560,7 @@ class CoreService(BaseClient):
             Dict[str, Any]: The updated bank information
         """
         response = self._patch_sync(
-            f"/v3/bank-information/{bank_account_id}",
+            f"/v1/users/{request.user_id}/bank-accounts/{bank_account_id}",
             json_data=request.model_dump(exclude_none=True),
         )
         return response
@@ -1570,10 +1580,8 @@ class CoreService(BaseClient):
         Returns:
             PrivateUserResponse: The updated user information
         """
-        response = await self._patch(
-            f"/v3/users/{user_id}/verification-request",
-            json_data=request.model_dump(exclude_none=True),
-        )
+        endpoint = f"/v1/users/{user_id}/verification-requests"
+        response = await self._patch(endpoint, json_data=request.model_dump(exclude_none=True))
         return PrivateUserResponse(**response)
 
     def update_user_verification_sync(
@@ -1591,10 +1599,8 @@ class CoreService(BaseClient):
         Returns:
             PrivateUserResponse: The updated user information
         """
-        response = self._patch_sync(
-            f"/v3/users/{user_id}/verification-request",
-            json_data=request.model_dump(exclude_none=True),
-        )
+        endpoint = f"/v1/users/{user_id}/verification-requests"
+        response = self._patch_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return PrivateUserResponse(**response)
 
     async def get_category_attributes(
@@ -1624,10 +1630,8 @@ class CoreService(BaseClient):
         if vendor_id is not None:
             params["vendor_id"] = vendor_id
 
-        response = await self._get(
-            f"/v3/categories/{category_id}/attributes",
-            params=params,
-        )
+        endpoint = f"/v1/categories/{category_id}/attributes"
+        response = self._get(endpoint, params=params)
         return AttributesResponse(**response)
 
     def get_category_attributes_sync(
@@ -1657,10 +1661,8 @@ class CoreService(BaseClient):
         if vendor_id is not None:
             params["vendor_id"] = vendor_id
 
-        response = self._get_sync(
-            f"/v3/categories/{category_id}/attributes",
-            params=params,
-        )
+        endpoint = f"/v1/categories/{category_id}/attributes"
+        response = self._get_sync(endpoint, params=params)
         return AttributesResponse(**response)
 
     async def get_categories(self) -> CategoriesResponse:
@@ -1670,7 +1672,8 @@ class CoreService(BaseClient):
         Returns:
             CategoriesResponse: The list of categories
         """
-        response = await self._get("/v3/categories")
+        endpoint = "/v1/categories"
+        response = await self._get(endpoint)
         return CategoriesResponse(**response)
 
     def get_categories_sync(self) -> CategoriesResponse:
@@ -1680,7 +1683,8 @@ class CoreService(BaseClient):
         Returns:
             CategoriesResponse: The list of categories
         """
-        response = self._get_sync("/v3/categories")
+        endpoint ="/v1/categories"
+        response = self._get_sync(endpoint)
         return CategoriesResponse(**response)
 
     async def get_category(self, category_id: int) -> CategoryResponse:
@@ -1693,7 +1697,8 @@ class CoreService(BaseClient):
         Returns:
             CategoryResponse: The category details with hierarchical structure
         """
-        response = await self._get(f"/v3/categories/{category_id}")
+        endpoint = f"/v1/categories/{category_id}"
+        response = await self._get(endpoint)
         return CategoryResponse(**response)
 
     def get_category_sync(self, category_id: int) -> CategoryResponse:
@@ -1706,7 +1711,8 @@ class CoreService(BaseClient):
         Returns:
             CategoryResponse: The category details with hierarchical structure
         """
-        response = self._get_sync(f"/v3/categories/{category_id}")
+        endpoint = f"/v1/categories/{category_id}"
+        response = self._get_sync(endpoint)
         return CategoryResponse(**response)
 
     async def update_bulk_products(
@@ -1724,8 +1730,9 @@ class CoreService(BaseClient):
         Returns:
             List of update results for each product.
         """
-        endpoint = f"/v4/vendors/{vendor_id}/products"
+        endpoint = f"/v1/vendors/{vendor_id}/products/batch-updates"
         response = await self._patch(endpoint, json_data=request.model_dump(exclude_none=True))
+        response = self._unwrap_response(response)
         return [UpdateProductResponseItem(**item) for item in response]
 
     def update_bulk_products_sync(
@@ -1743,8 +1750,9 @@ class CoreService(BaseClient):
         Returns:
             List of update results for each product.
         """
-        endpoint = f"/v4/vendors/{vendor_id}/products"
+        endpoint = f"/v1/vendors/{vendor_id}/products/batch-updates"
         response = self._patch_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        response = self._unwrap_response(response)
         return [UpdateProductResponseItem(**item) for item in response]
 
     async def update_product(
@@ -1835,7 +1843,7 @@ class CoreService(BaseClient):
                 enhanced_request.video = existing_video_id
 
         # Update the product with enhanced request
-        endpoint = f"/v4/products/{product_id}"
+        endpoint = f"/v1/products/{product_id}"
         response = await self._patch(endpoint, json_data=enhanced_request.model_dump(exclude_none=True))
         return ProductResponseSchema(**response)
 
@@ -1922,6 +1930,6 @@ class CoreService(BaseClient):
                 enhanced_request.video = existing_video_id
 
         # Update the product with enhanced request
-        endpoint = f"/v4/products/{product_id}"
+        endpoint = f"/v1/products/{product_id}"
         response = self._patch_sync(endpoint, json_data=enhanced_request.model_dump(exclude_none=True))
         return ProductResponseSchema(**response)

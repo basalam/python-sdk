@@ -41,7 +41,8 @@ from basalam_sdk.core.models import (
 TEST_USER_ID = 430
 TEST_VENDOR_ID = 266
 TEST_PRODUCT_ID = 24835037
-TEST_CATEGORY_ID = 1066
+TEST_CATEGORY_ID = 238
+SHIPPING_METHOD_ID = 3198
 
 # Additional test IDs
 TEST_BANK_ACCOUNT_ID = 54321
@@ -96,8 +97,6 @@ async def test_update_vendor_async(basalam_client):
     try:
         request = UpdateVendorSchema(
             title="Updated Test Vendor",
-            notice="Updated notice",
-            summary="Updated summary"
         )
         result = await basalam_client.core.update_vendor(TEST_VENDOR_ID, request)
         print(f"update_vendor async result: {result}")
@@ -191,7 +190,7 @@ async def test_update_shipping_methods_async(basalam_client):
         request = UpdateShippingMethodSchema(
             shipping_methods=[
                 ShippingMethodUpdateItem(
-                    method_id=1,
+                    method_id=SHIPPING_METHOD_ID,
                     is_customized=True,
                     base_cost=10000,
                     additional_cost=5000
@@ -240,9 +239,8 @@ async def test_update_vendor_status_async(basalam_client):
     """Test update_vendor_status async method."""
     try:
         request = UpdateVendorStatusSchema(
-            status=1,
-            description="Test status update",
-            reason=1
+            status=2986,
+            description="Test status update"
         )
         result = await basalam_client.core.update_vendor_status(TEST_VENDOR_ID, request)
         print(f"update_vendor_status async result: {result}")

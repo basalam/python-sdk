@@ -33,7 +33,7 @@ class UploadService(BaseClient):
         Returns:
             The response containing the uploaded file details.
         """
-        endpoint = "/v3/files"
+        endpoint = "/v1/files"
 
         # Prepare files for multipart/form-data
         files = {"file": file}
@@ -71,7 +71,7 @@ class UploadService(BaseClient):
         Returns:
             The response containing the uploaded file details.
         """
-        endpoint = "/v3/files"
+        endpoint = "/v1/files"
 
         # Prepare files for multipart/form-data
         files = {"file": file}

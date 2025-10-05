@@ -43,7 +43,7 @@ class OrderService(BaseClient):
         Returns:
             BasketResponse: The active basket data.
         """
-        endpoint = "/v2/basket"
+        endpoint = "/v1/baskets"
         params = {"refresh": refresh}
         response = await self._get(endpoint, params=params)
         return BasketResponse(**response)
@@ -58,7 +58,7 @@ class OrderService(BaseClient):
         Returns:
             BasketResponse: The active basket data.
         """
-        endpoint = "/v2/basket"
+        endpoint = "/v1/baskets"
         params = {"refresh": refresh}
         response = self._get_sync(endpoint, params=params)
         return BasketResponse(**response)
@@ -67,7 +67,7 @@ class OrderService(BaseClient):
         """
         Get product variation status.
         """
-        endpoint = f"/v2/basket/product/{product_id}/status"
+        endpoint = f"/v1/baskets/products/{product_id}/status"
         response = await self._get(endpoint)
         return response
 
@@ -75,7 +75,7 @@ class OrderService(BaseClient):
         """
         Get product variation status (synchronous version).
         """
-        endpoint = f"/v2/basket/product/{product_id}/status"
+        endpoint = f"/v1/baskets/products/{product_id}/status"
         response = self._get_sync(endpoint)
         return response
 
@@ -87,7 +87,7 @@ class OrderService(BaseClient):
         """
         Create payment for an invoice.
         """
-        endpoint = f"/v2/invoice/{invoice_id}/payment"
+        endpoint = f"/v1/invoices/{invoice_id}/payments"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
@@ -99,7 +99,7 @@ class OrderService(BaseClient):
         """
         Create payment for an invoice (synchronous version).
         """
-        endpoint = f"/v2/invoice/{invoice_id}/payment"
+        endpoint = f"/v1/invoices/{invoice_id}/payments"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
@@ -111,7 +111,7 @@ class OrderService(BaseClient):
         """
         Get payable invoices.
         """
-        endpoint = "/v2/invoice/payable"
+        endpoint = "/v1/invoices/payable"
         params = {
             "page": page,
             "per_page": per_page
@@ -127,7 +127,7 @@ class OrderService(BaseClient):
         """
         Get payable invoices (synchronous version).
         """
-        endpoint = "/v2/invoice/payable"
+        endpoint = "/v1/invoices/payable"
         params = {
             "page": page,
             "per_page": per_page
@@ -146,7 +146,7 @@ class OrderService(BaseClient):
         """
         Get unpaid invoices.
         """
-        endpoint = "/v2/invoice/unpaid"
+        endpoint = "/v1/invoices/unpaid"
         params = {
             "page": page,
             "per_page": per_page,
@@ -171,7 +171,7 @@ class OrderService(BaseClient):
         """
         Get unpaid invoices (synchronous version).
         """
-        endpoint = "/v2/invoice/unpaid"
+        endpoint = "/v1/invoices/unpaid"
         params = {
             "page": page,
             "per_page": per_page,
@@ -193,7 +193,7 @@ class OrderService(BaseClient):
         """
         Get payment callback.
         """
-        endpoint = f"/v2/payment/{payment_id}/callback"
+        endpoint = f"/v1/payments/{payment_id}/callbacks"
         response = await self._get(endpoint, params=request.model_dump(exclude_none=True))
         return response
 
@@ -205,7 +205,7 @@ class OrderService(BaseClient):
         """
         Get payment callback (synchronous version).
         """
-        endpoint = f"/v2/payment/{payment_id}/callback"
+        endpoint = f"/v1/payments/{payment_id}/callbacks"
         response = self._get_sync(endpoint, params=request.model_dump(exclude_none=True))
         return response
 
@@ -217,7 +217,7 @@ class OrderService(BaseClient):
         """
         Create payment callback.
         """
-        endpoint = f"/v2/payment/{payment_id}/callback"
+        endpoint = f"/v1/payments/{payment_id}/callbacks"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
         return response
 
@@ -229,6 +229,6 @@ class OrderService(BaseClient):
         """
         Create payment callback (synchronous version).
         """
-        endpoint = f"/v2/payment/{payment_id}/callback"
+        endpoint = f"/v1/payments/{payment_id}/callbacks"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
         return response

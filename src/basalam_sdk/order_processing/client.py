@@ -39,10 +39,6 @@ class OrderProcessingService(BaseClient):
         """
         super().__init__(service="order-processing", **kwargs)
 
-    # -------------------------------------------------------------------------
-    # Customer OrderEnum endpoints
-    # -------------------------------------------------------------------------
-
     async def get_customer_orders(
             self,
             filters: Optional[OrderFilter] = None
@@ -56,7 +52,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the list of orders.
         """
-        endpoint = "/v3/customer-orders"
+        endpoint = "/v1/customer-orders"
         filters = filters or OrderFilter()
         params = filters.model_dump(exclude_none=True)
 
@@ -84,7 +80,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the list of orders.
         """
-        endpoint = "/v3/customer-orders"
+        endpoint = "/v1/customer-orders"
         filters = filters or OrderFilter()
         params = filters.model_dump(exclude_none=True)
 
@@ -109,7 +105,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the order details.
         """
-        endpoint = f"/v3/customer-orders/{order_id}"
+        endpoint = f"/v1/customer-orders/{order_id}"
         response = await self._get(endpoint)
         return Order(**response)
 
@@ -123,7 +119,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the order details.
         """
-        endpoint = f"/v3/customer-orders/{order_id}"
+        endpoint = f"/v1/customer-orders/{order_id}"
         response = self._get_sync(endpoint)
         return Order(**response)
 
@@ -137,7 +133,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the parcel hints.
         """
-        endpoint = f"/v3/customer-orders/{order_id}/parcel-hints"
+        endpoint = f"/v1/customer-orders/{order_id}/parcel-hints"
         response = await self._get(endpoint)
         return ParcelHintsResponse(**response)
 
@@ -151,7 +147,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the parcel hints.
         """
-        endpoint = f"/v3/customer-orders/{order_id}/parcel-hints"
+        endpoint = f"/v1/customer-orders/{order_id}/parcel-hints"
         response = self._get_sync(endpoint)
         return ParcelHintsResponse(**response)
 
@@ -168,7 +164,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the list of items.
         """
-        endpoint = "/v3/customer-items"
+        endpoint = "/v1/customer-orders/items"
         filters = filters or ItemFilter()
         params = filters.model_dump(exclude_none=True)
 
@@ -188,7 +184,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the list of items.
         """
-        endpoint = "/v3/customer-items"
+        endpoint = "/v1/customer-orders/items"
         filters = filters or ItemFilter()
         params = filters.model_dump(exclude_none=True)
 
@@ -205,7 +201,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the item details.
         """
-        endpoint = f"/v3/customer-items/{item_id}"
+        endpoint = f"/v1/customer-orders/items/{item_id}"
         response = await self._get(endpoint)
         return CustomerItemResponse(**response)
 
@@ -219,13 +215,9 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the item details.
         """
-        endpoint = f"/v3/customer-items/{item_id}"
+        endpoint = f"/v1/customer-orders/items/{item_id}"
         response = self._get_sync(endpoint)
         return CustomerItemResponse(**response)
-
-    # -------------------------------------------------------------------------
-    # Vendor Parcel endpoints
-    # -------------------------------------------------------------------------
 
     async def get_vendor_orders_parcels(
             self,
@@ -240,7 +232,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the list of parcels.
         """
-        endpoint = "/v3/vendor-parcels"
+        endpoint = "/v1/vendor-parcels"
         filters = filters or OrderParcelFilter()
 
         params = {}
@@ -283,7 +275,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the list of parcels.
         """
-        endpoint = "/v3/vendor-parcels"
+        endpoint = "/v1/vendor-parcels"
         filters = filters or OrderParcelFilter()
 
         params = {}
@@ -323,7 +315,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the parcel details.
         """
-        endpoint = f"/v3/vendor-parcels/{parcel_id}"
+        endpoint = f"/v1/vendor-parcels/{parcel_id}"
         response = await self._get(endpoint)
         return ParcelResponse(**response)
 
@@ -337,13 +329,9 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the parcel details.
         """
-        endpoint = f"/v3/vendor-parcels/{parcel_id}"
+        endpoint = f"/v1/vendor-parcels/{parcel_id}"
         response = self._get_sync(endpoint)
         return ParcelResponse(**response)
-
-    # -------------------------------------------------------------------------
-    # OrderEnum Statistics endpoints
-    # -------------------------------------------------------------------------
 
     async def get_orders_stats(
             self,
@@ -368,7 +356,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the order statistics.
         """
-        endpoint = "/v3/orders-calculate-stats"
+        endpoint = "/v1/orders/stats"
 
         params = {"resource_count": resource_count.value}
         if vendor_id is not None:
@@ -410,7 +398,7 @@ class OrderProcessingService(BaseClient):
         Returns:
             The response containing the order statistics.
         """
-        endpoint = "/v3/orders-calculate-stats"
+        endpoint = "/v1/orders/stats"
 
         params = {"resource_count": resource_count.value}
         if vendor_id is not None:

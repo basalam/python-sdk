@@ -11,12 +11,12 @@ different message types, manage chat participants, and track chat history and up
 
 ## Chat Methods
 
-| Method                                | Description       | Parameters                    |
-|---------------------------------------|-------------------|-------------------------------|
-| [`create_message()`](#create-message) | Create a message  | `request: MessageRequest`     |
-| [`create_chat()`](#create-chat)       | Create a chat     | `request: CreateChatRequest`  |
-| [`get_messages()`](#get-messages)     | Get chat messages | `request: GetMessagesRequest` |
-| [`get_chats()`](#get-chats)           | Get chats list    | `request: GetChatsRequest`    |
+| Method                                | Description       | Parameters                                                     |
+|---------------------------------------|-------------------|----------------------------------------------------------------|
+| [`create_message()`](#create-message) | Create a message  | `chat_id: int, request: MessageRequest`                        |
+| [`create_chat()`](#create-chat)       | Create a chat     | `request: CreateChatRequest`                                   |
+| [`get_messages()`](#get-messages)     | Get chat messages | `chat_id: int, request: Optional[GetMessagesRequest] = None`   |
+| [`get_chats()`](#get-chats)           | Get chats list    | `request: GetChatsRequest`                                     |
 
 ## Examples
 
@@ -46,7 +46,7 @@ async def create_message_example():
             text="Hello, how can I help you?"
         )
     )
-    message = await client.create_message(request=request)
+    message = await client.chat.create_message(chat_id=123, request=request)
     return message
 ```
 
@@ -60,7 +60,7 @@ async def create_chat_example():
     request = CreateChatRequest(
         user_id=123
     )
-    new_chat = await client.create_chat(request=request)
+    new_chat = await client.chat.create_chat(request=request)
     return new_chat
 ```
 
@@ -72,12 +72,21 @@ from basalam_sdk.chat.models import GetMessagesRequest
 
 async def get_messages_example():
     request = GetMessagesRequest(
-        chat_id=123,
         message_id=456,
         limit=20,
         order="desc",
     )
-    messages = await client.get_messages(request=request)
+    messages = await client.chat.get_messages(chat_id=123, request=request)
+
+    # Option 2: With default parameters (request is optional)
+    messages = await client.chat.get_messages(chat_id=123)
+
+    # Option 3: With only some custom parameters
+    messages = await client.chat.get_messages(
+        chat_id=123,
+        request=GetMessagesRequest(limit=50)
+    )
+
     return messages
 ```
 
@@ -93,7 +102,7 @@ async def get_chats_example():
         order_by=MessageOrderByEnum.UPDATED_AT,
         filters=MessageFiltersEnum.UNSEEN
     )
-    chats = await client.get_chats(request=request)
+    chats = await client.chat.get_chats(request=request)
     return chats
 ```
 

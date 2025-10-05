@@ -510,16 +510,16 @@ class PublicVendorResponse(BaseModel):
 
 class PrivateVendorResponse(BaseModel):
     """Private vendor response model."""
-    id: int
-    name: str
-    description: str
-    logo: Optional[str] = None
+    id: Optional[int] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    logo: Optional[dict] = None
     cover: Optional[str] = None
-    mobile: str
-    email: str
-    address: str
-    city_id: int
-    settings: List[VendorSettingResponse]
+    mobile: Optional[str] = None
+    email: Optional[str] = None
+    address: Optional[str] = None
+    city_id: Optional[int] = None
+    settings: Optional[List[VendorSettingResponse]] = None
     legal_data: Optional[VendorLegalDataSchema] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

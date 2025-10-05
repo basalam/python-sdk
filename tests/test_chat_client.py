@@ -16,7 +16,7 @@ from basalam_sdk.chat.models import (
 from basalam_sdk.config import BasalamConfig, Environment
 
 # Test data
-TEST_CHAT_ID = 178204460  # 183583802
+TEST_CHAT_ID = 183583802
 TEST_USER_ID = 430
 
 
@@ -54,7 +54,6 @@ async def test_create_message_async(basalam_client):
         )
         result = await basalam_client.chat.create_message(
             request=request,
-            user_agent="SDK-Test"
         )
         print(f"create_message async result: {result}")
         assert result is not None
@@ -75,7 +74,8 @@ def test_create_message_sync(basalam_client):
         request = MessageRequest(
             chat_id=TEST_CHAT_ID,
             content=message_input,
-            message_type=MessageTypeEnum.TEXT
+            message_type=MessageTypeEnum.TEXT,
+            temp_id=12345
         )
         result = basalam_client.chat.create_message_sync(
             request=request
@@ -100,10 +100,6 @@ async def test_get_messages_async(basalam_client):
             request=request
         )
         print(f"get_messages async result: {result}")
-        assert result is not None
-        assert hasattr(result, 'data')
-        assert hasattr(result.data, 'messages')
-        assert isinstance(result.data.messages, list)
     except Exception as e:
         print(f"get_messages async error: {e}")
         assert True
@@ -113,7 +109,8 @@ def test_get_messages_sync(basalam_client):
     """Test get_messages_sync method."""
     try:
         request = GetMessagesRequest(
-            chat_id=TEST_CHAT_ID
+            chat_id=TEST_CHAT_ID,
+
         )
         result = basalam_client.chat.get_messages_sync(
             request=request

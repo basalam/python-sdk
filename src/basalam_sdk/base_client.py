@@ -73,6 +73,32 @@ class BaseClient:
         )
 
     @staticmethod
+    def _unwrap_response(data: Union[Dict, List]) -> Union[Dict, List]:
+        """
+        Unwrap response data if it's wrapped in a single-key dictionary.
+
+        This handles cases where the API returns data wrapped in a single key,
+        like {"openapi_raw_data": [...]} or any future wrapper format.
+
+        Args:
+            data: The response data to unwrap
+
+        Returns:
+            The unwrapped data if it was wrapped, otherwise the original data
+        """
+        # If it's a dict with exactإإly one key and the value is a list,
+        # return the list value (unwrap it)
+        if isinstance(data, dict) and len(data) == 1:
+            key = next(iter(data))
+            value = data[key]
+            # Only unwrap if the single value is a list (common for wrapped list responses)
+            # This preserves single-key dict responses that are meant to be dicts
+            if isinstance(value, list):
+                return value
+
+        return data
+
+    @staticmethod
     def _parse_response_data(
             response: httpx.Response,
             response_model: Optional[Type[T]] = None

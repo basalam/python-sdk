@@ -20,10 +20,6 @@ class SearchService(BaseClient):
         """Initialize the search service client."""
         super().__init__(service="search", **kwargs)
 
-    # -------------------------------------------------------------------------
-    # Product Search endpoints
-    # -------------------------------------------------------------------------
-
     async def search_products(self, request: ProductSearchModel) -> Dict[str, Any]:
         """
         Search for products.
@@ -34,7 +30,7 @@ class SearchService(BaseClient):
         Returns:
             The search results.
         """
-        endpoint = "/ai-engine/api/v2.0/product/search"
+        endpoint = "/v1/products/search"
         response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True), require_auth=False)
         return response
 
@@ -48,6 +44,6 @@ class SearchService(BaseClient):
         Returns:
             The search results.
         """
-        endpoint = "/ai-engine/api/v2.0/product/search"
+        endpoint = "/v1/products/search"
         response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True), require_auth=False)
         return response

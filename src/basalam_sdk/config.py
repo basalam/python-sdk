@@ -58,42 +58,42 @@ class BasalamConfig:
 
     SERVICE_CONFIGS = {
         "core": ServiceConfig(
-            base_url="https://core.basalam.com",
+            base_url="https://openapi.basalam.com",
             path="",
-            api_version="v3"
+            api_version="v1"
         ),
         "wallet": ServiceConfig(
-            base_url="https://wallet.basalam.com",
+            base_url="https://openapi.basalam.com",
             path="",
-            api_version="v2"
+            api_version="v1"
         ),
         "chat": ServiceConfig(
-            base_url="https://conversation.basalam.com",
+            base_url="https://openapi.basalam.com",
             path="",
-            api_version="v2"
+            api_version="v1"
         ),
         "order": ServiceConfig(
-            base_url="https://order.basalam.com",
+            base_url="https://openapi.basalam.com",
             path="",
-            api_version="v2"
+            api_version="v1"
         ),
         "order-processing": ServiceConfig(
-            base_url="https://order-processing.basalam.com",
+            base_url="https://openapi.basalam.com",
             path="",
-            api_version="v3"
+            api_version="v1"
         ),
         "search": ServiceConfig(
-            base_url="https://search.basalam.com",
-            path="ai-engine/api",
-            api_version="v2.0"
+            base_url="https://openapi.basalam.com",
+            path="",
+            api_version="v1"
         ),
         "upload": ServiceConfig(
-            base_url="https://uploadio.basalam.com",
+            base_url="https://openapi.basalam.com",
             path="",
-            api_version="v3"
+            api_version="v1"
         ),
         "webhook": ServiceConfig(
-            base_url="https://webhook.basalam.com",
+            base_url="https://openapi.basalam.com",
             path="",
             api_version="v1"
         ),

@@ -56,16 +56,6 @@ class SpendCreditRequest(BaseModel):
     references: Optional[Dict[str, int]] = None
 
 
-class SpendSpecificCreditRequest(BaseModel):
-    """Spend from specific credit request model."""
-    reason_id: int
-    reference_id: int
-    amount: int
-    description: str
-    settleable: Optional[bool] = None
-    references: Optional[Dict[str, int]] = None
-
-
 class CreditResponse(BaseModel):
     """Credit response model."""
     id: int
@@ -106,20 +96,6 @@ class SpendResponse(BaseModel):
     rollback_reason: ReasonResponse
     items: List[SpendItemResponse]
     references: List[ReferenceResponse]
-
-
-class CreditCreationResponse(BaseModel):
-    """Credit creation response model."""
-    id: int
-    client_id: int
-    reference_id: int
-    user_id: int
-    reason: Optional[ReasonResponse] = None
-    amount: int
-    description: Optional[str] = None
-    created_at: Optional[datetime] = None
-    credits: List[CreditResponse]
-    references: Optional[List[ReferenceResponse]] = None
 
 
 class HistoryCreditItemResponse(BaseModel):
@@ -176,30 +152,3 @@ class HistoryPaginationResponse(BaseModel):
     last_page: int
     from_: int
     to: int
-
-
-class RefundRequest(BaseModel):
-    """Refund request model."""
-    original_reason: int
-    original_reference_id: int
-    reason: int
-    reference_id: int
-    amount: int
-    description: Optional[str] = None
-    references: Optional[List[ReferenceRequest]] = None
-
-
-class RollbackRefundRequest(BaseModel):
-    """Rollback refund request model."""
-    refund_reason: int
-    rollback_refund_reason: int
-    refund_reference_id: int
-    reference_id: int
-    description: Optional[str] = None
-    references: Optional[List[ReferenceRequest]] = None
-
-
-class CanRollbackRefundResponse(BaseModel):
-    """Can rollback refund response model."""
-    status: bool
-    message: str

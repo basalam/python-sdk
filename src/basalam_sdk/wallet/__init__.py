@@ -7,8 +7,6 @@ This module provides access to Basalam's wallet service APIs.
 from .client import WalletService
 from .models import (
     BalanceFilter,
-    CanRollbackRefundResponse,
-    CreditCreationResponse,
     CreditResponse,
     CreditTypeResponse,
     HistoryCreditItemResponse,
@@ -20,19 +18,14 @@ from .models import (
     ReasonResponse,
     ReferenceRequest,
     ReferenceResponse,
-    RefundRequest,
-    RollbackRefundRequest,
     SpendCreditRequest,
     SpendItemResponse,
     SpendResponse,
-    SpendSpecificCreditRequest,
 )
 
 __all__ = [
     "WalletService",
     "BalanceFilter",
-    "CanRollbackRefundResponse",
-    "CreditCreationResponse",
     "CreditResponse",
     "CreditTypeResponse",
     "HistoryCreditItemResponse",
@@ -44,10 +37,7 @@ __all__ = [
     "ReasonResponse",
     "ReferenceRequest",
     "ReferenceResponse",
-    "RefundRequest",
-    "RollbackRefundRequest",
     "SpendCreditRequest",
     "SpendItemResponse",
     "SpendResponse",
-    "SpendSpecificCreditRequest",
 ]

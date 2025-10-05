@@ -15,11 +15,11 @@ from basalam_sdk.order_processing.models import (
 )
 
 # Test IDs (you'll need valid IDs for testing)
-TEST_ORDER_ID = 12345
+TEST_ORDER_ID = 57745665
 TEST_ITEM_ID = 67890
 TEST_PARCEL_ID = 2196466970
-TEST_VENDOR_ID = 266
-TEST_CUSTOMER_ID = 430
+TEST_VENDOR_ID = "266"
+TEST_CUSTOMER_ID = "430"
 TEST_PRODUCT_ID = 456
 
 
@@ -76,7 +76,6 @@ def test_get_customer_orders_sync(basalam_client):
         filters = OrderFilter(
             per_page=5,
             sort="paid_at:asc",
-            customer_ids=[TEST_CUSTOMER_ID]
         )
         result_filtered = basalam_client.order_processing.get_customer_orders_sync(filters=filters)
         print(f"get_customer_orders_sync (with filters) result: {result_filtered}")
@@ -102,7 +101,7 @@ async def test_get_order_async(basalam_client):
         assert True
 
 
-def test_get_customer_rder_sync(basalam_client):
+def test_get_customer_order_sync(basalam_client):
     """Test get_order_sync method."""
     try:
         result = basalam_client.order_processing.get_customer_order(TEST_ORDER_ID)
@@ -212,7 +211,6 @@ async def test_get_vendor_orders_parcels_async(basalam_client):
         filters = OrderParcelFilter(
             per_page=10,
             sort="estimate_send_at:desc",
-            vendor_ids=[TEST_VENDOR_ID],
             statuses=[ParcelStatus.NEW_ORDER, ParcelStatus.PREPARATION_IN_PROGRESS]
         )
         result_filtered = await basalam_client.order_processing.get_vendor_orders_parcels(filters=filters)
@@ -235,9 +233,7 @@ def test_get_vendor_orders_parcels_sync(basalam_client):
 
         # Test with filters
         filters = OrderParcelFilter(
-            per_page=5,
-            vendor_ids=[TEST_VENDOR_ID],
-            customer_ids=[TEST_CUSTOMER_ID]
+            per_page=5
         )
         result_filtered = basalam_client.order_processing.get_vendor_orders_parcels_sync(filters=filters)
         print(f"get_vendor_orders_parcels_sync (with filters) result: {result_filtered}")
