@@ -161,7 +161,7 @@ class VendorLegalRequestSchema(BaseModel):
 
 
 class CreateVendorSchema(BaseModel):
-    """Create vendor schema - Updated to match OpenAPI specification."""
+    """Create vendor schema."""
     title: str
     category_type: Optional[int] = None
     city: Optional[int] = None
@@ -181,7 +181,7 @@ class CreateVendorSchema(BaseModel):
 
 
 class UpdateVendorSchema(BaseModel):
-    """Update vendor schema - Updated to match OpenAPI specification."""
+    """Update vendor schema."""
     title: Optional[str] = None
     category_type: Optional[int] = None
     city: Optional[int] = None
@@ -563,7 +563,7 @@ class ChangeUserMobileConfirmSchema(BaseModel):
 
 
 class UserCardsSchema(BaseModel):
-    """User cards schema - Updated to match OpenAPI specification."""
+    """User cards schema."""
     card_number: Optional[str] = None
     sheba_number: Optional[str] = None
     sheba_owner: Optional[str] = None
@@ -581,7 +581,7 @@ class UserCardsOtpSchema(BaseModel):
 
 
 class UserVerifyBankInformationSchema(BaseModel):
-    """User verify bank information schema - Updated to match OpenAPI specification."""
+    """User verify bank information schema."""
     bank_information_id: int
     national_code: str
     birthday: str
@@ -1074,3 +1074,16 @@ class CreateDiscountRequestSchema(BaseModel):
 class DeleteDiscountRequestSchema(BaseModel):
     """Delete discount request schema."""
     product_filter: Optional[DiscountProductFilterSchema] = None
+
+
+class ShelveSchema(BaseModel):
+    """Shelve request schema for create and update operations."""
+    title: str
+    description: Optional[str] = None
+    file_id: Optional[int] = None
+
+
+class UpdateShelveProductsSchema(BaseModel):
+    """Update shelve products request schema."""
+    include_products: Optional[List[int]] = None
+    exclude_products: Optional[List[int]] = None

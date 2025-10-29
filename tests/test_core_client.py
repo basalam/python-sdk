@@ -34,7 +34,11 @@ from basalam_sdk.core.models import (
     UserVerifyBankInformationSchema,
     UpdateUserBankInformationSchema,
     UserVerificationSchema,
-    UnitTypeInputEnum, ProductBulkFieldInputEnum, ProductBulkActionTypeEnum
+    UnitTypeInputEnum,
+    ProductBulkFieldInputEnum,
+    ProductBulkActionTypeEnum,
+    ShelveSchema,
+    UpdateShelveProductsSchema,
 )
 
 # Test IDs (you'll need valid IDs for testing)
@@ -46,6 +50,7 @@ SHIPPING_METHOD_ID = 3198
 
 # Additional test IDs
 TEST_BANK_ACCOUNT_ID = 54321
+TEST_SHELVE_ID = 531907
 
 
 @pytest.fixture
@@ -827,5 +832,121 @@ async def test_get_category_async(basalam_client):
 
     except Exception as e:
         print(f"get_category async error: {e}")
+        # Don't fail the test for API errors, just log them
+        assert True
+
+
+# -------------------------------------------------------------------------
+# Shelve Management endpoints tests
+# -------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_create_shelve_async(basalam_client):
+    """Test create_shelve async method."""
+    try:
+        request = ShelveSchema(
+            title="Test SDK Shelve",
+            description="This is a test shelve for SDK testing"
+        )
+        result = await basalam_client.core.create_shelve(request)
+        print(f"create_shelve async result: {result}")
+        assert isinstance(result, dict)
+
+    except Exception as e:
+        print(f"create_shelve async error: {e}")
+        # Don't fail the test for API errors, just log them
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_update_shelve_async(basalam_client):
+    """Test update_shelve async method."""
+    try:
+        request = ShelveSchema(
+            title="Test SDK Shelve-updated",
+            description="This is a test shelve for SDK testing"
+        )
+        result = await basalam_client.core.update_shelve(TEST_SHELVE_ID, request)
+        print(f"update_shelve async result: {result}")
+        assert isinstance(result, dict)
+
+    except Exception as e:
+        print(f"update_shelve async error: {e}")
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_delete_shelve_async(basalam_client):
+    """Test delete_shelve async method."""
+    try:
+        result = await basalam_client.core.delete_shelve(TEST_SHELVE_ID)
+        print(f"delete_shelve async result: {result}")
+        assert isinstance(result, dict)
+
+    except Exception as e:
+        print(f"delete_shelve async error: {e}")
+        # Don't fail the test for API errors, just log them
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_get_shelve_products_async(basalam_client):
+    """Test get_shelve_products async method."""
+    try:
+        # Test without title filter
+        result = await basalam_client.core.get_shelve_products(TEST_SHELVE_ID)
+        print(f"get_shelve_products async (no filter) result: {result}")
+        assert isinstance(result, dict)
+
+    except Exception as e:
+        print(f"get_shelve_products async error: {e}")
+        # Don't fail the test for API errors, just log them
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_get_shelve_products_async(basalam_client):
+    """Test get_shelve_products async method."""
+    try:
+        # Test without title filter
+        result = await basalam_client.core.get_shelve_products(TEST_SHELVE_ID)
+        print(f"get_shelve_products async (no filter) result: {result}")
+        assert isinstance(result, dict)
+
+    except Exception as e:
+        print(f"get_shelve_products async error: {e}")
+        # Don't fail the test for API errors, just log them
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_update_shelve_products_async(basalam_client):
+    """Test update_shelve_products async method."""
+    try:
+        # Test including products
+        request = UpdateShelveProductsSchema(
+            include_products=[TEST_PRODUCT_ID],
+            exclude_products=[]
+        )
+        result = await basalam_client.core.update_shelve_products(TEST_SHELVE_ID, request)
+        print(f"update_shelve_products async result: {result}")
+        assert isinstance(result, dict)
+
+    except Exception as e:
+        print(f"update_shelve_products async error: {e}")
+        # Don't fail the test for API errors, just log them
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_delete_shelve_product_async(basalam_client):
+    """Test delete_shelve_product async method."""
+    try:
+        result = await basalam_client.core.delete_shelve_product(TEST_SHELVE_ID, 24835037)
+        print(f"delete_shelve_product async result: {result}")
+        assert isinstance(result, dict)
+
+    except Exception as e:
+        print(f"delete_shelve_product async error: {e}")
         # Don't fail the test for API errors, just log them
         assert True

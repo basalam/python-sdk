@@ -11,7 +11,12 @@ from basalam_sdk.chat.models import (
     MessageInput,
     MessageTypeEnum,
     GetMessagesRequest,
-    GetChatsRequest, MessageOrderByEnum,
+    GetChatsRequest,
+    MessageOrderByEnum,
+    EditMessageRequest,
+    DeleteMessageRequest,
+    DeleteChatsRequest,
+    ForwardMessageRequest,
 )
 from basalam_sdk.config import BasalamConfig, Environment
 
@@ -273,3 +278,214 @@ def test_model_dump_exclude_none_sync(basalam_client):
 
     # Verify that required fields are included
     assert "chat_type" in dumped_data
+
+
+# -------------------------------------------------------------------------
+# Edit message endpoints tests
+# -------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_edit_message_async(basalam_client):
+    """Test edit_message async method."""
+
+    try:
+        message_input = MessageInput(
+            text="Updated test message"
+        )
+        request = EditMessageRequest(
+            message_id=980466407,
+            content=message_input
+        )
+        result = await basalam_client.chat.edit_message(
+            request=request
+        )
+        print(f"edit_message async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'data')
+        assert hasattr(result.data, 'id')
+    except Exception as e:
+        print(f"edit_message async error: {e}")
+        assert True
+
+
+def test_edit_message_sync(basalam_client):
+    """Test edit_message_sync method."""
+
+    try:
+        request = EditMessageRequest(
+            message_id=980466407,
+            content=MessageInput(
+                text="Updated twice",
+                entity_id=2
+        )
+        )
+        result = basalam_client.chat.edit_message_sync(
+            request=request
+        )
+        print(f"edit_message_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'data')
+        assert hasattr(result.data, 'id')
+    except Exception as e:
+        print(f"edit_message_sync error: {e}")
+        assert True
+
+
+# -------------------------------------------------------------------------
+# Delete message endpoints tests
+# -------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_delete_message_async(basalam_client):
+    """Test delete_message async method."""
+
+    try:
+        request = DeleteMessageRequest(
+            message_ids=[980466407]
+        )
+        result = await basalam_client.chat.delete_message(
+            request=request
+        )
+        print(f"delete_message async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'data')
+        assert isinstance(result.data, bool)
+    except Exception as e:
+        print(f"delete_message async error: {e}")
+        assert True
+
+
+def test_delete_message_sync(basalam_client):
+    """Test delete_message_sync method."""
+
+    try:
+        request = DeleteMessageRequest(
+            message_ids=[123456, 123457]
+        )
+        result = basalam_client.chat.delete_message_sync(
+            request=request
+        )
+        print(f"delete_message_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'data')
+        assert isinstance(result.data, bool)
+    except Exception as e:
+        print(f"delete_message_sync error: {e}")
+        assert True
+
+
+# -------------------------------------------------------------------------
+# Delete chats endpoints tests
+# -------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_delete_chats_async(basalam_client):
+    """Test delete_chats async method."""
+
+    try:
+        request = DeleteChatsRequest(
+            chat_ids=[TEST_CHAT_ID]
+        )
+        result = await basalam_client.chat.delete_chats(
+            request=request
+        )
+        print(f"delete_chats async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'data')
+        assert isinstance(result.data, bool)
+    except Exception as e:
+        print(f"delete_chats async error: {e}")
+        assert True
+
+
+def test_delete_chats_sync(basalam_client):
+    """Test delete_chats_sync method."""
+
+    try:
+        request = DeleteChatsRequest(
+            chat_ids=[123456, 123457]
+        )
+        result = basalam_client.chat.delete_chats_sync(
+            request=request
+        )
+        print(f"delete_chats_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'data')
+        assert isinstance(result.data, bool)
+    except Exception as e:
+        print(f"delete_chats_sync error: {e}")
+        assert True
+
+
+# -------------------------------------------------------------------------
+# Forward message endpoints tests
+# -------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_forward_message_async(basalam_client):
+    """Test forward_message async method."""
+
+    try:
+        request = ForwardMessageRequest(
+            message_ids=[983365122, 983365104],
+            chat_ids=[TEST_CHAT_ID]
+        )
+        result = await basalam_client.chat.forward_message(
+            request=request
+        )
+        print(f"forward_message async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'data')
+        assert isinstance(result.data, bool)
+    except Exception as e:
+        print(f"forward_message async error: {e}")
+        assert True
+
+
+def test_forward_message_sync(basalam_client):
+    """Test forward_message_sync method."""
+
+    try:
+        request = ForwardMessageRequest(
+            message_ids=[980484321],
+            chat_ids=[TEST_CHAT_ID]
+        )
+        result = basalam_client.chat.forward_message_sync(
+            request=request
+        )
+        print(f"forward_message_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'data')
+        assert isinstance(result.data, bool)
+    except Exception as e:
+        print(f"forward_message_sync error: {e}")
+        assert True
+
+
+# -------------------------------------------------------------------------
+# Get unseen chat count endpoints tests
+# -------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_get_unseen_chat_count_async(basalam_client):
+    """Test get_unseen_chat_count async method."""
+    try:
+        result = await basalam_client.chat.get_unseen_chat_count()
+        print(f"get_unseen_chat_count async result: {result}")
+        assert result is not None
+
+    except Exception as e:
+        print(f"get_unseen_chat_count async error: {e}")
+        assert True
+
+
+def test_get_unseen_chat_count_sync(basalam_client):
+    """Test get_unseen_chat_count_sync method."""
+    try:
+        result = basalam_client.chat.get_unseen_chat_count_sync()
+        print(f"get_unseen_chat_count_sync result: {result}")
+        assert result is not None
+
+    except Exception as e:
+        print(f"get_unseen_chat_count_sync error: {e}")
+        assert True

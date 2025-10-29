@@ -11,7 +11,14 @@ from .models import (
     CreateChatResponse,
     GetMessagesRequest,
     GetMessagesResponse,
-    GetChatsRequest
+    GetChatsRequest,
+    EditMessageRequest,
+    EditMessageResponse,
+    DeleteMessageRequest,
+    DeleteChatsRequest,
+    ForwardMessageRequest,
+    BooleanResponse,
+    UnseenChatCountResponse
 )
 from ..base_client import BaseClient
 
@@ -200,7 +207,7 @@ class ChatService(BaseClient):
             request: The get chats request model containing query parameters.
 
         Returns:
-            ChatListResponse: The list of chats based on OpenAPI specification.
+            ChatListResponse: The list of chats.
         """
         params = {
             "limit": request.limit,
@@ -232,7 +239,7 @@ class ChatService(BaseClient):
             request: The get chats request model containing query parameters.
 
         Returns:
-            ChatListResponse: The list of chats based on OpenAPI specification.
+            ChatListResponse: The list of chats.
         """
         params = {
             "limit": request.limit,
@@ -252,3 +259,193 @@ class ChatService(BaseClient):
         endpoint = f"/v1/chats"
         response = self._get_sync(endpoint, params=params)
         return ChatListResponse(**response)
+
+    async def edit_message(
+            self,
+            request: EditMessageRequest,
+            x_client_info: Optional[str] = None,  # Just for Basalam internal team usage!!!
+    ) -> EditMessageResponse:
+        """
+        Edit a message.
+
+        Args:
+            request: The edit message request model.
+            x_client_info: The X-Client-Info header value.
+
+        Returns:
+            EditMessageResponse: The response from the API.
+        """
+        headers = {}
+        if x_client_info:
+            headers["X-Client-Info"] = x_client_info
+
+        endpoint = "/v1/chats/messages"
+        response = await self._patch(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return EditMessageResponse(**response)
+
+    def edit_message_sync(
+            self,
+            request: EditMessageRequest,
+            x_client_info: Optional[str] = None,  # Just for Basalam internal team usage!!!
+    ) -> EditMessageResponse:
+        """
+        Edit a message (synchronous version).
+
+        Args:
+            request: The edit message request model.
+            x_client_info: The X-Client-Info header value.
+
+        Returns:
+            EditMessageResponse: The response from the API.
+        """
+        headers = {}
+        if x_client_info:
+            headers["X-Client-Info"] = x_client_info
+
+        endpoint = "/v1/chats/messages"
+        response = self._patch_sync(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return EditMessageResponse(**response)
+
+    async def delete_message(
+            self,
+            request: DeleteMessageRequest,
+    ) -> BooleanResponse:
+        """
+        Delete messages.
+
+        Args:
+            request: The delete message request model containing message IDs.
+
+        Returns:
+            BooleanResponse: The response from the API.
+        """
+        endpoint = "/v1/chats/messages"
+        response = await self._delete(endpoint, json_data=request.model_dump(exclude_none=True))
+        return BooleanResponse(**response)
+
+    def delete_message_sync(
+            self,
+            request: DeleteMessageRequest,
+    ) -> BooleanResponse:
+        """
+        Delete messages (synchronous version).
+
+        Args:
+            request: The delete message request model containing message IDs.
+
+        Returns:
+            BooleanResponse: The response from the API.
+        """
+        endpoint = "/v1/chats/messages"
+        response = self._delete_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return BooleanResponse(**response)
+
+    async def delete_chats(
+            self,
+            request: DeleteChatsRequest,
+    ) -> BooleanResponse:
+        """
+        Delete chats.
+
+        Args:
+            request: The delete chats request model containing chat IDs.
+
+        Returns:
+            BooleanResponse: The response from the API.
+        """
+        endpoint = "/v1/chats"
+        response = await self._delete(endpoint, json_data=request.model_dump(exclude_none=True))
+        return BooleanResponse(**response)
+
+    def delete_chats_sync(
+            self,
+            request: DeleteChatsRequest,
+    ) -> BooleanResponse:
+        """
+        Delete chats (synchronous version).
+
+        Args:
+            request: The delete chats request model containing chat IDs.
+
+        Returns:
+            BooleanResponse: The response from the API.
+        """
+        endpoint = "/v1/chats"
+        response = self._delete_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return BooleanResponse(**response)
+
+    async def forward_message(
+            self,
+            request: ForwardMessageRequest,
+            user_agent: Optional[str] = None,  # Just for Basalam internal team usage!!!
+            x_client_info: Optional[str] = None,  # Just for Basalam internal team usage!!!
+    ) -> BooleanResponse:
+        """
+        Forward messages to multiple conversations.
+
+        Args:
+            request: The forward message request model.
+            user_agent: The User-Agent header value.
+            x_client_info: The X-Client-Info header value.
+
+        Returns:
+            BooleanResponse: The response from the API.
+        """
+        headers = {}
+        if user_agent:
+            headers["User-Agent"] = user_agent
+        if x_client_info:
+            headers["X-Client-Info"] = x_client_info
+
+        endpoint = "/v1/chats/messages/forward"
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return BooleanResponse(**response)
+
+    def forward_message_sync(
+            self,
+            request: ForwardMessageRequest,
+            user_agent: Optional[str] = None,  # Just for Basalam internal team usage!!!
+            x_client_info: Optional[str] = None,  # Just for Basalam internal team usage!!!
+    ) -> BooleanResponse:
+        """
+        Forward messages to multiple conversations (synchronous version).
+
+        Args:
+            request: The forward message request model.
+            user_agent: The User-Agent header value.
+            x_client_info: The X-Client-Info header value.
+
+        Returns:
+            BooleanResponse: The response from the API.
+        """
+        headers = {}
+        if user_agent:
+            headers["User-Agent"] = user_agent
+        if x_client_info:
+            headers["X-Client-Info"] = x_client_info
+
+        endpoint = "/v1/chats/messages/forward"
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True), headers=headers)
+        return BooleanResponse(**response)
+
+    async def get_unseen_chat_count(self) -> UnseenChatCountResponse:
+        """
+        Get unseen chat count.
+
+        Returns:
+            UnseenChatCountResponse: The response containing count and more_than_count flag.
+        """
+        endpoint = "/v1/chats/unseen-count"
+        response = await self._get(endpoint)
+        return UnseenChatCountResponse(**response)
+
+    def get_unseen_chat_count_sync(self) -> UnseenChatCountResponse:
+        """
+        Get unseen chat count (synchronous version).
+
+        Returns:
+            UnseenChatCountResponse: The response containing count and more_than_count flag.
+        """
+        endpoint = "/v1/chats/unseen-count"
+        response = self._get_sync(endpoint)
+        return UnseenChatCountResponse(**response)

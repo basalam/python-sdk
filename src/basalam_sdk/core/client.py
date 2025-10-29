@@ -18,7 +18,7 @@ from .models import (
     ProductResponseSchema, BatchUpdateProductsRequest, UpdateProductResponseItem,
     BulkProductsUpdateRequestSchema, BulkProductsUpdateResponseSchema, BulkProductsUpdatesListResponse,
     BulkProductsUpdatesCountResponse, ProductShelfResponse, CreateDiscountRequestSchema,
-    DeleteDiscountRequestSchema
+    DeleteDiscountRequestSchema, ShelveSchema, UpdateShelveProductsSchema
 )
 from ..auth import BaseAuth
 from ..base_client import BaseClient
@@ -1933,3 +1933,231 @@ class CoreService(BaseClient):
         endpoint = f"/v1/products/{product_id}"
         response = self._patch_sync(endpoint, json_data=enhanced_request.model_dump(exclude_none=True))
         return ProductResponseSchema(**response)
+
+    async def create_shelve(
+            self,
+            request: ShelveSchema
+    ) -> Dict[str, Any]:
+        """
+        Create a new shelve.
+
+        Args:
+            request: The shelve creation request.
+
+        Returns:
+            General response data.
+        """
+        endpoint = "/v1/shelves"
+        response = await self._post(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
+
+    def create_shelve_sync(
+            self,
+            request: ShelveSchema
+    ) -> Dict[str, Any]:
+        """
+        Create a new shelve (synchronous version).
+
+        Args:
+            request: The shelve creation request.
+
+        Returns:
+            General response data.
+        """
+        endpoint = "/v1/shelves"
+        response = self._post_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
+
+    async def update_shelve(
+            self,
+            shelve_id: int,
+            request: ShelveSchema
+    ) -> Dict[str, Any]:
+        """
+        Update a shelve.
+
+        Args:
+            shelve_id: The ID of the shelve.
+            request: The shelve update request.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v1/shelves/{shelve_id}"
+        response = await self._put(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
+
+    def update_shelve_sync(
+            self,
+            shelve_id: int,
+            request: ShelveSchema
+    ) -> Dict[str, Any]:
+        """
+        Update a shelve (synchronous version).
+
+        Args:
+            shelve_id: The ID of the shelve.
+            request: The shelve update request.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v1/shelves/{shelve_id}"
+        response = self._put_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
+
+    async def delete_shelve(
+            self,
+            shelve_id: int
+    ) -> Dict[str, Any]:
+        """
+        Delete a shelve.
+
+        Args:
+            shelve_id: The ID of the shelve to delete.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v1/shelves/{shelve_id}"
+        response = await self._delete(endpoint)
+        return response
+
+    def delete_shelve_sync(
+            self,
+            shelve_id: int
+    ) -> Dict[str, Any]:
+        """
+        Delete a shelve (synchronous version).
+
+        Args:
+            shelve_id: The ID of the shelve to delete.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v1/shelves/{shelve_id}"
+        response = self._delete_sync(endpoint)
+        return response
+
+    async def get_shelve_products(
+            self,
+            shelve_id: int,
+            title: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Get products list for a shelve.
+
+        Args:
+            shelve_id: The ID of the shelve.
+            title: Optional filter by product title.
+
+        Returns:
+            General response data containing the list of products.
+        """
+        endpoint = f"/v1/shelves/{shelve_id}/products"
+        params = {}
+        if title is not None:
+            params["title"] = title
+
+        response = await self._get(endpoint, params=params)
+        return response
+
+    def get_shelve_products_sync(
+            self,
+            shelve_id: int,
+            title: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Get products list for a shelve (synchronous version).
+
+        Args:
+            shelve_id: The ID of the shelve.
+            title: Optional filter by product title.
+
+        Returns:
+            General response data containing the list of products.
+        """
+        endpoint = f"/v1/shelves/{shelve_id}/products"
+        params = {}
+        if title is not None:
+            params["title"] = title
+
+        response = self._get_sync(endpoint, params=params)
+        return response
+
+    async def update_shelve_products(
+            self,
+            shelve_id: int,
+            request: UpdateShelveProductsSchema
+    ) -> Dict[str, Any]:
+        """
+        Update products in a shelve.
+
+        Args:
+            shelve_id: The ID of the shelve.
+            request: The shelve products update request.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v1/shelves/{shelve_id}/products"
+        response = await self._put(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
+
+    def update_shelve_products_sync(
+            self,
+            shelve_id: int,
+            request: UpdateShelveProductsSchema
+    ) -> Dict[str, Any]:
+        """
+        Update products in a shelve (synchronous version).
+
+        Args:
+            shelve_id: The ID of the shelve.
+            request: The shelve products update request.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v1/shelves/{shelve_id}/products"
+        response = self._put_sync(endpoint, json_data=request.model_dump(exclude_none=True))
+        return response
+
+    async def delete_shelve_product(
+            self,
+            shelve_id: int,
+            product_id: int
+    ) -> Dict[str, Any]:
+        """
+        Delete a product from a shelve.
+
+        Args:
+            shelve_id: The ID of the shelve.
+            product_id: The ID of the product to delete.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v1/shelves/{shelve_id}/products/{product_id}"
+        response = await self._delete(endpoint)
+        return response
+
+    def delete_shelve_product_sync(
+            self,
+            shelve_id: int,
+            product_id: int
+    ) -> Dict[str, Any]:
+        """
+        Delete a product from a shelve (synchronous version).
+
+        Args:
+            shelve_id: The ID of the shelve.
+            product_id: The ID of the product to delete.
+
+        Returns:
+            General response data.
+        """
+        endpoint = f"/v1/shelves/{shelve_id}/products/{product_id}"
+        response = self._delete_sync(endpoint)
+        return response

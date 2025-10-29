@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 
 class MessageTypeEnum(str, Enum):
-    """Message type enumeration - Updated to match OpenAPI specification."""
+    """Message type enumeration."""
     FILE = "file"
     OLD_FILE = "old_file"
     PRODUCT = "product"
@@ -45,13 +45,13 @@ class MessageFiltersEnum(str, Enum):
 
 
 class MessageInput(BaseModel):
-    """Message input model - Updated to match OpenAPI specification."""
+    """Message input model."""
     text: Optional[str] = None
     entity_id: Optional[int] = None
 
 
 class AttachmentFile(BaseModel):
-    """Attachment file model - Updated to match OpenAPI specification."""
+    """Attachment file model."""
     id: int
     url: str
     height: Optional[int] = None
@@ -68,7 +68,7 @@ class Attachment(BaseModel):
 
 
 class MessageRequest(BaseModel):
-    """Message request model - Updated to match OpenAPI specification."""
+    """Message request model."""
     chat_id: int
     content: Optional[MessageInput] = None
     message_type: MessageTypeEnum
@@ -79,7 +79,7 @@ class MessageRequest(BaseModel):
 
 
 class GetChatsRequest(BaseModel):
-    """Get chats request model - Based on OpenAPI specification."""
+    """Get chats request model."""
     limit: Optional[int] = 30
     order_by: Optional[MessageOrderByEnum] = MessageOrderByEnum.UPDATED_AT
     updated_from: Optional[str] = None
@@ -90,7 +90,7 @@ class GetChatsRequest(BaseModel):
 
 
 class LocationResource(BaseModel):
-    """Location request model - Based on OpenAPI specification."""
+    """Location request model."""
     geo_width: int
     geo_height: int
 
@@ -161,7 +161,7 @@ class MessageResponse(BaseModel):
 
 
 class CreateChatRequest(BaseModel):
-    """Create chat request model - Updated to match OpenAPI specification."""
+    """Create chat request model."""
     user_id: Optional[int] = None
     hash_id: Optional[str] = None
 
@@ -218,7 +218,7 @@ class CreateChatResponse(BaseModel):
 
 
 class GetMessagesRequest(BaseModel):
-    """Get messages request model - Based on OpenAPI specification."""
+    """Get messages request model."""
     chat_id: int
     message_id: Optional[int] = None
     limit: Optional[int] = 20
@@ -278,3 +278,41 @@ class ChatListData(BaseModel):
 class ChatListResponse(BaseModel):
     """Response model for chat list endpoint."""
     data: ChatListData
+
+
+class EditMessageRequest(BaseModel):
+    """Edit message request model."""
+    message_id: int
+    content: Optional[MessageInput] = None
+
+
+class DeleteMessageRequest(BaseModel):
+    """Delete message request model."""
+    message_ids: List[int]
+
+
+class DeleteChatsRequest(BaseModel):
+    """Delete chats request model."""
+    chat_ids: List[int]
+
+
+class ForwardMessageRequest(BaseModel):
+    """Forward message request model."""
+    message_ids: List[int]
+    chat_ids: List[int]
+
+
+class BooleanResponse(BaseModel):
+    """Boolean response model."""
+    data: bool
+
+
+class UnseenChatCountResponse(BaseModel):
+    """Unseen chat count response model."""
+    count: int
+    more_than_count: bool
+
+
+class EditMessageResponse(BaseModel):
+    """Edit message response model."""
+    data: MessageResource
