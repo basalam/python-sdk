@@ -53,6 +53,12 @@ information, handle bank account operations, and manage categories and attribute
 | [`get_category_attributes()`](#get-category-attributes)                                               | Get category attributes                        | `category_id`, `product_id`, `vendor_id`, `exclude_multi_selects`          |
 | [`get_categories()`](#get-categories)                                                                 | Get all categories                             | `None`                                                                     |
 | [`get_category()`](#get-category)                                                                     | Get specific category                          | `category_id`                                                              |
+| [`create_shelve()`](#create-shelve)                                                                   | Create a new shelve                            | `request: ShelveSchema`                                                    |
+| [`update_shelve()`](#update-shelve)                                                                   | Update a shelve                                | `shelve_id`, `request: ShelveSchema`                                       |
+| [`delete_shelve()`](#delete-shelve)                                                                   | Delete a shelve                                | `shelve_id`                                                                |
+| [`get_shelve_products()`](#get-shelve-products)                                                       | Get products in a shelve                       | `shelve_id`, `title`                                                       |
+| [`update_shelve_products()`](#update-shelve-products)                                                 | Update products in a shelve                    | `shelve_id`, `request: UpdateShelveProductsSchema`                         |
+| [`delete_shelve_product()`](#delete-shelve-product)                                                   | Delete product from shelve                     | `shelve_id`, `product_id`                                                  |
 
 ## Examples
 
@@ -728,4 +734,102 @@ async def get_category_example():
     )
 
     return category
+```
+
+### Create Shelve
+
+```python
+from basalam_sdk.core.models import ShelveSchema
+
+
+async def create_shelve_example():
+    shelve = await client.core.create_shelve(
+        request=ShelveSchema(
+            title="Summer Collection",
+            description="Products for summer season"
+        )
+    )
+
+    return shelve
+```
+
+### Update Shelve
+
+```python
+from basalam_sdk.core.models import ShelveSchema
+
+
+async def update_shelve_example():
+    shelve = await client.core.update_shelve(
+        shelve_id=123,
+        request=ShelveSchema(
+            title="Updated Summer Collection",
+            description="Updated description for summer products"
+        )
+    )
+
+    return shelve
+```
+
+### Delete Shelve
+
+```python
+async def delete_shelve_example():
+    result = await client.core.delete_shelve(
+        shelve_id=123
+    )
+
+    return result
+```
+
+### Get Shelve Products
+
+```python
+async def get_shelve_products_example():
+    # Get all products in a shelve
+    products = await client.core.get_shelve_products(
+        shelve_id=123
+    )
+
+    return products
+```
+
+### Update Shelve Products
+
+```python
+from basalam_sdk.core.models import UpdateShelveProductsSchema
+
+
+async def update_shelve_products_example():
+    # Add products to shelve
+    result = await client.core.update_shelve_products(
+        shelve_id=123,
+        request=UpdateShelveProductsSchema(
+            include_products=[456, 789, 101112],  # Product IDs to add
+            exclude_products=[]
+        )
+    )
+
+    # Remove products from shelve
+    result = await client.core.update_shelve_products(
+        shelve_id=123,
+        request=UpdateShelveProductsSchema(
+            include_products=[],
+            exclude_products=[456, 789]  # Product IDs to remove
+        )
+    )
+
+    return result
+```
+
+### Delete Shelve Product
+
+```python
+async def delete_shelve_product_example():
+    result = await client.core.delete_shelve_product(
+        shelve_id=123,
+        product_id=456
+    )
+
+    return result
 ```
