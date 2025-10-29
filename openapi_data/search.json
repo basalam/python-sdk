@@ -1,15 +1,15 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "AI Engine",
-    "version": "0.1.0"
+    "title": "Basalam OpenAPI Gateway",
+    "version": "1.0.0",
+    "description": "Filtered OpenAPI endpoints from core service"
   },
   "paths": {
-    "/ai-engine/api/v2.0/product/search": {
+    "/v1/products/search": {
       "post": {
         "tags": [
-          "product",
-          "OpenAPI v1"
+          "Search"
         ],
         "summary": "Product Search",
         "operationId": "product_search_ai_engine_api_v2_0_product_search_post",
@@ -153,6 +153,39 @@
         "type": "object",
         "title": "FiltersModel"
       },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -217,40 +250,13 @@
         },
         "type": "object",
         "title": "ProductSearchModel"
-      },
-      "ValidationError": {
-        "properties": {
-          "loc": {
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            },
-            "type": "array",
-            "title": "Location"
-          },
-          "msg": {
-            "type": "string",
-            "title": "Message"
-          },
-          "type": {
-            "type": "string",
-            "title": "Error Type"
-          }
-        },
-        "type": "object",
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
-        "title": "ValidationError"
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "url": "https://openapi.basalam.com",
+      "description": "Production Gateway"
+    }
+  ]
 }

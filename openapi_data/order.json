@@ -1,107 +1,15 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "title": "Order Service",
-    "version": "1.0.0"
+    "title": "Basalam OpenAPI Gateway",
+    "version": "1.0.0",
+    "description": "Filtered OpenAPI endpoints from core service"
   },
   "paths": {
-    "/v2/basket/product/{product_id}/status": {
+    "/v1/invoices/payable": {
       "get": {
         "tags": [
-          "Product",
-          "v2"
-        ],
-        "summary": "Get Product Variation Status",
-        "operationId": "get_product_variation_status_v2_basket_product__product_id__status_get",
-        "parameters": [
-          {
-            "required": true,
-            "schema": {
-              "title": "Product Id",
-              "type": "integer"
-            },
-            "name": "product_id",
-            "in": "path"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v2/invoice/{invoice_id}/payment": {
-      "post": {
-        "tags": [
-          "Payment",
-          "v2"
-        ],
-        "summary": "Create Payment",
-        "operationId": "create_payment_v2_invoice__invoice_id__payment_post",
-        "parameters": [
-          {
-            "required": true,
-            "schema": {
-              "title": "Invoice Id",
-              "type": "integer"
-            },
-            "name": "invoice_id",
-            "in": "path"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePaymentRequestModel"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v2/invoice/payable": {
-      "get": {
-        "tags": [
-          "Invoices",
-          "v2"
+          "Order"
         ],
         "summary": "Get Payable Invoices",
         "operationId": "get_payable_invoices_v2_invoice_payable_get",
@@ -147,11 +55,50 @@
         }
       }
     },
-    "/v2/invoice/unpaid": {
+    "/v1/baskets/products/{product_id}/status": {
       "get": {
         "tags": [
-          "Invoices",
-          "v2"
+          "Order"
+        ],
+        "summary": "Get Product Variation Status",
+        "operationId": "get_product_variation_status_v2_basket_product__product_id__status_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Product Id",
+              "type": "integer"
+            },
+            "name": "product_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/invoices/unpaid": {
+      "get": {
+        "tags": [
+          "Order"
         ],
         "summary": "Get Payable Invoices",
         "operationId": "get_payable_invoices_v2_invoice_unpaid_get",
@@ -229,14 +176,63 @@
         }
       }
     },
-    "/v2/payment/{pay_id}/callback": {
+    "/v1/invoices/{invoice_id}/payments": {
+      "post": {
+        "tags": [
+          "Order"
+        ],
+        "summary": "Create Payment",
+        "operationId": "create_payment_v2_invoice__invoice_id__payment_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Invoice Id",
+              "type": "integer"
+            },
+            "name": "invoice_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentRequestModel"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/payments/{payment_id}/callbacks": {
       "get": {
         "tags": [
-          "Payment",
-          "v2"
+          "Order"
         ],
         "summary": "Payment Callback",
-        "operationId": "payment_callback_v2_payment__pay_id__callback_post",
+        "operationId": "payment_callback_v2_payment__pay_id__callback_get",
         "parameters": [
           {
             "required": true,
@@ -244,7 +240,7 @@
               "title": "Pay Id",
               "type": "integer"
             },
-            "name": "pay_id",
+            "name": "payment_id",
             "in": "path"
           },
           {
@@ -280,11 +276,10 @@
       },
       "post": {
         "tags": [
-          "Payment",
-          "v2"
+          "Order"
         ],
         "summary": "Payment Callback",
-        "operationId": "payment_callback_v2_payment__pay_id__callback_post",
+        "operationId": "payment_callback_v2_payment__pay_id__callback_get",
         "parameters": [
           {
             "required": true,
@@ -292,7 +287,7 @@
               "title": "Pay Id",
               "type": "integer"
             },
-            "name": "pay_id",
+            "name": "payment_id",
             "in": "path"
           },
           {
@@ -327,11 +322,10 @@
         }
       }
     },
-    "/v2/basket": {
+    "/v1/baskets": {
       "get": {
         "tags": [
-          "Basket",
-          "v2"
+          "Order"
         ],
         "summary": "Get Active Basket",
         "operationId": "get_active_basket_v2_basket_get",
@@ -372,6 +366,37 @@
   },
   "components": {
     "schemas": {
+      "Order": {
+        "title": "Order",
+        "enum": [
+          "ASC",
+          "DESC"
+        ],
+        "description": "An enumeration."
+      },
+      "UnpaidInvoiceStatusEnum": {
+        "title": "UnpaidInvoiceStatusEnum",
+        "enum": [
+          "saleable",
+          "payable",
+          "unpaid"
+        ],
+        "description": "An enumeration."
+      },
+      "PaymentDriver": {
+        "title": "PaymentDriver",
+        "required": [
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "integer",
+            "gte": 0
+          }
+        }
+      },
       "CreatePaymentRequestModel": {
         "title": "CreatePaymentRequestModel",
         "required": [
@@ -403,54 +428,6 @@
           }
         }
       },
-      "HTTPValidationError": {
-        "title": "HTTPValidationError",
-        "type": "object",
-        "properties": {
-          "message": {
-            "title": "Error Message",
-            "type": "string"
-          },
-          "errors": {
-            "title": "Errors",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            }
-          }
-        }
-      },
-      "Order": {
-        "title": "Order",
-        "enum": [
-          "ASC",
-          "DESC"
-        ],
-        "description": "An enumeration."
-      },
-      "PaymentDriver": {
-        "title": "PaymentDriver",
-        "required": [
-          "amount"
-        ],
-        "type": "object",
-        "properties": {
-          "amount": {
-            "title": "Amount",
-            "type": "integer",
-            "gte": 0
-          }
-        }
-      },
-      "UnpaidInvoiceStatusEnum": {
-        "title": "UnpaidInvoiceStatusEnum",
-        "enum": [
-          "saleable",
-          "payable",
-          "unpaid"
-        ],
-        "description": "An enumeration."
-      },
       "ValidationError": {
         "title": "ValidationError",
         "required": [
@@ -473,7 +450,30 @@
             "type": "string"
           }
         }
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "message": {
+            "title": "Error Message",
+            "type": "string"
+          },
+          "errors": {
+            "title": "Errors",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "url": "https://openapi.basalam.com",
+      "description": "Production Gateway"
+    }
+  ]
 }

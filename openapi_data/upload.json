@@ -1,14 +1,15 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "title": "File Uploader",
-    "version": "0.1.0"
+    "title": "Basalam OpenAPI Gateway",
+    "version": "1.0.0",
+    "description": "Filtered OpenAPI endpoints from core service"
   },
   "paths": {
-    "/v3/files": {
+    "/v1/files": {
       "post": {
         "tags": [
-          "OpenApi - File"
+          "Upload"
         ],
         "summary": "Create File",
         "operationId": "create_file_v3_files_post",
@@ -63,6 +64,23 @@
   },
   "components": {
     "schemas": {
+      "UserUploadFileTypeEnum": {
+        "title": "UserUploadFileTypeEnum",
+        "enum": [
+          "product.photo",
+          "product.video",
+          "user.avatar",
+          "user.cover",
+          "vendor.cover",
+          "vendor.logo",
+          "chat.photo",
+          "chat.video",
+          "chat.voice",
+          "chat.file"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
       "Body_create_file_v3_files_post": {
         "title": "Body_create_file_v3_files_post",
         "required": [
@@ -78,6 +96,11 @@
           },
           "file_type": {
             "$ref": "#/components/schemas/UserUploadFileTypeEnum"
+          },
+          "thumbnail": {
+            "title": "Thumbnail",
+            "type": "string",
+            "format": "binary"
           },
           "custom_unique_name": {
             "title": "Custom Unique Name",
@@ -96,13 +119,9 @@
           "file_name",
           "file_name_alone",
           "path",
-          "format",
           "type",
           "file_type",
-          "width",
-          "height",
           "size",
-          "duration",
           "urls",
           "created_at",
           "creator_user_id"
@@ -178,36 +197,6 @@
           }
         }
       },
-      "HTTPValidationError": {
-        "title": "HTTPValidationError",
-        "type": "object",
-        "properties": {
-          "detail": {
-            "title": "Detail",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            }
-          }
-        }
-      },
-      "UserUploadFileTypeEnum": {
-        "title": "UserUploadFileTypeEnum",
-        "enum": [
-          "product.photo",
-          "product.video",
-          "user.avatar",
-          "user.cover",
-          "vendor.cover",
-          "vendor.logo",
-          "chat.photo",
-          "chat.video",
-          "chat.voice",
-          "chat.file"
-        ],
-        "type": "string",
-        "description": "An enumeration."
-      },
       "ValidationError": {
         "title": "ValidationError",
         "required": [
@@ -233,7 +222,26 @@
             "type": "string"
           }
         }
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "url": "https://openapi.basalam.com",
+      "description": "Production Gateway"
+    }
+  ]
 }

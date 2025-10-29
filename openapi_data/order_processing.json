@@ -1,166 +1,106 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Order Processing Service",
-    "version": "1.650.7"
+    "title": "Basalam OpenAPI Gateway",
+    "version": "1.0.0",
+    "description": "Filtered OpenAPI endpoints from core service"
   },
   "paths": {
-    "/v3/customer-orders": {
-      "get": {
+    "/v1/vendor-parcels/{parcel_id}/set-posted": {
+      "post": {
         "tags": [
-          "OpenApi - CustomerOrder"
+          "OrderProcessing"
         ],
-        "summary": "\u0644\u06cc\u0633\u062a \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u0645\u0634\u062a\u0631\u06cc",
-        "description": "<div dir='rtl'>\n        \u0644\u06cc\u0633\u062a \u0633\u0641\u0627\u0631\u0634\u062a \u0645\u0634\u062a\u0631\u06cc \u0645\u0631\u062a\u0628 \u0634\u062f\u0647 \u0628\u0631\u0627\u0633\u0627\u0633 \u062a\u0627\u0631\u06cc\u062e \u067e\u0631\u062f\u0627\u062e\u062a \u0631\u0627 \u0628\u0631 \u0645\u06cc \u06af\u0631\u062f\u0627\u0646\u062f.\n        <br/>\n        \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `customer.order.read` \u0627\u0632 \u0633\u0645\u062a \u06a9\u0627\u0631\u0628\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        <br />\n         \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u062a\u0645\u0627\u0645 \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        </div>",
-        "operationId": "customer_list_orders_v3_customer_orders_get",
+        "summary": "\u062a\u0627\u06cc\u06cc\u062f \u0627\u0631\u0633\u0627\u0644",
+        "operationId": "vendor_parcel_set_preparation_v3_vendor_parcels__parcel_id__set_posted_post",
         "parameters": [
           {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Ids"
-            },
-            "name": "ids",
-            "in": "query"
-          },
-          {
-            "description": "<div dir='rtl'>\u0628\u0631\u0627\u06cc \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0627\u0632 \u0627\u06cc\u0646 \u0641\u06cc\u0644\u062a\u0631\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.</div>",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Customer Ids",
-              "description": "<div dir='rtl'>\u0628\u0631\u0627\u06cc \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0627\u0632 \u0627\u06cc\u0646 \u0641\u06cc\u0644\u062a\u0631\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.</div>"
-            },
-            "name": "customer_ids",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Vendor Ids"
-            },
-            "name": "vendor_ids",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Product Ids"
-            },
-            "name": "product_ids",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Coupon Code"
-            },
-            "name": "coupon_code",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Items.Title[Like]"
-            },
-            "name": "items.title[like]",
-            "in": "query"
-          },
-          {
-            "description": "| Value | Name | translate | \n | :----: | ---- | :---- |\n | 3739 | NEW_ORDER | \u062c\u062f\u06cc\u062f |\n | 3237 | PREPARATION_IN_PROGRESS | \u062f\u0631 \u062d\u0627\u0644 \u0622\u0645\u0627\u062f\u0647 \u0633\u0627\u0632\u06cc |\n | 3238 | POSTED | \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647  |\n | 5017 | WRONG_TRACKING_CODE | \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0627\u0631\u0633\u0627\u0644 \u0646\u0627\u062f\u0631\u0633\u062a |\n | 3572 | PRODUCT_IS_NOT_DELIVERED | \u0646\u0631\u0633\u06cc\u062f\u0647 |\n | 3740 | PROBLEM_IS_REPORTED | \u062b\u0628\u062a \u0645\u0634\u06a9\u0644 \u0634\u062f\u0647 |\n | 4633 | CUSTOMER_CANCEL_REQUEST_FROM_CUSTOMER | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 |\n | 5075 | OVERDUE_AGREEMENT_REQUEST_FROM_VENDOR | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062a\u0648\u0627\u0641\u0642 \u062a\u0627\u062e\u06cc\u0631 |\n | 3195 | SATISFIED | \u0631\u0636\u0627\u06cc\u062a  |\n | 3233 | DEFINITIVE_DISSATISFACTION | \u0639\u0648\u062f\u062a \u0648\u062c\u0647 \u06a9\u0627\u0645\u0644 |\n | 3067 | CANCEL | \u0644\u063a\u0648 ",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Parcels.Statuses",
-              "description": "| Value | Name | translate | \n | :----: | ---- | :---- |\n | 3739 | NEW_ORDER | \u062c\u062f\u06cc\u062f |\n | 3237 | PREPARATION_IN_PROGRESS | \u062f\u0631 \u062d\u0627\u0644 \u0622\u0645\u0627\u062f\u0647 \u0633\u0627\u0632\u06cc |\n | 3238 | POSTED | \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647  |\n | 5017 | WRONG_TRACKING_CODE | \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0627\u0631\u0633\u0627\u0644 \u0646\u0627\u062f\u0631\u0633\u062a |\n | 3572 | PRODUCT_IS_NOT_DELIVERED | \u0646\u0631\u0633\u06cc\u062f\u0647 |\n | 3740 | PROBLEM_IS_REPORTED | \u062b\u0628\u062a \u0645\u0634\u06a9\u0644 \u0634\u062f\u0647 |\n | 4633 | CUSTOMER_CANCEL_REQUEST_FROM_CUSTOMER | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 |\n | 5075 | OVERDUE_AGREEMENT_REQUEST_FROM_VENDOR | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062a\u0648\u0627\u0641\u0642 \u062a\u0627\u062e\u06cc\u0631 |\n | 3195 | SATISFIED | \u0631\u0636\u0627\u06cc\u062a  |\n | 3233 | DEFINITIVE_DISSATISFACTION | \u0639\u0648\u062f\u062a \u0648\u062c\u0647 \u06a9\u0627\u0645\u0644 |\n | 3067 | CANCEL | \u0644\u063a\u0648 "
-            },
-            "name": "parcels.statuses",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "maxLength": 50,
-              "minLength": 3,
-              "title": "Customer Name[Like]"
-            },
-            "name": "customer_name[like]",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time",
-              "title": "Paid At[Gte]"
-            },
-            "name": "paid_at[gte]",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time",
-              "title": "Paid At[Lte]"
-            },
-            "name": "paid_at[lte]",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time",
-              "title": "Parcels.Estimate Send At[Lte]"
-            },
-            "name": "parcels.estimate_send_at[lte]",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time",
-              "title": "Parcels.Estimate Send At[Gte]"
-            },
-            "name": "parcels.estimate_send_at[gte]",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Sort",
-              "default": "paid_at:desc"
-            },
-            "name": "sort",
-            "in": "query"
-          },
-          {
-            "required": false,
+            "required": true,
             "schema": {
               "type": "integer",
-              "maximum": 30.0,
-              "title": "Per Page",
-              "default": 10
+              "title": "Parcel Id"
             },
-            "name": "per_page",
-            "in": "query"
+            "name": "parcel_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PostedOrderRequestV3"
+                  }
+                ],
+                "title": "Request"
+              }
+            }
           },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizationResponse"
+                }
+              }
+            }
+          }
+        },
+        "description": "\u062a\u0627\u06cc\u06cc\u062f \u0627\u0631\u0633\u0627\u0644"
+      }
+    },
+    "/v1/customer-orders/items/{item_id}": {
+      "get": {
+        "tags": [
+          "OrderProcessing"
+        ],
+        "summary": "\u062c\u0632\u0626\u06cc\u0627\u062a \u06a9\u0627\u0645\u0644 \u06cc\u06a9 \u0622\u06cc\u062a\u0645 \u0633\u0641\u0627\u0631\u0634",
+        "description": "<div dir='rtl'>\n        \u062c\u0632\u0626\u06cc\u0627\u062a \u06a9\u0627\u0645\u0644 \u06cc\u06a9 \u0622\u06cc\u062a\u0645 \u0633\u0641\u0627\u0631\u0634 \u0631\u0627 \u0628\u0631\u0645\u06cc\u06af\u0631\u062f\u0627\u0646\u062f.\n        <br />\n        \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `customer.order.read` \u0627\u0632 \u0633\u0645\u062a \u06a9\u0627\u0631\u0628\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        <br/>\n        \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647 \u062c\u0632\u0626\u06cc\u0627\u062a \u062a\u0645\u0627\u0645 \u0622\u06cc\u062a\u0645 \u0647\u0627 \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        </div>",
+        "operationId": "customer_item_details_v3_customer_items__item_id__get",
+        "parameters": [
           {
-            "required": false,
+            "required": true,
             "schema": {
-              "type": "string",
-              "title": "Cursor"
+              "type": "integer",
+              "title": "Item Id"
             },
-            "name": "cursor",
-            "in": "query"
+            "name": "item_id",
+            "in": "path"
           }
         ],
         "responses": {
@@ -169,7 +109,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrdersResponse"
+                  "$ref": "#/components/schemas/api__responses__v3__items__Item_response__ItemResponse"
                 }
               }
             }
@@ -207,10 +147,423 @@
         }
       }
     },
-    "/v3/customer-orders/{order_id}": {
+    "/v1/vendor-parcels": {
       "get": {
         "tags": [
-          "OpenApi - CustomerOrder"
+          "OrderProcessing"
+        ],
+        "summary": "\u0644\u06cc\u0633\u062a \u0633\u0641\u0627\u0631\u0634 \u0647\u0627\u06cc \u063a\u0631\u0641\u0647 \u062f\u0627\u0631",
+        "description": "<div dir='rtl'>\n        \u0644\u06cc\u0633\u062a \u0633\u0641\u0627\u0631\u0634 \u0647\u0627\u06cc \u063a\u0631\u0641\u0647 \u062f\u0627\u0631 \u0645\u0631\u062a\u0628 \u0634\u062f\u0647 \u0628\u0631\u0627\u0633\u0627\u0633 \u0645\u0647\u0644\u062a \u0627\u0631\u0633\u0627\u0644 \u0631\u0627 \u0628\u0631 \u0645\u06cc \u06af\u0631\u062f\u0627\u0646\u062f.\n        <br/>\n        \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u062f\u0627\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        <br />\n        \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u062a\u0645\u0627\u0645 \u0633\u0641\u0627\u0631\u0634 \u0647\u0627 \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        </div>",
+        "operationId": "vendor_list_parcels_v3_vendor_parcels_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Ids"
+            },
+            "name": "ids",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Items.Customer Ids"
+            },
+            "name": "items.customer_ids",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Items.Vendor Ids"
+            },
+            "name": "items.vendor_ids",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Items.Product Ids"
+            },
+            "name": "items.product_ids",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Items.Order Ids"
+            },
+            "name": "items.order_ids",
+            "in": "query"
+          },
+          {
+            "description": "| Value | Name | translate | \n | :----: | ---- | :---- |\n | 3739 | NEW_ORDER | \u062c\u062f\u06cc\u062f |\n | 3237 | PREPARATION_IN_PROGRESS | \u062f\u0631 \u062d\u0627\u0644 \u0622\u0645\u0627\u062f\u0647 \u0633\u0627\u0632\u06cc |\n | 3238 | POSTED | \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647  |\n | 5017 | WRONG_TRACKING_CODE | \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0627\u0631\u0633\u0627\u0644 \u0646\u0627\u062f\u0631\u0633\u062a |\n | 3572 | PRODUCT_IS_NOT_DELIVERED | \u0646\u0631\u0633\u06cc\u062f\u0647 |\n | 3740 | PROBLEM_IS_REPORTED | \u062b\u0628\u062a \u0645\u0634\u06a9\u0644 \u0634\u062f\u0647 |\n | 4633 | CUSTOMER_CANCEL_REQUEST_FROM_CUSTOMER | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 \u0645\u0634\u062a\u0631\u06cc |\n | 5075 | OVERDUE_AGREEMENT_REQUEST_FROM_VENDOR | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062a\u0648\u0627\u0641\u0642 \u062a\u0627\u062e\u06cc\u0631 |\n | 3195 | SATISFIED | \u0631\u0636\u0627\u06cc\u062a  |\n | 3233 | DEFINITIVE_DISSATISFACTION | \u0639\u0648\u062f\u062a \u0648\u062c\u0647 \u06a9\u0627\u0645\u0644 |\n | 3067 | CANCEL | \u0644\u063a\u0648 \n | 6440 | VENDOR_CANCEL_REQUEST | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 \u063a\u0631\u0641\u0647 \u062f\u0627\u0631 ",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Statuses",
+              "description": "| Value | Name | translate | \n | :----: | ---- | :---- |\n | 3739 | NEW_ORDER | \u062c\u062f\u06cc\u062f |\n | 3237 | PREPARATION_IN_PROGRESS | \u062f\u0631 \u062d\u0627\u0644 \u0622\u0645\u0627\u062f\u0647 \u0633\u0627\u0632\u06cc |\n | 3238 | POSTED | \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647  |\n | 5017 | WRONG_TRACKING_CODE | \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0627\u0631\u0633\u0627\u0644 \u0646\u0627\u062f\u0631\u0633\u062a |\n | 3572 | PRODUCT_IS_NOT_DELIVERED | \u0646\u0631\u0633\u06cc\u062f\u0647 |\n | 3740 | PROBLEM_IS_REPORTED | \u062b\u0628\u062a \u0645\u0634\u06a9\u0644 \u0634\u062f\u0647 |\n | 4633 | CUSTOMER_CANCEL_REQUEST_FROM_CUSTOMER | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 \u0645\u0634\u062a\u0631\u06cc |\n | 5075 | OVERDUE_AGREEMENT_REQUEST_FROM_VENDOR | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062a\u0648\u0627\u0641\u0642 \u062a\u0627\u062e\u06cc\u0631 |\n | 3195 | SATISFIED | \u0631\u0636\u0627\u06cc\u062a  |\n | 3233 | DEFINITIVE_DISSATISFACTION | \u0639\u0648\u062f\u062a \u0648\u062c\u0647 \u06a9\u0627\u0645\u0644 |\n | 3067 | CANCEL | \u0644\u063a\u0648 \n | 6440 | VENDOR_CANCEL_REQUEST | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 \u063a\u0631\u0641\u0647 \u062f\u0627\u0631 "
+            },
+            "name": "statuses",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Estimate Send At[Gte]"
+            },
+            "name": "estimate_send_at[gte]",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Estimate Send At[Lte]"
+            },
+            "name": "estimate_send_at[lte]",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Created At[Gte]"
+            },
+            "name": "created_at[gte]",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Created At[Lte]"
+            },
+            "name": "created_at[lte]",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Sort",
+              "default": "estimate_send_at:desc"
+            },
+            "name": "sort",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 30.0,
+              "title": "Per Page",
+              "default": 10
+            },
+            "name": "per_page",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Cursor"
+            },
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParcelsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/orders/stats": {
+      "get": {
+        "tags": [
+          "OrderProcessing"
+        ],
+        "summary": "\u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a",
+        "description": "<div dir='rtl'>\n        <strong>\u062a\u0639\u062f\u0627\u062f \u06a9\u0648\u067e\u0646 \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0634\u062f\u0647 \u062f\u0631 \u0633\u0641\u0627\u0631\u0634\u0627\u062a (\u0647\u0645\u0647 \u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-coupon-used-in-orders \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> coupon_code </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/><br/>\n        </div> \n        <strong>\u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u0645\u0634\u062a\u0631\u06cc (\u0647\u0645\u0647 \u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627):</strong>\n        <div style=\"margin-right: 30px;\">\n             \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `customer.order.read` \u0627\u0632 \u0633\u0645\u062a \u06a9\u0627\u0631\u0628\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-orders-per-customer \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> customer_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/><br/>\n        </div>\n        <strong>\u062a\u0639\u062f\u0627\u062f \u062e\u0631\u06cc\u062f\u0647\u0627\u06cc \u0645\u0634\u062a\u0631\u06cc (\u0645\u062c\u0645\u0648\u0639 \u062a\u0645\u0627\u0645 \u0627\u0642\u0644\u0627\u0645 \u0628\u0627 \u062a\u0639\u062f\u0627\u062f):</strong>\n        <div style=\"margin-right: 30px;\">\n             \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `customer.order.read` \u0627\u0632 \u0633\u0645\u062a \u06a9\u0627\u0631\u0628\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-purchases-per-customer \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> customer_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/><br/>\n        </div>\n        <strong>\u062a\u0639\u062f\u0627\u062f \u0641\u0631\u0648\u0634\u200c\u0647\u0627\u06cc \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0645\u062c\u0645\u0648\u0639 \u062a\u0645\u0627\u0645 \u0627\u0642\u0644\u0627\u0645 \u0628\u0627 \u062a\u0639\u062f\u0627\u062f \u0628\u0627 \u0648\u0636\u0639\u06cc\u062a \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br/>\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-sales-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/><br/>\n        </div>\n        <strong> \u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0647\u0645\u0647 \u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-orders-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/>\n            <br/>\n        </div>\n        <strong> \u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0627\u0631\u0633\u0627\u0644 \u0646\u0634\u062f\u0647):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-not-shipped-orders-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/>\n            <br/>\n        </div>\n        <strong> \u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-shipped-orders-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/>\n            <br/>\n        </div>\n        <strong> \u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0646\u06cc\u0627\u0632\u0645\u0646\u062f \u0627\u0642\u062f\u0627\u0645):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-pending-orders-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/>\n            <br/>\n        </div>\n        <strong> \u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0628\u0633\u062a\u0647 \u0634\u062f\u0647):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-completed-orders-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/>\n            <br/>\n        </div>                        \n        <strong>\u062a\u0639\u062f\u0627\u062f \u0641\u0631\u0648\u0634 \u0645\u062d\u0635\u0648\u0644 (\u0645\u062c\u0645\u0648\u0639 \u062a\u0645\u0627\u0645 \u0627\u0642\u0644\u0627\u0645 \u0628\u0627 \u062a\u0639\u062f\u0627\u062f \u0628\u0627 \u0648\u0636\u0639\u06cc\u062a \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br/>\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-sales-per-product \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> product_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/><br/>\n        </div>\n    </div>",
+        "operationId": "order_calculate_stats_v3_orders_calculate_stats_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ResourceStats"
+            },
+            "name": "resource_count",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Vendor Id"
+            },
+            "name": "vendor_id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            },
+            "name": "product_id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Customer Id"
+            },
+            "name": "customer_id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Coupon Code"
+            },
+            "name": "coupon_code",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Cache-Control"
+            },
+            "name": "Cache-Control",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderCalculateStatsByRef"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vendor-parcels/{parcel_id}/set-preparation": {
+      "post": {
+        "tags": [
+          "OrderProcessing"
+        ],
+        "summary": "\u062a\u0627\u06cc\u06cc\u062f \u0633\u0641\u0627\u0631\u0634",
+        "operationId": "vendor_parcel_set_preparation_v3_vendor_parcels__parcel_id__set_preparation_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Parcel Id"
+            },
+            "name": "parcel_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizationResponse"
+                }
+              }
+            }
+          }
+        },
+        "description": "\u062a\u0627\u06cc\u06cc\u062f \u0633\u0641\u0627\u0631\u0634"
+      }
+    },
+    "/v1/vendor-parcels/{parcel_id}": {
+      "get": {
+        "tags": [
+          "OrderProcessing"
+        ],
+        "summary": "\u062c\u0632\u0626\u06cc\u0627\u062a \u06a9\u0627\u0645\u0644 \u06cc\u06a9 \u0633\u0641\u0627\u0631\u0634",
+        "description": "<div dir='rtl'>\n        \u062c\u0632\u0626\u06cc\u0627\u062a \u06a9\u0627\u0645\u0644 \u06cc\u06a9 \u0633\u0641\u0627\u0631\u0634 \u0631\u0627 \u0628\u0631\u0645\u06cc\u06af\u0631\u062f\u0627\u0646\u062f.\n        <br />\n        \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u062f\u0627\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        <br/>\n        \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647 \u062c\u0632\u0626\u06cc\u0627\u062a \u062a\u0645\u0627\u0645 \u0633\u0641\u0627\u0631\u0634 \u0647\u0627 \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        </div>",
+        "operationId": "vendor_parcel_details_v3_vendor_parcels__parcel_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Parcel Id"
+            },
+            "name": "parcel_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/api__responses__v3__parcels__parcel_response__ParcelResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/customer-orders/{order_id}": {
+      "get": {
+        "tags": [
+          "OrderProcessing"
         ],
         "summary": "\u062c\u0632\u0626\u06cc\u0627\u062a \u06a9\u0627\u0645\u0644 \u06cc\u06a9 \u0633\u0641\u0627\u0631\u0634",
         "description": "<div dir='rtl'>\n        \u062c\u0632\u0626\u06cc\u0627\u062a \u06a9\u0627\u0645\u0644 \u06cc\u06a9 \u0633\u0641\u0627\u0631\u0634 \u0645\u062b\u0644 \u06a9\u0648\u067e\u0646 \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0634\u062f\u0647 \u0644\u06cc\u0633\u062a \u0622\u06cc\u062a\u0645 \u0647\u0627 \u0648... \u0631\u0627 \u0628\u0631\u0645\u06cc\u06af\u0631\u062f\u0627\u0646\u062f.\n        <br />\n        \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `customer.order.read` \u0627\u0632 \u0633\u0645\u062a \u06a9\u0627\u0631\u0628\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        <br/>\n        \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u062c\u0632\u0626\u06cc\u0627\u062a \u062a\u0645\u0627\u0645 \u0633\u0641\u0627\u0631\u0634 \u0647\u0627 \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        </div>",
@@ -270,10 +623,10 @@
         }
       }
     },
-    "/v3/customer-items": {
+    "/v1/customer-orders/items": {
       "get": {
         "tags": [
-          "OpenApi - CustomerOrder"
+          "OrderProcessing"
         ],
         "summary": "\u0644\u06cc\u0633\u062a \u0622\u06cc\u062a\u0645 \u0647\u0627\u06cc \u0645\u0634\u062a\u0631\u06cc",
         "description": "<div dir='rtl'>\n        \u0644\u06cc\u0633\u062a \u0622\u06cc\u062a\u0645 \u0647\u0627\u06cc \u0645\u0634\u062a\u0631\u06cc \u0645\u0631\u062a\u0628 \u0634\u062f\u0647 \u0628\u0631\u0627\u0633\u0627\u0633 \u062a\u0627\u0631\u06cc\u062e \u0627\u06cc\u062c\u0627\u062f \u0631\u0627 \u0628\u0631 \u0645\u06cc \u06af\u0631\u062f\u0627\u0646\u062f.\n        <br/>\n        \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `customer.order.read` \u0627\u0632 \u0633\u0645\u062a \u06a9\u0627\u0631\u0628\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        <br />\n         \u0628\u0631\u0627\u06cc \u062f\u0633\u062a\u0631\u0633\u06cc \u0628\u0647 \u062a\u0645\u0627\u0645 \u0622\u06cc\u062a\u0645 \u0647\u0627\u06cc \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        </div>",
@@ -421,22 +774,22 @@
         }
       }
     },
-    "/v3/customer-items/{item_id}": {
+    "/v1/customer-orders/{order_id}/parcel-hints": {
       "get": {
         "tags": [
-          "OpenApi - CustomerOrder"
+          "OrderProcessing"
         ],
-        "summary": "\u062c\u0632\u0626\u06cc\u0627\u062a \u06a9\u0627\u0645\u0644 \u06cc\u06a9 \u0622\u06cc\u062a\u0645 \u0633\u0641\u0627\u0631\u0634",
-        "description": "<div dir='rtl'>\n        \u062c\u0632\u0626\u06cc\u0627\u062a \u06a9\u0627\u0645\u0644 \u06cc\u06a9 \u0622\u06cc\u062a\u0645 \u0633\u0641\u0627\u0631\u0634 \u0631\u0627 \u0628\u0631\u0645\u06cc\u06af\u0631\u062f\u0627\u0646\u062f.\n        <br />\n        \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `customer.order.read` \u0627\u0632 \u0633\u0645\u062a \u06a9\u0627\u0631\u0628\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        <br/>\n        \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647 \u062c\u0632\u0626\u06cc\u0627\u062a \u062a\u0645\u0627\u0645 \u0622\u06cc\u062a\u0645 \u0647\u0627 \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        </div>",
-        "operationId": "customer_item_details_v3_customer_items__item_id__get",
+        "summary": "\u0627\u0637\u0644\u0627\u0639\u0627\u062a \u06a9\u0645\u06a9\u06cc \u0633\u0641\u0627\u0631\u0634",
+        "description": "<div dir='rtl'>\n        \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u062a\u06a9\u0645\u06cc\u0644 \u06a9\u0646\u0646\u062f\u0647 \u062f\u0631 \u0645\u0648\u0631\u062f \u0648\u0636\u0639\u06cc\u062a \u0641\u0639\u0644\u06cc \u0633\u0641\u0627\u0631\u0634 \u0631\u0627 \u0628\u0647 \u0645\u0634\u062a\u0631\u06cc \u0627\u0631\u0627\u0626\u0647 \u0645\u06cc \u062f\u0647\u062f.\n        <br />\n        \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `customer.order.read` \u0627\u0632 \u0633\u0645\u062a \u06a9\u0627\u0631\u0628\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        <br/>\n        \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0627\u06cc\u0646 \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0628\u0631\u0627\u06cc \u062a\u0645\u0627\u0645 \u0633\u0641\u0627\u0631\u0634 \u0647\u0627 \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        </div>",
+        "operationId": "customer_order_hint_v3_customer_orders__order_id__parcel_hints_get",
         "parameters": [
           {
             "required": true,
             "schema": {
               "type": "integer",
-              "title": "Item Id"
+              "title": "Order Id"
             },
-            "name": "item_id",
+            "name": "order_id",
             "in": "path"
           }
         ],
@@ -446,7 +799,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/api__responses__v3__items__Item_response__ItemResponse"
+                  "$ref": "#/components/schemas/OrderHintsResponse"
                 }
               }
             }
@@ -484,14 +837,14 @@
         }
       }
     },
-    "/v3/vendor-parcels": {
+    "/v1/customer-orders": {
       "get": {
         "tags": [
-          "OpenApi - VendorOrder"
+          "OrderProcessing"
         ],
-        "summary": "\u0644\u06cc\u0633\u062a \u0633\u0641\u0627\u0631\u0634 \u0647\u0627\u06cc \u063a\u0631\u0641\u0647 \u062f\u0627\u0631",
-        "description": "<div dir='rtl'>\n        \u0644\u06cc\u0633\u062a \u0633\u0641\u0627\u0631\u0634 \u0647\u0627\u06cc \u063a\u0631\u0641\u0647 \u062f\u0627\u0631 \u0645\u0631\u062a\u0628 \u0634\u062f\u0647 \u0628\u0631\u0627\u0633\u0627\u0633 \u0645\u0647\u0644\u062a \u0627\u0631\u0633\u0627\u0644 \u0631\u0627 \u0628\u0631 \u0645\u06cc \u06af\u0631\u062f\u0627\u0646\u062f.\n        <br/>\n        \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u062f\u0627\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        <br />\n        \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u062a\u0645\u0627\u0645 \u0633\u0641\u0627\u0631\u0634 \u0647\u0627 \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        </div>",
-        "operationId": "vendor_list_parcels_v3_vendor_parcels_get",
+        "summary": "\u0644\u06cc\u0633\u062a \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u0645\u0634\u062a\u0631\u06cc",
+        "description": "<div dir='rtl'>\n        \u0644\u06cc\u0633\u062a \u0633\u0641\u0627\u0631\u0634\u062a \u0645\u0634\u062a\u0631\u06cc \u0645\u0631\u062a\u0628 \u0634\u062f\u0647 \u0628\u0631\u0627\u0633\u0627\u0633 \u062a\u0627\u0631\u06cc\u062e \u067e\u0631\u062f\u0627\u062e\u062a \u0631\u0627 \u0628\u0631 \u0645\u06cc \u06af\u0631\u062f\u0627\u0646\u062f.\n        <br/>\n        \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `customer.order.read` \u0627\u0632 \u0633\u0645\u062a \u06a9\u0627\u0631\u0628\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        <br />\n         \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u062a\u0645\u0627\u0645 \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        </div>",
+        "operationId": "customer_list_orders_v3_customer_orders_get",
         "parameters": [
           {
             "required": false,
@@ -503,80 +856,72 @@
             "in": "query"
           },
           {
+            "description": "<div dir='rtl'>\u0628\u0631\u0627\u06cc \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0627\u0632 \u0627\u06cc\u0646 \u0641\u06cc\u0644\u062a\u0631\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.</div>",
             "required": false,
             "schema": {
               "type": "string",
-              "title": "Items.Customer Ids"
+              "title": "Customer Ids",
+              "description": "<div dir='rtl'>\u0628\u0631\u0627\u06cc \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0627\u0632 \u0627\u06cc\u0646 \u0641\u06cc\u0644\u062a\u0631\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.</div>"
             },
-            "name": "items.customer_ids",
+            "name": "customer_ids",
             "in": "query"
           },
           {
             "required": false,
             "schema": {
               "type": "string",
-              "title": "Items.Vendor Ids"
+              "title": "Vendor Ids"
             },
-            "name": "items.vendor_ids",
+            "name": "vendor_ids",
             "in": "query"
           },
           {
             "required": false,
             "schema": {
               "type": "string",
-              "title": "Items.Product Ids"
+              "title": "Product Ids"
             },
-            "name": "items.product_ids",
+            "name": "product_ids",
             "in": "query"
           },
           {
             "required": false,
             "schema": {
               "type": "string",
-              "title": "Items.Order Ids"
+              "title": "Coupon Code"
             },
-            "name": "items.order_ids",
-            "in": "query"
-          },
-          {
-            "description": "| Value | Name | translate | \n | :----: | ---- | :---- |\n | 3739 | NEW_ORDER | \u062c\u062f\u06cc\u062f |\n | 3237 | PREPARATION_IN_PROGRESS | \u062f\u0631 \u062d\u0627\u0644 \u0622\u0645\u0627\u062f\u0647 \u0633\u0627\u0632\u06cc |\n | 3238 | POSTED | \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647  |\n | 5017 | WRONG_TRACKING_CODE | \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0627\u0631\u0633\u0627\u0644 \u0646\u0627\u062f\u0631\u0633\u062a |\n | 3572 | PRODUCT_IS_NOT_DELIVERED | \u0646\u0631\u0633\u06cc\u062f\u0647 |\n | 3740 | PROBLEM_IS_REPORTED | \u062b\u0628\u062a \u0645\u0634\u06a9\u0644 \u0634\u062f\u0647 |\n | 4633 | CUSTOMER_CANCEL_REQUEST_FROM_CUSTOMER | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 |\n | 5075 | OVERDUE_AGREEMENT_REQUEST_FROM_VENDOR | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062a\u0648\u0627\u0641\u0642 \u062a\u0627\u062e\u06cc\u0631 |\n | 3195 | SATISFIED | \u0631\u0636\u0627\u06cc\u062a  |\n | 3233 | DEFINITIVE_DISSATISFACTION | \u0639\u0648\u062f\u062a \u0648\u062c\u0647 \u06a9\u0627\u0645\u0644 |\n | 3067 | CANCEL | \u0644\u063a\u0648 ",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Statuses",
-              "description": "| Value | Name | translate | \n | :----: | ---- | :---- |\n | 3739 | NEW_ORDER | \u062c\u062f\u06cc\u062f |\n | 3237 | PREPARATION_IN_PROGRESS | \u062f\u0631 \u062d\u0627\u0644 \u0622\u0645\u0627\u062f\u0647 \u0633\u0627\u0632\u06cc |\n | 3238 | POSTED | \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647  |\n | 5017 | WRONG_TRACKING_CODE | \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0627\u0631\u0633\u0627\u0644 \u0646\u0627\u062f\u0631\u0633\u062a |\n | 3572 | PRODUCT_IS_NOT_DELIVERED | \u0646\u0631\u0633\u06cc\u062f\u0647 |\n | 3740 | PROBLEM_IS_REPORTED | \u062b\u0628\u062a \u0645\u0634\u06a9\u0644 \u0634\u062f\u0647 |\n | 4633 | CUSTOMER_CANCEL_REQUEST_FROM_CUSTOMER | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 |\n | 5075 | OVERDUE_AGREEMENT_REQUEST_FROM_VENDOR | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062a\u0648\u0627\u0641\u0642 \u062a\u0627\u062e\u06cc\u0631 |\n | 3195 | SATISFIED | \u0631\u0636\u0627\u06cc\u062a  |\n | 3233 | DEFINITIVE_DISSATISFACTION | \u0639\u0648\u062f\u062a \u0648\u062c\u0647 \u06a9\u0627\u0645\u0644 |\n | 3067 | CANCEL | \u0644\u063a\u0648 "
-            },
-            "name": "statuses",
+            "name": "coupon_code",
             "in": "query"
           },
           {
             "required": false,
             "schema": {
               "type": "string",
-              "format": "date-time",
-              "title": "Estimate Send At[Gte]"
+              "title": "Items.Title[Like]"
             },
-            "name": "estimate_send_at[gte]",
+            "name": "items.title[like]",
+            "in": "query"
+          },
+          {
+            "description": "| Value | Name | translate | \n | :----: | ---- | :---- |\n | 3739 | NEW_ORDER | \u062c\u062f\u06cc\u062f |\n | 3237 | PREPARATION_IN_PROGRESS | \u062f\u0631 \u062d\u0627\u0644 \u0622\u0645\u0627\u062f\u0647 \u0633\u0627\u0632\u06cc |\n | 3238 | POSTED | \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647  |\n | 5017 | WRONG_TRACKING_CODE | \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0627\u0631\u0633\u0627\u0644 \u0646\u0627\u062f\u0631\u0633\u062a |\n | 3572 | PRODUCT_IS_NOT_DELIVERED | \u0646\u0631\u0633\u06cc\u062f\u0647 |\n | 3740 | PROBLEM_IS_REPORTED | \u062b\u0628\u062a \u0645\u0634\u06a9\u0644 \u0634\u062f\u0647 |\n | 4633 | CUSTOMER_CANCEL_REQUEST_FROM_CUSTOMER | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 \u0645\u0634\u062a\u0631\u06cc |\n | 5075 | OVERDUE_AGREEMENT_REQUEST_FROM_VENDOR | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062a\u0648\u0627\u0641\u0642 \u062a\u0627\u062e\u06cc\u0631 |\n | 3195 | SATISFIED | \u0631\u0636\u0627\u06cc\u062a  |\n | 3233 | DEFINITIVE_DISSATISFACTION | \u0639\u0648\u062f\u062a \u0648\u062c\u0647 \u06a9\u0627\u0645\u0644 |\n | 3067 | CANCEL | \u0644\u063a\u0648 \n | 6440 | VENDOR_CANCEL_REQUEST | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 \u063a\u0631\u0641\u0647 \u062f\u0627\u0631 ",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "Parcels.Statuses",
+              "description": "| Value | Name | translate | \n | :----: | ---- | :---- |\n | 3739 | NEW_ORDER | \u062c\u062f\u06cc\u062f |\n | 3237 | PREPARATION_IN_PROGRESS | \u062f\u0631 \u062d\u0627\u0644 \u0622\u0645\u0627\u062f\u0647 \u0633\u0627\u0632\u06cc |\n | 3238 | POSTED | \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647  |\n | 5017 | WRONG_TRACKING_CODE | \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0627\u0631\u0633\u0627\u0644 \u0646\u0627\u062f\u0631\u0633\u062a |\n | 3572 | PRODUCT_IS_NOT_DELIVERED | \u0646\u0631\u0633\u06cc\u062f\u0647 |\n | 3740 | PROBLEM_IS_REPORTED | \u062b\u0628\u062a \u0645\u0634\u06a9\u0644 \u0634\u062f\u0647 |\n | 4633 | CUSTOMER_CANCEL_REQUEST_FROM_CUSTOMER | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 \u0645\u0634\u062a\u0631\u06cc |\n | 5075 | OVERDUE_AGREEMENT_REQUEST_FROM_VENDOR | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u062a\u0648\u0627\u0641\u0642 \u062a\u0627\u062e\u06cc\u0631 |\n | 3195 | SATISFIED | \u0631\u0636\u0627\u06cc\u062a  |\n | 3233 | DEFINITIVE_DISSATISFACTION | \u0639\u0648\u062f\u062a \u0648\u062c\u0647 \u06a9\u0627\u0645\u0644 |\n | 3067 | CANCEL | \u0644\u063a\u0648 \n | 6440 | VENDOR_CANCEL_REQUEST | \u062f\u0631\u062e\u0648\u0627\u0633\u062a \u0644\u063a\u0648 \u063a\u0631\u0641\u0647 \u062f\u0627\u0631 "
+            },
+            "name": "parcels.statuses",
             "in": "query"
           },
           {
             "required": false,
             "schema": {
               "type": "string",
-              "format": "date-time",
-              "title": "Estimate Send At[Lte]"
+              "maxLength": 50,
+              "minLength": 3,
+              "title": "Customer Name[Like]"
             },
-            "name": "estimate_send_at[lte]",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time",
-              "title": "Created At[Gte]"
-            },
-            "name": "created_at[gte]",
+            "name": "customer_name[like]",
             "in": "query"
           },
           {
@@ -584,9 +929,39 @@
             "schema": {
               "type": "string",
               "format": "date-time",
-              "title": "Created At[Lte]"
+              "title": "Paid At[Gte]"
             },
-            "name": "created_at[lte]",
+            "name": "paid_at[gte]",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Paid At[Lte]"
+            },
+            "name": "paid_at[lte]",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Parcels.Estimate Send At[Lte]"
+            },
+            "name": "parcels.estimate_send_at[lte]",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Parcels.Estimate Send At[Gte]"
+            },
+            "name": "parcels.estimate_send_at[gte]",
             "in": "query"
           },
           {
@@ -594,7 +969,7 @@
             "schema": {
               "type": "string",
               "title": "Sort",
-              "default": "estimate_send_at:desc"
+              "default": "paid_at:desc"
             },
             "name": "sort",
             "in": "query"
@@ -626,177 +1001,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ParcelsResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthenticationResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthorizationResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v3/vendor-parcels/{parcel_id}": {
-      "get": {
-        "tags": [
-          "OpenApi - VendorOrder"
-        ],
-        "summary": "\u062c\u0632\u0626\u06cc\u0627\u062a \u06a9\u0627\u0645\u0644 \u06cc\u06a9 \u0633\u0641\u0627\u0631\u0634",
-        "description": "<div dir='rtl'>\n        \u062c\u0632\u0626\u06cc\u0627\u062a \u06a9\u0627\u0645\u0644 \u06cc\u06a9 \u0633\u0641\u0627\u0631\u0634 \u0631\u0627 \u0628\u0631\u0645\u06cc\u06af\u0631\u062f\u0627\u0646\u062f.\n        <br />\n        \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u062f\u0627\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        <br/>\n        \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647 \u062c\u0632\u0626\u06cc\u0627\u062a \u062a\u0645\u0627\u0645 \u0633\u0641\u0627\u0631\u0634 \u0647\u0627 \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n        </div>",
-        "operationId": "vendor_parcel_details_v3_vendor_parcels__parcel_id__get",
-        "parameters": [
-          {
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "title": "Parcel Id"
-            },
-            "name": "parcel_id",
-            "in": "path"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/api__responses__v3__parcels__parcel_response__ParcelResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthenticationResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthorizationResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v3/orders-calculate-stats": {
-      "get": {
-        "tags": [
-          "OpenApi - Statistic"
-        ],
-        "summary": "\u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a",
-        "description": "<div dir='rtl'>\n        <strong>\u062a\u0639\u062f\u0627\u062f \u06a9\u0648\u067e\u0646 \u0627\u0633\u062a\u0641\u0627\u062f\u0647 \u0634\u062f\u0647 \u062f\u0631 \u0633\u0641\u0627\u0631\u0634\u0627\u062a (\u0647\u0645\u0647 \u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-coupon-used-in-orders \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> coupon_code </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/><br/>\n        </div> \n        <strong>\u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u0645\u0634\u062a\u0631\u06cc (\u0647\u0645\u0647 \u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627):</strong>\n        <div style=\"margin-right: 30px;\">\n             \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `customer.order.read` \u0627\u0632 \u0633\u0645\u062a \u06a9\u0627\u0631\u0628\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-orders-per-customer \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> customer_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/><br/>\n        </div>\n        <strong>\u062a\u0639\u062f\u0627\u062f \u062e\u0631\u06cc\u062f\u0647\u0627\u06cc \u0645\u0634\u062a\u0631\u06cc (\u0645\u062c\u0645\u0648\u0639 \u062a\u0645\u0627\u0645 \u0627\u0642\u0644\u0627\u0645 \u0628\u0627 \u062a\u0639\u062f\u0627\u062f):</strong>\n        <div style=\"margin-right: 30px;\">\n             \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `customer.order.read` \u0627\u0632 \u0633\u0645\u062a \u06a9\u0627\u0631\u0628\u0631 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-purchases-per-customer \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> customer_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/><br/>\n        </div>\n        <strong>\u062a\u0639\u062f\u0627\u062f \u0641\u0631\u0648\u0634\u200c\u0647\u0627\u06cc \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0645\u062c\u0645\u0648\u0639 \u062a\u0645\u0627\u0645 \u0627\u0642\u0644\u0627\u0645 \u0628\u0627 \u062a\u0639\u062f\u0627\u062f \u0628\u0627 \u0648\u0636\u0639\u06cc\u062a \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br/>\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-sales-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/><br/>\n        </div>\n        <strong> \u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0647\u0645\u0647 \u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-orders-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/>\n            <br/>\n        </div>\n        <strong> \u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0627\u0631\u0633\u0627\u0644 \u0646\u0634\u062f\u0647):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-not-shipped-orders-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/>\n            <br/>\n        </div>\n        <strong> \u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-shipped-orders-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/>\n            <br/>\n        </div>\n        <strong> \u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0646\u06cc\u0627\u0632\u0645\u0646\u062f \u0627\u0642\u062f\u0627\u0645):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-pending-orders-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/>\n            <br/>\n        </div>\n        <strong> \u062a\u0639\u062f\u0627\u062f \u0633\u0641\u0627\u0631\u0634\u0627\u062a \u063a\u0631\u0641\u0647\u200c\u062f\u0627\u0631 (\u0628\u0633\u062a\u0647 \u0634\u062f\u0647):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc `vendor.parcel.read` \u0627\u0632 \u0633\u0645\u062a \u063a\u0631\u0641\u0647 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br />\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-completed-orders-per-vendor \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> vendor_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/>\n            <br/>\n        </div>                        \n        <strong>\u062a\u0639\u062f\u0627\u062f \u0641\u0631\u0648\u0634 \u0645\u062d\u0635\u0648\u0644 (\u0645\u062c\u0645\u0648\u0639 \u062a\u0645\u0627\u0645 \u0627\u0642\u0644\u0627\u0645 \u0628\u0627 \u062a\u0639\u062f\u0627\u062f \u0628\u0627 \u0648\u0636\u0639\u06cc\u062a \u0627\u0631\u0633\u0627\u0644 \u0634\u062f\u0647):</strong>\n        <div style=\"margin-right: 30px;\">\n            \u062a\u0648\u062c\u0647 \u06a9\u0646\u06cc\u062f \u06a9\u0647 \u0628\u0631\u0627\u06cc \u0645\u0634\u0627\u0647\u062f\u0647\u060c \u0628\u0647 \u062f\u0633\u062a\u0631\u0633\u06cc \u0627\u062f\u0645\u06cc\u0646 \u0646\u06cc\u0627\u0632 \u062f\u0627\u0631\u06cc\u062f.\n            <br/>\n            <strong> resource_count </strong> \u0628\u0631\u0627\u0628\u0631 \u0628\u0627 number-of-sales-per-product \u0628\u0627\u0634\u062f. \n            <br/>\n            <strong> product_id </strong>\u0627\u062c\u0628\u0627\u0631\u06cc \u0627\u0633\u062a.\n            <br/><br/>\n        </div>\n    </div>",
-        "operationId": "order_calculate_stats_v3_orders_calculate_stats_get",
-        "parameters": [
-          {
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/ResourceStats"
-            },
-            "name": "resource_count",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "title": "Vendor Id"
-            },
-            "name": "vendor_id",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "title": "Product Id"
-            },
-            "name": "product_id",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "title": "Customer Id"
-            },
-            "name": "customer_id",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Coupon Code"
-            },
-            "name": "coupon_code",
-            "in": "query"
-          },
-          {
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "Cache-Control"
-            },
-            "name": "Cache-Control",
-            "in": "header"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/OrderCalculateStatsByRef"
+                  "$ref": "#/components/schemas/OrdersResponse"
                 }
               }
             }
@@ -837,130 +1042,184 @@
   },
   "components": {
     "schemas": {
-      "AuthenticationErrors": {
+      "CustomerHintResponse": {
         "properties": {
-          "code": {
-            "type": "integer",
-            "title": "Code"
+          "variant": {
+            "$ref": "#/components/schemas/HintBarVariantEnums"
           },
-          "message": {
-            "type": "string",
-            "title": "Message"
-          },
-          "fields": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Fields"
+          "hint": {
+            "$ref": "#/components/schemas/HintResponse"
           }
         },
         "type": "object",
         "required": [
-          "code",
-          "message",
-          "fields"
+          "variant",
+          "hint"
         ],
-        "title": "AuthenticationErrors"
+        "title": "CustomerHintResponse"
       },
-      "AuthenticationResponse": {
-        "properties": {
-          "http_status": {
-            "type": "integer",
-            "title": "Http Status",
-            "default": 401
-          },
-          "message": {
-            "type": "string",
-            "title": "Message",
-            "default": "Unauthorized"
-          },
-          "errors": {
-            "items": {
-              "$ref": "#/components/schemas/AuthenticationErrors"
-            },
-            "type": "array",
-            "title": "Errors"
-          }
-        },
-        "type": "object",
-        "required": [
-          "errors"
-        ],
-        "title": "AuthenticationResponse"
-      },
-      "AuthorizationErrors": {
-        "properties": {
-          "code": {
-            "type": "integer",
-            "title": "Code"
-          },
-          "message": {
-            "type": "string",
-            "title": "Message"
-          },
-          "fields": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Fields"
-          }
-        },
-        "type": "object",
-        "required": [
-          "code",
-          "message",
-          "fields"
-        ],
-        "title": "AuthorizationErrors"
-      },
-      "AuthorizationResponse": {
-        "properties": {
-          "http_status": {
-            "type": "integer",
-            "title": "Http Status",
-            "default": 403
-          },
-          "message": {
-            "type": "string",
-            "title": "Message",
-            "default": "Forbidden access."
-          },
-          "errors": {
-            "items": {
-              "$ref": "#/components/schemas/AuthorizationErrors"
-            },
-            "type": "array",
-            "title": "Errors"
-          }
-        },
-        "type": "object",
-        "required": [
-          "errors"
-        ],
-        "title": "AuthorizationResponse"
-      },
-      "CityResponse": {
+      "ParcelHintResponse": {
         "properties": {
           "id": {
             "type": "integer",
             "title": "Id"
           },
-          "title": {
-            "type": "string",
-            "title": "Title"
+          "hint_bar": {
+            "$ref": "#/components/schemas/CustomerHintResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "ParcelHintResponse"
+      },
+      "OrderOfItemSummeryRepose": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
           },
-          "parent": {
-            "$ref": "#/components/schemas/CityResponse"
+          "paid_at": {
+            "type": "string",
+            "title": "Paid At"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/api__responses__v3__user__customer_response__CustomerResponse"
           }
         },
         "type": "object",
         "required": [
           "id",
-          "title"
+          "paid_at",
+          "created_at",
+          "customer"
         ],
-        "title": "CityResponse"
+        "title": "OrderOfItemSummeryRepose"
+      },
+      "UserSummaryResponse2": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "hash_id": {
+            "type": "string",
+            "title": "Hash Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "avatar": {
+            "$ref": "#/components/schemas/FileResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "hash_id",
+          "name"
+        ],
+        "title": "UserSummaryResponse2"
+      },
+      "OrdersResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/api__responses__v3__orders__order_summary_response__OrderSummaryResponse"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "next_cursor": {
+            "type": "string",
+            "title": "Next Cursor"
+          },
+          "previous_cursor": {
+            "type": "string",
+            "title": "Previous Cursor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "OrdersResponse"
+      },
+      "api__responses__v3__products__product_variation_response__ProductVariationResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "properties": {
+            "items": {
+              "$ref": "#/components/schemas/api__responses__v3__products__product_variation_response__Properties"
+            },
+            "type": "array",
+            "title": "Properties"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "ProductVariationResponse"
+      },
+      "ParcelsResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ParcelSummaryResponse"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "next_cursor": {
+            "type": "string",
+            "title": "Next Cursor"
+          },
+          "previous_cursor": {
+            "type": "string",
+            "title": "Previous Cursor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "ParcelsResponse"
+      },
+      "UserResponse2": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "hash_id": {
+            "type": "string",
+            "title": "Hash Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "avatar": {
+            "$ref": "#/components/schemas/FileResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "hash_id",
+          "name"
+        ],
+        "title": "UserResponse2"
       },
       "CouponResultResponse": {
         "properties": {
@@ -990,6 +1249,281 @@
         ],
         "title": "CouponResultResponse"
       },
+      "PostedOrderRequestV3": {
+        "properties": {
+          "tracking_code": {
+            "type": "string",
+            "title": "Tracking Code"
+          },
+          "shipping_method": {
+            "type": "integer",
+            "enum": [
+              3197,
+              3198,
+              3259,
+              5137,
+              4040,
+              6102,
+              6101,
+              6110,
+              6111,
+              6112,
+              6113,
+              6114
+            ],
+            "title": "Shipping Method",
+            "description": "\u0631\u0648\u0634 \u0627\u0631\u0633\u0627\u0644. \u0645\u0642\u0627\u062f\u06cc\u0631 \u0645\u062c\u0627\u0632: 3197 = SPECIAL, 3198 = EXPRESS, 3259 = COURIER, 5137 = TRANSIT, 4040 = TIPAX, 6102 = MAHEX, 6101 = CHAPAR, 6110 = AMADAST, 6111 = DECA, 6112 = CHEETA, 6113 = BOXIT, 6114 = SALAM_RESAN"
+          }
+        },
+        "type": "object",
+        "required": [
+          "shipping_method"
+        ],
+        "title": "PostedOrderRequestV3"
+      },
+      "api__responses__v3__parcels__shipping_method_response__ShippingMethodResponse": {
+        "properties": {
+          "current": {
+            "$ref": "#/components/schemas/Method"
+          },
+          "default": {
+            "$ref": "#/components/schemas/Method"
+          }
+        },
+        "type": "object",
+        "required": [
+          "current",
+          "default"
+        ],
+        "title": "ShippingMethodResponse"
+      },
+      "EstimatedDelivery": {
+        "properties": {
+          "min_day_at": {
+            "type": "string",
+            "title": "Min Day At"
+          },
+          "max_day_at": {
+            "type": "string",
+            "title": "Max Day At"
+          },
+          "hint": {
+            "type": "string",
+            "title": "Hint"
+          },
+          "delivery_hint": {
+            "type": "string",
+            "title": "Delivery Hint"
+          }
+        },
+        "type": "object",
+        "required": [
+          "min_day_at",
+          "max_day_at",
+          "hint",
+          "delivery_hint"
+        ],
+        "title": "EstimatedDelivery"
+      },
+      "api__responses__v3__products__product_summary_response__ProductSummaryResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category_id": {
+            "type": "integer",
+            "title": "Category Id"
+          },
+          "photos": {
+            "items": {
+              "$ref": "#/components/schemas/FileResponse"
+            },
+            "type": "array",
+            "title": "Photos"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "category_id",
+          "photos"
+        ],
+        "title": "ProductSummaryResponse"
+      },
+      "CityResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "parent": {
+            "$ref": "#/components/schemas/CityResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "CityResponse"
+      },
+      "PublicResponse": {
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ],
+            "title": "Result"
+          }
+        },
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "title": "PublicResponse"
+      },
+      "ParcelOfOrderResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "total_items_price": {
+            "type": "integer",
+            "title": "Total Items Price"
+          },
+          "estimate_send_at": {
+            "type": "string",
+            "title": "Estimate Send At"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          },
+          "confirmed_at": {
+            "type": "string",
+            "title": "Confirmed At"
+          },
+          "estimate_confirm": {
+            "$ref": "#/components/schemas/EstimateConfirm"
+          },
+          "send_at": {
+            "type": "string",
+            "title": "Send At"
+          },
+          "estimate_send": {
+            "$ref": "#/components/schemas/EstimateSend"
+          },
+          "estimated_delivery": {
+            "$ref": "#/components/schemas/EstimatedDelivery"
+          },
+          "is_confirmed": {
+            "type": "boolean",
+            "title": "Is Confirmed"
+          },
+          "is_send_date": {
+            "type": "boolean",
+            "title": "Is Send Date"
+          },
+          "is_delivered": {
+            "type": "boolean",
+            "title": "Is Delivered"
+          },
+          "has_delay": {
+            "type": "boolean",
+            "title": "Has Delay"
+          },
+          "delay_days": {
+            "type": "integer",
+            "title": "Delay Days"
+          },
+          "shipping_cost": {
+            "type": "integer",
+            "title": "Shipping Cost"
+          },
+          "shipping_method": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/api__responses__v3__parcels__shipping_method_response__ShippingMethodResponse"
+              },
+              {
+                "$ref": "#/components/schemas/api__responses__v3__parcels__shipping_method_response__ShippingResponse"
+              }
+            ],
+            "title": "Shipping Method"
+          },
+          "is_freight_collect": {
+            "type": "boolean",
+            "title": "Is Freight Collect",
+            "default": false
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnumerationResponse"
+          },
+          "submitted_problems": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Submitted Problems"
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/VendorResponseSla"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemOfParcelResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "post_receipt": {
+            "$ref": "#/components/schemas/api__responses__v3__parcels__post_receipt_response__PostReceiptResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "total_items_price",
+          "created_at",
+          "updated_at",
+          "confirmed_at",
+          "estimate_confirm",
+          "estimate_send",
+          "estimated_delivery",
+          "is_confirmed",
+          "is_send_date",
+          "is_delivered",
+          "delay_days",
+          "shipping_cost",
+          "shipping_method",
+          "submitted_problems",
+          "vendor",
+          "items"
+        ],
+        "title": "ParcelOfOrderResponse"
+      },
       "EnumerationResponse": {
         "properties": {
           "id": {
@@ -1008,60 +1542,77 @@
         ],
         "title": "EnumerationResponse"
       },
-      "EstimatedDelivery": {
-        "properties": {
-          "min_day_at": {
-            "type": "string",
-            "title": "Min Day At"
-          },
-          "max_day_at": {
-            "type": "string",
-            "title": "Max Day At"
-          },
-          "hint": {
-            "type": "string",
-            "title": "Hint"
-          }
-        },
-        "type": "object",
-        "required": [
-          "min_day_at",
-          "max_day_at",
-          "hint"
-        ],
-        "title": "EstimatedDelivery"
-      },
-      "FileResponse": {
+      "api__responses__v3__parcels__post_receipt_response__PostReceiptResponse": {
         "properties": {
           "id": {
             "type": "integer",
             "title": "Id"
           },
-          "original": {
+          "tracking_code": {
             "type": "string",
-            "title": "Original"
+            "title": "Tracking Code"
           },
-          "format": {
+          "final_post_cost": {
+            "type": "integer",
+            "title": "Final Post Cost"
+          },
+          "created_at": {
             "type": "string",
-            "title": "Format"
+            "title": "Created At"
           },
-          "resized": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "type": "object",
-            "title": "Resized"
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          },
+          "tracking_link": {
+            "type": "string",
+            "title": "Tracking Link"
+          },
+          "phone_number": {
+            "type": "string",
+            "title": "Phone Number"
+          },
+          "attachment": {
+            "$ref": "#/components/schemas/FileResponse"
+          },
+          "editable": {
+            "type": "boolean",
+            "title": "Editable"
+          },
+          "edited": {
+            "type": "boolean",
+            "title": "Edited"
           }
         },
         "type": "object",
         "required": [
           "id",
-          "original",
-          "resized"
+          "created_at",
+          "updated_at",
+          "editable",
+          "edited"
         ],
-        "title": "FileResponse"
+        "title": "PostReceiptResponse"
       },
-      "ItemOfParcelResponse": {
+      "Method": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "Method"
+      },
+      "api__responses__v3__items__item_summary_response__ItemSummaryResponse": {
         "properties": {
           "id": {
             "type": "integer",
@@ -1086,9 +1637,11 @@
           "last_item_status": {
             "$ref": "#/components/schemas/api__responses__v3__items__item_status__item_status_response__ItemStatusResponse"
           },
-          "max_refund_amount": {
-            "type": "integer",
-            "title": "Max Refund Amount"
+          "parcel": {
+            "$ref": "#/components/schemas/ParcelOfItemSummaryResponse"
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderOfItemSummeryRepose"
           },
           "product": {
             "$ref": "#/components/schemas/api__responses__v3__products__product_summary_response__ProductSummaryResponse"
@@ -1104,10 +1657,32 @@
           "quantity",
           "weight",
           "price",
-          "max_refund_amount",
+          "parcel",
+          "order",
           "product"
         ],
-        "title": "ItemOfParcelResponse"
+        "title": "ItemSummaryResponse"
+      },
+      "OrderHintsResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "parcels": {
+            "items": {
+              "$ref": "#/components/schemas/ParcelHintResponse"
+            },
+            "type": "array",
+            "title": "Parcels"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "parcels"
+        ],
+        "title": "OrderHintsResponse"
       },
       "ItemOfParcelSummeryResponse": {
         "properties": {
@@ -1153,68 +1728,6 @@
         ],
         "title": "ItemOfParcelSummeryResponse"
       },
-      "ItemsResponse": {
-        "properties": {
-          "data": {
-            "items": {
-              "$ref": "#/components/schemas/api__responses__v3__items__item_summary_response__ItemSummaryResponse"
-            },
-            "type": "array",
-            "title": "Data"
-          },
-          "next_cursor": {
-            "type": "string",
-            "title": "Next Cursor"
-          },
-          "previous_cursor": {
-            "type": "string",
-            "title": "Previous Cursor"
-          }
-        },
-        "type": "object",
-        "required": [
-          "data"
-        ],
-        "title": "ItemsResponse"
-      },
-      "OrderAmountFetcherResponse": {
-        "properties": {
-          "gateway": {
-            "type": "integer",
-            "title": "Gateway"
-          },
-          "credit": {
-            "type": "integer",
-            "title": "Credit"
-          },
-          "salampay": {
-            "type": "integer",
-            "title": "Salampay"
-          },
-          "other": {
-            "type": "integer",
-            "title": "Other"
-          },
-          "total": {
-            "type": "integer",
-            "title": "Total"
-          },
-          "other_drivers_detail": {
-            "type": "object",
-            "title": "Other Drivers Detail"
-          }
-        },
-        "type": "object",
-        "required": [
-          "gateway",
-          "credit",
-          "salampay",
-          "other",
-          "total",
-          "other_drivers_detail"
-        ],
-        "title": "OrderAmountFetcherResponse"
-      },
       "OrderCalculateStatsByRef": {
         "properties": {
           "result": {
@@ -1227,156 +1740,6 @@
           "result"
         ],
         "title": "OrderCalculateStatsByRef"
-      },
-      "OrderOfItemSummeryRepose": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "paid_at": {
-            "type": "string",
-            "title": "Paid At"
-          },
-          "created_at": {
-            "type": "string",
-            "title": "Created At"
-          },
-          "customer": {
-            "$ref": "#/components/schemas/api__responses__v3__user__customer_response__CustomerResponse"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "paid_at",
-          "created_at",
-          "customer"
-        ],
-        "title": "OrderOfItemSummeryRepose"
-      },
-      "OrderOfParcelSummeryRepose": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "paid_at": {
-            "type": "string",
-            "title": "Paid At"
-          },
-          "created_at": {
-            "type": "string",
-            "title": "Created At"
-          },
-          "customer": {
-            "$ref": "#/components/schemas/api__responses__v3__user__customer_response__CustomerResponse"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "paid_at",
-          "created_at",
-          "customer"
-        ],
-        "title": "OrderOfParcelSummeryRepose"
-      },
-      "OrderResponse": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "amount_drivers": {
-            "$ref": "#/components/schemas/OrderAmountFetcherResponse"
-          },
-          "amount": {
-            "type": "integer",
-            "title": "Amount"
-          },
-          "has_credit": {
-            "type": "boolean",
-            "title": "Has Credit"
-          },
-          "bnpl_amount": {
-            "type": "integer",
-            "title": "Bnpl Amount"
-          },
-          "installment_amount": {
-            "type": "integer",
-            "title": "Installment Amount"
-          },
-          "coupon": {
-            "$ref": "#/components/schemas/api__responses__coupon_response__CouponResponse"
-          },
-          "coupon_discount": {
-            "type": "integer",
-            "title": "Coupon Discount"
-          },
-          "credit_amount": {
-            "type": "integer",
-            "title": "Credit Amount"
-          },
-          "paid_at": {
-            "type": "string",
-            "title": "Paid At"
-          },
-          "created_at": {
-            "type": "string",
-            "title": "Created At"
-          },
-          "customer": {
-            "$ref": "#/components/schemas/api__responses__v3__user__customer_response__CustomerResponse"
-          },
-          "parcels": {
-            "items": {
-              "$ref": "#/components/schemas/ParcelOfOrderResponse"
-            },
-            "type": "array",
-            "title": "Parcels"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "amount_drivers",
-          "amount",
-          "has_credit",
-          "bnpl_amount",
-          "installment_amount",
-          "coupon_discount",
-          "credit_amount",
-          "paid_at",
-          "created_at",
-          "customer",
-          "parcels"
-        ],
-        "title": "OrderResponse"
-      },
-      "OrdersResponse": {
-        "properties": {
-          "data": {
-            "items": {
-              "$ref": "#/components/schemas/api__responses__v3__orders__order_summary_response__OrderSummaryResponse"
-            },
-            "type": "array",
-            "title": "Data"
-          },
-          "next_cursor": {
-            "type": "string",
-            "title": "Next Cursor"
-          },
-          "previous_cursor": {
-            "type": "string",
-            "title": "Previous Cursor"
-          }
-        },
-        "type": "object",
-        "required": [
-          "data"
-        ],
-        "title": "OrdersResponse"
       },
       "ParcelOfItemResponse": {
         "properties": {
@@ -1453,398 +1816,97 @@
         ],
         "title": "ParcelOfItemResponse"
       },
-      "ParcelOfItemSummaryResponse": {
+      "EstimateSend": {
         "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "created_at": {
-            "type": "string",
-            "title": "Created At"
-          },
-          "updated_at": {
-            "type": "string",
-            "title": "Updated At"
-          },
-          "estimate_send_at": {
-            "type": "string",
-            "title": "Estimate Send At"
-          },
-          "status": {
-            "$ref": "#/components/schemas/EnumerationResponse"
-          },
-          "shipping_method": {
-            "$ref": "#/components/schemas/api__responses__v3__parcels__shipping_method_response__ShippingMethodResponse"
-          },
-          "vendor": {
-            "$ref": "#/components/schemas/VendorResponse2"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "shipping_method",
-          "vendor"
-        ],
-        "title": "ParcelOfItemSummaryResponse"
-      },
-      "ParcelOfOrderResponse": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "total_items_price": {
-            "type": "integer",
-            "title": "Total Items Price"
-          },
-          "estimate_send_at": {
-            "type": "string",
-            "title": "Estimate Send At"
-          },
-          "created_at": {
-            "type": "string",
-            "title": "Created At"
-          },
-          "updated_at": {
-            "type": "string",
-            "title": "Updated At"
-          },
-          "confirmed_at": {
-            "type": "string",
-            "title": "Confirmed At"
-          },
           "send_at": {
             "type": "string",
             "title": "Send At"
           },
-          "estimated_delivery": {
-            "$ref": "#/components/schemas/EstimatedDelivery"
-          },
-          "is_confirmed": {
-            "type": "boolean",
-            "title": "Is Confirmed"
-          },
-          "is_send_date": {
-            "type": "boolean",
-            "title": "Is Send Date"
-          },
-          "is_delivered": {
-            "type": "boolean",
-            "title": "Is Delivered"
-          },
-          "has_delay": {
-            "type": "boolean",
-            "title": "Has Delay"
-          },
-          "delay_days": {
-            "type": "integer",
-            "title": "Delay Days"
-          },
-          "shipping_cost": {
-            "type": "integer",
-            "title": "Shipping Cost"
-          },
-          "shipping_method": {
-            "$ref": "#/components/schemas/api__responses__v3__parcels__shipping_method_response__ShippingMethodResponse"
-          },
-          "is_freight_collect": {
-            "type": "boolean",
-            "title": "Is Freight Collect",
-            "default": false
-          },
-          "status": {
-            "$ref": "#/components/schemas/EnumerationResponse"
-          },
-          "vendor": {
-            "$ref": "#/components/schemas/VendorResponseSla"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/ItemOfParcelResponse"
-            },
-            "type": "array",
-            "title": "Items"
-          },
-          "post_receipt": {
-            "$ref": "#/components/schemas/api__responses__v3__parcels__post_receipt_response__PostReceiptResponse"
+          "send_hint": {
+            "type": "string",
+            "title": "Send Hint"
           }
         },
         "type": "object",
         "required": [
-          "id",
-          "total_items_price",
-          "created_at",
-          "updated_at",
-          "confirmed_at",
-          "estimated_delivery",
-          "is_confirmed",
-          "is_send_date",
-          "is_delivered",
-          "delay_days",
-          "shipping_cost",
-          "shipping_method",
-          "vendor",
-          "items"
+          "send_at",
+          "send_hint"
         ],
-        "title": "ParcelOfOrderResponse"
+        "title": "EstimateSend"
       },
-      "ParcelOfOrderSummaryResponse": {
+      "OrderResponse": {
         "properties": {
           "id": {
             "type": "integer",
             "title": "Id"
           },
-          "total_items_price": {
+          "amount_drivers": {
+            "$ref": "#/components/schemas/OrderAmountFetcherResponse"
+          },
+          "amount": {
             "type": "integer",
-            "title": "Total Items Price"
+            "title": "Amount"
+          },
+          "has_credit": {
+            "type": "boolean",
+            "title": "Has Credit"
+          },
+          "bnpl_amount": {
+            "type": "integer",
+            "title": "Bnpl Amount"
+          },
+          "installment_amount": {
+            "type": "integer",
+            "title": "Installment Amount"
+          },
+          "coupon": {
+            "$ref": "#/components/schemas/api__responses__coupon_response__CouponResponse"
+          },
+          "coupon_discount": {
+            "type": "integer",
+            "title": "Coupon Discount"
+          },
+          "credit_amount": {
+            "type": "integer",
+            "title": "Credit Amount"
+          },
+          "paid_at": {
+            "type": "string",
+            "title": "Paid At"
           },
           "created_at": {
             "type": "string",
             "title": "Created At"
           },
-          "updated_at": {
-            "type": "string",
-            "title": "Updated At"
+          "customer": {
+            "$ref": "#/components/schemas/api__responses__v3__user__customer_response__CustomerResponse"
           },
-          "estimate_send_at": {
-            "type": "string",
-            "title": "Estimate Send At"
-          },
-          "status": {
-            "$ref": "#/components/schemas/EnumerationResponse"
-          },
-          "shipping_method": {
-            "$ref": "#/components/schemas/api__responses__v3__parcels__shipping_method_response__ShippingMethodResponse"
-          },
-          "vendor": {
-            "$ref": "#/components/schemas/VendorResponse2"
-          },
-          "items": {
+          "parcels": {
             "items": {
-              "$ref": "#/components/schemas/ItemOfParcelSummeryResponse"
+              "$ref": "#/components/schemas/ParcelOfOrderResponse"
             },
             "type": "array",
-            "title": "Items"
+            "title": "Parcels"
           }
         },
         "type": "object",
         "required": [
           "id",
-          "total_items_price",
+          "amount_drivers",
+          "amount",
+          "has_credit",
+          "bnpl_amount",
+          "installment_amount",
+          "coupon_discount",
+          "credit_amount",
+          "paid_at",
           "created_at",
-          "updated_at",
-          "shipping_method",
-          "vendor",
-          "items"
+          "customer",
+          "parcels"
         ],
-        "title": "ParcelOfOrderSummaryResponse"
+        "title": "OrderResponse"
       },
-      "ParcelSummaryResponse": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "total_items_price": {
-            "type": "integer",
-            "title": "Total Items Price"
-          },
-          "created_at": {
-            "type": "string",
-            "title": "Created At"
-          },
-          "updated_at": {
-            "type": "string",
-            "title": "Updated At"
-          },
-          "weight": {
-            "type": "integer",
-            "title": "Weight"
-          },
-          "estimate_send_at": {
-            "type": "string",
-            "title": "Estimate Send At"
-          },
-          "vendor": {
-            "$ref": "#/components/schemas/VendorResponse2"
-          },
-          "order": {
-            "$ref": "#/components/schemas/OrderOfParcelSummeryRepose"
-          },
-          "status": {
-            "$ref": "#/components/schemas/EnumerationResponse"
-          },
-          "shipping_method": {
-            "$ref": "#/components/schemas/api__responses__v3__parcels__shipping_method_response__ShippingMethodResponse"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/ItemOfParcelSummeryResponse"
-            },
-            "type": "array",
-            "title": "Items"
-          },
-          "post_receipt": {
-            "$ref": "#/components/schemas/api__responses__v3__parcels__post_receipt_response__PostReceiptResponse"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "total_items_price",
-          "created_at",
-          "updated_at",
-          "weight",
-          "vendor",
-          "order",
-          "shipping_method",
-          "items"
-        ],
-        "title": "ParcelSummaryResponse"
-      },
-      "ParcelsResponse": {
-        "properties": {
-          "data": {
-            "items": {
-              "$ref": "#/components/schemas/ParcelSummaryResponse"
-            },
-            "type": "array",
-            "title": "Data"
-          },
-          "next_cursor": {
-            "type": "string",
-            "title": "Next Cursor"
-          },
-          "previous_cursor": {
-            "type": "string",
-            "title": "Previous Cursor"
-          }
-        },
-        "type": "object",
-        "required": [
-          "data"
-        ],
-        "title": "ParcelsResponse"
-      },
-      "RecipientOrderResponse": {
-        "properties": {
-          "name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "mobile": {
-            "type": "string",
-            "title": "Mobile"
-          },
-          "postal_code": {
-            "type": "string",
-            "title": "Postal Code"
-          },
-          "postal_address": {
-            "type": "string",
-            "title": "Postal Address"
-          },
-          "latitude": {
-            "type": "number",
-            "title": "Latitude"
-          },
-          "longitude": {
-            "type": "number",
-            "title": "Longitude"
-          },
-          "house_number": {
-            "type": "string",
-            "title": "House Number"
-          },
-          "house_unit": {
-            "type": "string",
-            "title": "House Unit"
-          }
-        },
-        "type": "object",
-        "required": [
-          "name"
-        ],
-        "title": "RecipientOrderResponse"
-      },
-      "ResourceStats": {
-        "enum": [
-          "number-of-coupon-used-in-orders",
-          "number-of-purchases-per-customer",
-          "number-of-orders-per-customer",
-          "total-of-purchase-amount-per-customer",
-          "number-of-sales-per-vendor",
-          "number-of-orders-per-vendor",
-          "number-of-new-orders-per-vendor",
-          "number-of-problem-orders-per-vendor",
-          "number-of-due-orders-per-vendor",
-          "total-of-sales-amount-per-vendor",
-          "number-of-sales-per-product",
-          "number-of-not-shipped-orders-per-vendor",
-          "number-of-shipped-orders-per-vendor",
-          "number-of-pending-orders-per-vendor",
-          "number-of-completed-orders-per-vendor"
-        ],
-        "title": "ResourceStats",
-        "description": "An enumeration."
-      },
-      "UserResponse2": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "hash_id": {
-            "type": "string",
-            "title": "Hash Id"
-          },
-          "name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "avatar": {
-            "$ref": "#/components/schemas/FileResponse"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "hash_id",
-          "name"
-        ],
-        "title": "UserResponse2"
-      },
-      "UserSummaryResponse2": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "hash_id": {
-            "type": "string",
-            "title": "Hash Id"
-          },
-          "name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "avatar": {
-            "$ref": "#/components/schemas/FileResponse"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "hash_id",
-          "name"
-        ],
-        "title": "UserSummaryResponse2"
-      },
-      "ValidationErrors": {
+      "AuthenticationErrors": {
         "properties": {
           "code": {
             "type": "integer",
@@ -1868,273 +1930,64 @@
           "message",
           "fields"
         ],
-        "title": "ValidationErrors"
+        "title": "AuthenticationErrors"
       },
-      "ValidationResponse": {
+      "OrderAmountFetcherResponse": {
         "properties": {
-          "http_status": {
+          "gateway": {
             "type": "integer",
-            "title": "Http Status",
-            "default": 422
+            "title": "Gateway"
           },
-          "message": {
-            "type": "string",
-            "title": "Message",
-            "default": "Unprocessable entity."
-          },
-          "errors": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationErrors"
-            },
-            "type": "array",
-            "title": "Errors"
-          }
-        },
-        "type": "object",
-        "required": [
-          "errors"
-        ],
-        "title": "ValidationResponse"
-      },
-      "VendorResponse2": {
-        "properties": {
-          "id": {
+          "credit": {
             "type": "integer",
-            "title": "Id"
+            "title": "Credit"
           },
-          "identifier": {
-            "type": "string",
-            "title": "Identifier"
-          },
-          "title": {
-            "type": "string",
-            "title": "Title"
-          },
-          "city": {
-            "$ref": "#/components/schemas/CityResponse"
-          },
-          "owner": {
-            "$ref": "#/components/schemas/UserResponse2"
-          },
-          "logo": {
-            "$ref": "#/components/schemas/FileResponse"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "identifier",
-          "title",
-          "city",
-          "owner"
-        ],
-        "title": "VendorResponse2"
-      },
-      "VendorResponseSla": {
-        "properties": {
-          "id": {
+          "salampay": {
             "type": "integer",
-            "title": "Id"
+            "title": "Salampay"
           },
-          "identifier": {
-            "type": "string",
-            "title": "Identifier"
-          },
-          "title": {
-            "type": "string",
-            "title": "Title"
-          },
-          "city": {
-            "$ref": "#/components/schemas/CityResponse"
-          },
-          "owner": {
-            "$ref": "#/components/schemas/UserResponse2"
-          },
-          "sla_enabled": {
-            "type": "boolean",
-            "title": "Sla Enabled"
-          },
-          "logo": {
-            "$ref": "#/components/schemas/FileResponse"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "identifier",
-          "title",
-          "city",
-          "owner",
-          "sla_enabled"
-        ],
-        "title": "VendorResponseSla"
-      },
-      "api__responses__coupon_response__CouponResponse": {
-        "properties": {
-          "id": {
+          "other": {
             "type": "integer",
-            "title": "Id"
+            "title": "Other"
           },
-          "code": {
-            "type": "string",
-            "title": "Code"
-          },
-          "results": {
-            "items": {
-              "$ref": "#/components/schemas/CouponResultResponse"
-            },
-            "type": "array",
-            "title": "Results"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "code",
-          "results"
-        ],
-        "title": "CouponResponse"
-      },
-      "api__responses__v3__items__Item_response__ItemResponse": {
-        "properties": {
-          "id": {
+          "total": {
             "type": "integer",
-            "title": "Id"
+            "title": "Total"
           },
-          "title": {
-            "type": "string",
-            "title": "Title"
-          },
-          "quantity": {
-            "type": "integer",
-            "title": "Quantity"
-          },
-          "weight": {
-            "type": "integer",
-            "title": "Weight"
-          },
-          "price": {
-            "type": "integer",
-            "title": "Price"
-          },
-          "last_item_status": {
-            "$ref": "#/components/schemas/api__responses__v3__items__item_status__item_status_response__ItemStatusResponse"
-          },
-          "max_refund_amount": {
-            "type": "integer",
-            "title": "Max Refund Amount"
-          },
-          "product": {
-            "$ref": "#/components/schemas/api__responses__v3__products__product_summary_response__ProductSummaryResponse"
-          },
-          "parcel": {
-            "$ref": "#/components/schemas/ParcelOfItemResponse"
-          },
-          "order": {
-            "$ref": "#/components/schemas/OrderOfItemSummeryRepose"
-          },
-          "variation": {
-            "$ref": "#/components/schemas/api__responses__v3__products__product_variation_response__ProductVariationResponse"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "title",
-          "quantity",
-          "weight",
-          "price",
-          "max_refund_amount",
-          "product",
-          "parcel",
-          "order"
-        ],
-        "title": "ItemResponse"
-      },
-      "api__responses__v3__items__item_status__item_status_response__ItemStatusResponse": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "status": {
-            "$ref": "#/components/schemas/EnumerationResponse"
-          },
-          "operator": {
-            "$ref": "#/components/schemas/EnumerationResponse"
-          },
-          "description": {
-            "type": "string",
-            "title": "Description"
-          },
-          "created_at": {
-            "type": "string",
-            "title": "Created At"
-          },
-          "details": {
+          "other_drivers_detail": {
             "type": "object",
-            "title": "Details"
+            "title": "Other Drivers Detail"
           }
         },
         "type": "object",
         "required": [
-          "id",
-          "status",
-          "operator",
-          "created_at"
+          "gateway",
+          "credit",
+          "salampay",
+          "other",
+          "total",
+          "other_drivers_detail"
         ],
-        "title": "ItemStatusResponse"
+        "title": "OrderAmountFetcherResponse"
       },
-      "api__responses__v3__items__item_summary_response__ItemSummaryResponse": {
+      "api__responses__v3__user__customer_response__CustomerResponse": {
         "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
+          "recipient": {
+            "$ref": "#/components/schemas/RecipientOrderResponse"
           },
-          "title": {
-            "type": "string",
-            "title": "Title"
+          "city": {
+            "$ref": "#/components/schemas/CityResponse"
           },
-          "quantity": {
-            "type": "integer",
-            "title": "Quantity"
-          },
-          "weight": {
-            "type": "integer",
-            "title": "Weight"
-          },
-          "price": {
-            "type": "integer",
-            "title": "Price"
-          },
-          "last_item_status": {
-            "$ref": "#/components/schemas/api__responses__v3__items__item_status__item_status_response__ItemStatusResponse"
-          },
-          "parcel": {
-            "$ref": "#/components/schemas/ParcelOfItemSummaryResponse"
-          },
-          "order": {
-            "$ref": "#/components/schemas/OrderOfItemSummeryRepose"
-          },
-          "product": {
-            "$ref": "#/components/schemas/api__responses__v3__products__product_summary_response__ProductSummaryResponse"
-          },
-          "variation": {
-            "$ref": "#/components/schemas/api__responses__v3__products__product_variation_response__ProductVariationResponse"
+          "user": {
+            "$ref": "#/components/schemas/UserSummaryResponse2"
           }
         },
         "type": "object",
         "required": [
-          "id",
-          "title",
-          "quantity",
-          "weight",
-          "price",
-          "parcel",
-          "order",
-          "product"
+          "recipient",
+          "user"
         ],
-        "title": "ItemSummaryResponse"
+        "title": "CustomerResponse"
       },
       "api__responses__v3__orders__order_summary_response__OrderSummaryResponse": {
         "properties": {
@@ -2208,6 +2061,784 @@
           "parcels"
         ],
         "title": "OrderSummaryResponse"
+      },
+      "AuthorizationErrors": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fields"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "fields"
+        ],
+        "title": "AuthorizationErrors"
+      },
+      "api__responses__v3__parcels__shipping_method_response__ShippingResponse": {
+        "properties": {
+          "current": {
+            "$ref": "#/components/schemas/Method"
+          },
+          "default": {
+            "$ref": "#/components/schemas/Method"
+          }
+        },
+        "type": "object",
+        "required": [
+          "current",
+          "default"
+        ],
+        "title": "ShippingResponse"
+      },
+      "AuthorizationResponse": {
+        "properties": {
+          "http_status": {
+            "type": "integer",
+            "title": "Http Status",
+            "default": 403
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "Forbidden access."
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/AuthorizationErrors"
+            },
+            "type": "array",
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "errors"
+        ],
+        "title": "AuthorizationResponse"
+      },
+      "HintBarVariantEnums": {
+        "enum": [
+          "info",
+          "warning",
+          "danger",
+          "success",
+          "normal"
+        ],
+        "title": "HintBarVariantEnums",
+        "description": "An enumeration."
+      },
+      "ParcelSummaryResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "total_items_price": {
+            "type": "integer",
+            "title": "Total Items Price"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          },
+          "weight": {
+            "type": "integer",
+            "title": "Weight"
+          },
+          "estimate_send_at": {
+            "type": "string",
+            "title": "Estimate Send At"
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/VendorResponse2"
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderOfParcelSummeryRepose"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnumerationResponse"
+          },
+          "shipping_method": {
+            "$ref": "#/components/schemas/api__responses__v3__parcels__shipping_method_response__ShippingMethodResponse"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemOfParcelSummeryResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "post_receipt": {
+            "$ref": "#/components/schemas/api__responses__v3__parcels__post_receipt_response__PostReceiptResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "total_items_price",
+          "created_at",
+          "updated_at",
+          "weight",
+          "vendor",
+          "order",
+          "shipping_method",
+          "items"
+        ],
+        "title": "ParcelSummaryResponse"
+      },
+      "Action": {
+        "properties": {
+          "icon": {
+            "type": "string",
+            "title": "Icon"
+          },
+          "variant": {
+            "type": "string",
+            "title": "Variant"
+          },
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "title"
+        ],
+        "title": "Action"
+      },
+      "FileResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "original": {
+            "type": "string",
+            "title": "Original"
+          },
+          "format": {
+            "type": "string",
+            "title": "Format"
+          },
+          "resized": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Resized"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "original",
+          "resized"
+        ],
+        "title": "FileResponse"
+      },
+      "RecipientOrderResponse": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "mobile": {
+            "type": "string",
+            "title": "Mobile"
+          },
+          "postal_code": {
+            "type": "string",
+            "title": "Postal Code"
+          },
+          "postal_address": {
+            "type": "string",
+            "title": "Postal Address"
+          },
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          },
+          "house_number": {
+            "type": "string",
+            "title": "House Number"
+          },
+          "house_unit": {
+            "type": "string",
+            "title": "House Unit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "RecipientOrderResponse"
+      },
+      "VendorResponseSla": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "identifier": {
+            "type": "string",
+            "title": "Identifier"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "city": {
+            "$ref": "#/components/schemas/CityResponse"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/UserResponse2"
+          },
+          "sla_enabled": {
+            "type": "boolean",
+            "title": "Sla Enabled"
+          },
+          "logo": {
+            "$ref": "#/components/schemas/FileResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "identifier",
+          "title",
+          "city",
+          "owner",
+          "sla_enabled"
+        ],
+        "title": "VendorResponseSla"
+      },
+      "HintResponse": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            },
+            "type": "array",
+            "title": "Actions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "title": "HintResponse"
+      },
+      "ResourceStats": {
+        "enum": [
+          "number-of-coupon-used-in-orders",
+          "number-of-purchases-per-customer",
+          "number-of-orders-per-customer",
+          "total-of-purchase-amount-per-customer",
+          "number-of-sales-per-vendor",
+          "number-of-orders-per-vendor",
+          "number-of-new-orders-per-vendor",
+          "number-of-problem-orders-per-vendor",
+          "number-of-due-orders-per-vendor",
+          "total-of-sales-amount-per-vendor",
+          "number-of-sales-per-product",
+          "number-of-not-shipped-orders-per-vendor",
+          "number-of-shipped-orders-per-vendor",
+          "number-of-pending-orders-per-vendor",
+          "number-of-completed-orders-per-vendor"
+        ],
+        "title": "ResourceStats",
+        "description": "An enumeration."
+      },
+      "ValidationErrors": {
+        "properties": {
+          "code": {
+            "type": "integer",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fields"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message",
+          "fields"
+        ],
+        "title": "ValidationErrors"
+      },
+      "VendorResponse2": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "identifier": {
+            "type": "string",
+            "title": "Identifier"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "city": {
+            "$ref": "#/components/schemas/CityResponse"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/UserResponse2"
+          },
+          "logo": {
+            "$ref": "#/components/schemas/FileResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "identifier",
+          "title",
+          "city",
+          "owner"
+        ],
+        "title": "VendorResponse2"
+      },
+      "api__responses__v3__items__item_status__item_status_response__ItemStatusResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnumerationResponse"
+          },
+          "operator": {
+            "$ref": "#/components/schemas/EnumerationResponse"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "details": {
+            "type": "object",
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "operator",
+          "created_at"
+        ],
+        "title": "ItemStatusResponse"
+      },
+      "EstimateConfirm": {
+        "properties": {
+          "confirm_at": {
+            "type": "string",
+            "title": "Confirm At"
+          },
+          "confirm_hint": {
+            "type": "string",
+            "title": "Confirm Hint"
+          }
+        },
+        "type": "object",
+        "required": [
+          "confirm_at",
+          "confirm_hint"
+        ],
+        "title": "EstimateConfirm"
+      },
+      "ParcelOfItemSummaryResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          },
+          "estimate_send_at": {
+            "type": "string",
+            "title": "Estimate Send At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnumerationResponse"
+          },
+          "shipping_method": {
+            "$ref": "#/components/schemas/api__responses__v3__parcels__shipping_method_response__ShippingMethodResponse"
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/VendorResponse2"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "shipping_method",
+          "vendor"
+        ],
+        "title": "ParcelOfItemSummaryResponse"
+      },
+      "api__responses__v3__items__Item_response__ItemResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "weight": {
+            "type": "integer",
+            "title": "Weight"
+          },
+          "price": {
+            "type": "integer",
+            "title": "Price"
+          },
+          "last_item_status": {
+            "$ref": "#/components/schemas/api__responses__v3__items__item_status__item_status_response__ItemStatusResponse"
+          },
+          "max_refund_amount": {
+            "type": "integer",
+            "title": "Max Refund Amount"
+          },
+          "product": {
+            "$ref": "#/components/schemas/api__responses__v3__products__product_summary_response__ProductSummaryResponse"
+          },
+          "parcel": {
+            "$ref": "#/components/schemas/ParcelOfItemResponse"
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderOfItemSummeryRepose"
+          },
+          "variation": {
+            "$ref": "#/components/schemas/api__responses__v3__products__product_variation_response__ProductVariationResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "quantity",
+          "weight",
+          "price",
+          "max_refund_amount",
+          "product",
+          "parcel",
+          "order"
+        ],
+        "title": "ItemResponse"
+      },
+      "AuthenticationResponse": {
+        "properties": {
+          "http_status": {
+            "type": "integer",
+            "title": "Http Status",
+            "default": 401
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "default": "Unauthorized"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/AuthenticationErrors"
+            },
+            "type": "array",
+            "title": "Errors"
+          }
+        },
+        "type": "object",
+        "required": [
+          "errors"
+        ],
+        "title": "AuthenticationResponse"
+      },
+      "api__responses__v3__products__product_variation_response__Value": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "value"
+        ],
+        "title": "Value"
+      },
+      "ItemsResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/api__responses__v3__items__item_summary_response__ItemSummaryResponse"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "next_cursor": {
+            "type": "string",
+            "title": "Next Cursor"
+          },
+          "previous_cursor": {
+            "type": "string",
+            "title": "Previous Cursor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "ItemsResponse"
+      },
+      "OrderOfParcelSummeryRepose": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "paid_at": {
+            "type": "string",
+            "title": "Paid At"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/api__responses__v3__user__customer_response__CustomerResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "paid_at",
+          "created_at",
+          "customer"
+        ],
+        "title": "OrderOfParcelSummeryRepose"
+      },
+      "ParcelOfOrderSummaryResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "total_items_price": {
+            "type": "integer",
+            "title": "Total Items Price"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          },
+          "estimate_send_at": {
+            "type": "string",
+            "title": "Estimate Send At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnumerationResponse"
+          },
+          "shipping_method": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/api__responses__v3__parcels__shipping_method_response__ShippingMethodResponse"
+              },
+              {
+                "$ref": "#/components/schemas/api__responses__v3__parcels__shipping_method_response__ShippingResponse"
+              }
+            ],
+            "title": "Shipping Method"
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/VendorResponse2"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemOfParcelSummeryResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "total_items_price",
+          "created_at",
+          "updated_at",
+          "shipping_method",
+          "vendor",
+          "items"
+        ],
+        "title": "ParcelOfOrderSummaryResponse"
+      },
+      "ItemOfParcelResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "weight": {
+            "type": "integer",
+            "title": "Weight"
+          },
+          "price": {
+            "type": "integer",
+            "title": "Price"
+          },
+          "last_item_status": {
+            "$ref": "#/components/schemas/api__responses__v3__items__item_status__item_status_response__ItemStatusResponse"
+          },
+          "max_refund_amount": {
+            "type": "integer",
+            "title": "Max Refund Amount"
+          },
+          "product": {
+            "$ref": "#/components/schemas/api__responses__v3__products__product_summary_response__ProductSummaryResponse"
+          },
+          "variation": {
+            "$ref": "#/components/schemas/api__responses__v3__products__product_variation_response__ProductVariationResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "quantity",
+          "weight",
+          "price",
+          "max_refund_amount",
+          "product"
+        ],
+        "title": "ItemOfParcelResponse"
+      },
+      "api__responses__v3__products__product_variation_response__Properties": {
+        "properties": {
+          "property": {
+            "$ref": "#/components/schemas/api__responses__v3__products__product_variation_response__Property"
+          },
+          "value": {
+            "$ref": "#/components/schemas/api__responses__v3__products__product_variation_response__Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "property",
+          "value"
+        ],
+        "title": "Properties"
+      },
+      "api__responses__coupon_response__CouponResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/CouponResultResponse"
+            },
+            "type": "array",
+            "title": "Results"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "code",
+          "results"
+        ],
+        "title": "CouponResponse"
       },
       "api__responses__v3__parcels__parcel_response__ParcelResponse": {
         "properties": {
@@ -2310,140 +2941,6 @@
         ],
         "title": "ParcelResponse"
       },
-      "api__responses__v3__parcels__post_receipt_response__PostReceiptResponse": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "tracking_code": {
-            "type": "string",
-            "title": "Tracking Code"
-          },
-          "final_post_cost": {
-            "type": "integer",
-            "title": "Final Post Cost"
-          },
-          "created_at": {
-            "type": "string",
-            "title": "Created At"
-          },
-          "updated_at": {
-            "type": "string",
-            "title": "Updated At"
-          },
-          "tracking_link": {
-            "type": "string",
-            "title": "Tracking Link"
-          },
-          "phone_number": {
-            "type": "string",
-            "title": "Phone Number"
-          },
-          "attachment": {
-            "$ref": "#/components/schemas/FileResponse"
-          },
-          "editable": {
-            "type": "boolean",
-            "title": "Editable"
-          },
-          "edited": {
-            "type": "boolean",
-            "title": "Edited"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "editable",
-          "edited"
-        ],
-        "title": "PostReceiptResponse"
-      },
-      "api__responses__v3__parcels__shipping_method_response__ShippingMethodResponse": {
-        "properties": {
-          "current": {
-            "$ref": "#/components/schemas/EnumerationResponse"
-          },
-          "default": {
-            "$ref": "#/components/schemas/EnumerationResponse"
-          }
-        },
-        "type": "object",
-        "required": [
-          "current",
-          "default"
-        ],
-        "title": "ShippingMethodResponse"
-      },
-      "api__responses__v3__products__product_summary_response__ProductSummaryResponse": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "category_id": {
-            "type": "integer",
-            "title": "Category Id"
-          },
-          "photos": {
-            "items": {
-              "$ref": "#/components/schemas/FileResponse"
-            },
-            "type": "array",
-            "title": "Photos"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "category_id",
-          "photos"
-        ],
-        "title": "ProductSummaryResponse"
-      },
-      "api__responses__v3__products__product_variation_response__ProductVariationResponse": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "properties": {
-            "items": {
-              "$ref": "#/components/schemas/api__responses__v3__products__product_variation_response__Properties"
-            },
-            "type": "array",
-            "title": "Properties"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id"
-        ],
-        "title": "ProductVariationResponse"
-      },
-      "api__responses__v3__products__product_variation_response__Properties": {
-        "properties": {
-          "property": {
-            "$ref": "#/components/schemas/api__responses__v3__products__product_variation_response__Property"
-          },
-          "value": {
-            "$ref": "#/components/schemas/api__responses__v3__products__product_variation_response__Value"
-          }
-        },
-        "type": "object",
-        "required": [
-          "property",
-          "value"
-        ],
-        "title": "Properties"
-      },
       "api__responses__v3__products__product_variation_response__Property": {
         "properties": {
           "id": {
@@ -2467,48 +2964,38 @@
         ],
         "title": "Property"
       },
-      "api__responses__v3__products__product_variation_response__Value": {
+      "ValidationResponse": {
         "properties": {
-          "id": {
+          "http_status": {
             "type": "integer",
-            "title": "Id"
+            "title": "Http Status",
+            "default": 422
           },
-          "title": {
+          "message": {
             "type": "string",
-            "title": "Title"
+            "title": "Message",
+            "default": "Unprocessable entity."
           },
-          "value": {
-            "type": "string",
-            "title": "Value"
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationErrors"
+            },
+            "type": "array",
+            "title": "Errors"
           }
         },
         "type": "object",
         "required": [
-          "id",
-          "title",
-          "value"
+          "errors"
         ],
-        "title": "Value"
-      },
-      "api__responses__v3__user__customer_response__CustomerResponse": {
-        "properties": {
-          "recipient": {
-            "$ref": "#/components/schemas/RecipientOrderResponse"
-          },
-          "city": {
-            "$ref": "#/components/schemas/CityResponse"
-          },
-          "user": {
-            "$ref": "#/components/schemas/UserSummaryResponse2"
-          }
-        },
-        "type": "object",
-        "required": [
-          "recipient",
-          "user"
-        ],
-        "title": "CustomerResponse"
+        "title": "ValidationResponse"
       }
     }
-  }
+  },
+  "servers": [
+    {
+      "url": "https://openapi.basalam.com",
+      "description": "Production Gateway"
+    }
+  ]
 }
