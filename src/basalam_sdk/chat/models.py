@@ -117,8 +117,8 @@ class MessageFile(BaseModel):
 
 class MessageContent(BaseModel):
     """Message content model."""
-    links: List[MessageLink] = []
-    files: List[MessageFile] = []
+    links: Optional[List[MessageLink]] = []
+    files: Optional[List[MessageFile]] = []
     text: Optional[str] = None
     entity_id: Optional[int] = None
     location: Optional[LocationResource] = None
