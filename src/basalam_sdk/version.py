@@ -4,7 +4,7 @@ Version information for the Basalam SDK.
 This module centralizes version management and User-Agent generation.
 """
 
-__version__ = "1.1.2"
+__version__ = "1.1.3"
 __sdk_name__ = "basalam-python-sdk"
 
 

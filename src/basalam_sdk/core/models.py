@@ -795,20 +795,20 @@ class PackagingDimensionsRequestItem(BaseModel):
 
 class ProductRequestSchema(BaseModel):
     """Product request schema for create and update operations."""
-    name: str
+    name: Optional[str] = None
     photo: Optional[int] = None
     photos: Optional[List[int]] = None
     video: Optional[int] = None
     brief: Optional[str] = None
     description: Optional[str] = None
     order: Optional[int] = None
-    category_id: int
+    category_id: Optional[int] = None
     status: ProductStatusInputEnum = ProductStatusInputEnum.PUBLISHED
     preparation_days: int = 1
     keywords: Optional[List[str]] = None
     weight: Optional[float] = None
-    package_weight: int
-    primary_price: int
+    package_weight: Optional[int] = None
+    primary_price: Optional[int] = None
     stock: Optional[int] = None
     shipping_city_ids: Optional[List[int]] = None
     shipping_method_ids: Optional[List[int]] = None
@@ -931,7 +931,7 @@ class ProductResponseSchema(BaseModel):
     view_count: Optional[int] = None
     can_add_to_cart: Optional[bool] = None
     review_count: Optional[int] = None
-    rating: Optional[int] = None
+    rating: Optional[float] = None
     navigation: Optional[NavigationResponseSchema] = None
     variants: Optional[List[ProductVariantResponse]] = None
     variants_selected_index: Optional[int] = None
