@@ -7,6 +7,7 @@ different message types, manage chat participants, and track chat history and up
 ## Table of Contents
 
 - [Chat Methods](#chat-methods)
+- [Bot Methods](#bot-methods)
 - [Examples](#examples)
 
 ## Chat Methods
@@ -22,6 +23,20 @@ different message types, manage chat participants, and track chat history and up
 | [`delete_chats()`](#delete-chats)                   | Delete multiple chats       | `request: DeleteChatsRequest`                                  |
 | [`forward_message()`](#forward-message)             | Forward a message           | `chat_id: int, request: ForwardMessageRequest`                 |
 | [`get_unseen_chat_count()`](#get-unseen-chat-count) | Get unseen chats count      | None                                                           |
+
+## Bot Methods
+
+| Method                                                  | Description                          | Parameters     |
+|---------------------------------------------------------|--------------------------------------|----------------|
+| [`get_webhook_info()`](#get-webhook-info)               | Get webhook info (GET)               | `token: str`   |
+| [`get_webhook_info_post()`](#get-webhook-info-post)     | Get webhook info (POST)              | `token: str`   |
+| [`log_out()`](#log-out)                                 | Log out bot (GET)                    | `token: str`   |
+| [`log_out_post()`](#log-out-post)                       | Log out bot (POST)                   | `token: str`   |
+| [`delete_webhook()`](#delete-webhook)                   | Delete webhook (GET)                 | `token: str`   |
+| [`delete_webhook_post()`](#delete-webhook-post)         | Delete webhook (POST)                | `token: str`   |
+| [`delete_webhook_delete()`](#delete-webhook-delete)     | Delete webhook (DELETE)              | `token: str`   |
+| [`get_me()`](#get-me)                                   | Get bot information (GET)            | `token: str`   |
+| [`get_me_post()`](#get-me-post)                         | Get bot information (POST)           | `token: str`   |
 
 ## Examples
 
@@ -183,6 +198,115 @@ async def get_unseen_chat_count_example():
     count = await client.chat.get_unseen_chat_count()
     print(f"Unseen chats: {count}")
     return count
+```
+
+### Get Webhook Info
+
+```python
+import asyncio
+
+async def get_webhook_info_example():
+    # Using GET method
+    result = await client.chat.get_webhook_info(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    print(f"Webhook info: {result}")
+
+    # Using POST method
+    result = await client.chat.get_webhook_info_post(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    return result
+
+# Synchronous version
+def get_webhook_info_sync_example():
+    result = client.chat.get_webhook_info_sync(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    return result
+```
+
+### Log Out Bot
+
+```python
+import asyncio
+
+async def log_out_example():
+    # Using GET method
+    result = await client.chat.log_out(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    print(f"Log out result: {result}")
+
+    # Using POST method
+    result = await client.chat.log_out_post(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    return result
+
+# Synchronous version
+def log_out_sync_example():
+    result = client.chat.log_out_sync(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    return result
+```
+
+### Delete Webhook
+
+```python
+import asyncio
+
+async def delete_webhook_example():
+    # Using GET method
+    result = await client.chat.delete_webhook(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    print(f"Delete webhook result: {result}")
+
+    # Using POST method
+    result = await client.chat.delete_webhook_post(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+
+    # Using DELETE method (recommended)
+    result = await client.chat.delete_webhook_delete(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    return result
+
+# Synchronous version
+def delete_webhook_sync_example():
+    result = client.chat.delete_webhook_sync(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    return result
+```
+
+### Get Me (Bot Information)
+
+```python
+import asyncio
+
+async def get_me_example():
+    # Using GET method
+    result = await client.chat.get_me(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    print(f"Bot info: {result}")
+
+    # Using POST method
+    result = await client.chat.get_me_post(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    return result
+
+# Synchronous version
+def get_me_sync_example():
+    result = client.chat.get_me_sync(
+        token="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+    )
+    return result
 ```
 
 ## Message Types

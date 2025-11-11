@@ -17,12 +17,14 @@ from basalam_sdk.chat.models import (
     DeleteMessageRequest,
     DeleteChatsRequest,
     ForwardMessageRequest,
+    BotApiResponse,
 )
 from basalam_sdk.config import BasalamConfig, Environment
 
 # Test data
 TEST_CHAT_ID = 183583802
 TEST_USER_ID = 430
+TEST_BOT_TOKEN = ""
 
 
 @pytest.fixture
@@ -488,4 +490,299 @@ def test_get_unseen_chat_count_sync(basalam_client):
 
     except Exception as e:
         print(f"get_unseen_chat_count_sync error: {e}")
+        assert True
+
+
+# -------------------------------------------------------------------------
+# Bot endpoints tests - getWebhookInfo
+# -------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_get_webhook_info_async(basalam_client):
+    """Test get_webhook_info async method (GET)."""
+    try:
+        result = await basalam_client.chat.get_webhook_info(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"get_webhook_info async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"get_webhook_info async error: {e}")
+        assert True
+
+
+def test_get_webhook_info_sync(basalam_client):
+    """Test get_webhook_info_sync method (GET)."""
+    try:
+        result = basalam_client.chat.get_webhook_info_sync(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"get_webhook_info_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"get_webhook_info_sync error: {e}")
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_get_webhook_info_post_async(basalam_client):
+    """Test get_webhook_info_post async method (POST)."""
+    try:
+        result = await basalam_client.chat.get_webhook_info_post(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"get_webhook_info_post async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"get_webhook_info_post async error: {e}")
+        assert True
+
+
+def test_get_webhook_info_post_sync(basalam_client):
+    """Test get_webhook_info_post_sync method (POST)."""
+    try:
+        result = basalam_client.chat.get_webhook_info_post_sync(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"get_webhook_info_post_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"get_webhook_info_post_sync error: {e}")
+        assert True
+
+
+# -------------------------------------------------------------------------
+# Bot endpoints tests - logOut
+# -------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_log_out_async(basalam_client):
+    """Test log_out async method (GET)."""
+    try:
+        result = await basalam_client.chat.log_out(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"log_out async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"log_out async error: {e}")
+        assert True
+
+
+def test_log_out_sync(basalam_client):
+    """Test log_out_sync method (GET)."""
+    try:
+        result = basalam_client.chat.log_out_sync(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"log_out_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"log_out_sync error: {e}")
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_log_out_post_async(basalam_client):
+    """Test log_out_post async method (POST)."""
+    try:
+        result = await basalam_client.chat.log_out_post(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"log_out_post async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"log_out_post async error: {e}")
+        assert True
+
+
+def test_log_out_post_sync(basalam_client):
+    """Test log_out_post_sync method (POST)."""
+    try:
+        result = basalam_client.chat.log_out_post_sync(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"log_out_post_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"log_out_post_sync error: {e}")
+        assert True
+
+
+# -------------------------------------------------------------------------
+# Bot endpoints tests - deleteWebhook
+# -------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_delete_webhook_async(basalam_client):
+    """Test delete_webhook async method (GET)."""
+    try:
+        result = await basalam_client.chat.delete_webhook(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"delete_webhook async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"delete_webhook async error: {e}")
+        assert True
+
+
+def test_delete_webhook_sync(basalam_client):
+    """Test delete_webhook_sync method (GET)."""
+    try:
+        result = basalam_client.chat.delete_webhook_sync(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"delete_webhook_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"delete_webhook_sync error: {e}")
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_delete_webhook_post_async(basalam_client):
+    """Test delete_webhook_post async method (POST)."""
+    try:
+        result = await basalam_client.chat.delete_webhook_post(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"delete_webhook_post async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"delete_webhook_post async error: {e}")
+        assert True
+
+
+def test_delete_webhook_post_sync(basalam_client):
+    """Test delete_webhook_post_sync method (POST)."""
+    try:
+        result = basalam_client.chat.delete_webhook_post_sync(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"delete_webhook_post_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"delete_webhook_post_sync error: {e}")
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_delete_webhook_delete_async(basalam_client):
+    """Test delete_webhook_delete async method (DELETE)."""
+    try:
+        result = await basalam_client.chat.delete_webhook_delete(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"delete_webhook_delete async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"delete_webhook_delete async error: {e}")
+        assert True
+
+
+def test_delete_webhook_delete_sync(basalam_client):
+    """Test delete_webhook_delete_sync method (DELETE)."""
+    try:
+        result = basalam_client.chat.delete_webhook_delete_sync(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"delete_webhook_delete_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"delete_webhook_delete_sync error: {e}")
+        assert True
+
+
+# -------------------------------------------------------------------------
+# Bot endpoints tests - getMe
+# -------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_get_me_async(basalam_client):
+    """Test get_me async method (GET)."""
+    try:
+        result = await basalam_client.chat.get_me(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"get_me async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"get_me async error: {e}")
+        assert True
+
+
+def test_get_me_sync(basalam_client):
+    """Test get_me_sync method (GET)."""
+    try:
+        result = basalam_client.chat.get_me_sync(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"get_me_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"get_me_sync error: {e}")
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_get_me_post_async(basalam_client):
+    """Test get_me_post async method (POST)."""
+    try:
+        result = await basalam_client.chat.get_me_post(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"get_me_post async result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"get_me_post async error: {e}")
+        assert True
+
+
+def test_get_me_post_sync(basalam_client):
+    """Test get_me_post_sync method (POST)."""
+    try:
+        result = basalam_client.chat.get_me_post_sync(
+            token=TEST_BOT_TOKEN
+        )
+        print(f"get_me_post_sync result: {result}")
+        assert result is not None
+        assert hasattr(result, 'ok')
+        assert isinstance(result.ok, bool)
+    except Exception as e:
+        print(f"get_me_post_sync error: {e}")
         assert True

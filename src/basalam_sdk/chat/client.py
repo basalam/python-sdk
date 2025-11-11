@@ -18,7 +18,8 @@ from .models import (
     DeleteChatsRequest,
     ForwardMessageRequest,
     BooleanResponse,
-    UnseenChatCountResponse
+    UnseenChatCountResponse,
+    BotApiResponse
 )
 from ..base_client import BaseClient
 
@@ -449,3 +450,255 @@ class ChatService(BaseClient):
         endpoint = "/v1/chats/unseen-count"
         response = self._get_sync(endpoint)
         return UnseenChatCountResponse(**response)
+
+    async def get_webhook_info(self, token: str) -> BotApiResponse:
+        """
+        Get webhook information for the bot (GET method).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response containing webhook information.
+        """
+        endpoint = f"/v1/bots/{token}/getWebhookInfo"
+        response = await self._get(endpoint)
+        return BotApiResponse(**response)
+
+    def get_webhook_info_sync(self, token: str) -> BotApiResponse:
+        """
+        Get webhook information for the bot (GET method, synchronous version).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response containing webhook information.
+        """
+        endpoint = f"/v1/bots/{token}/getWebhookInfo"
+        response = self._get_sync(endpoint)
+        return BotApiResponse(**response)
+
+    async def get_webhook_info_post(self, token: str) -> BotApiResponse:
+        """
+        Get webhook information for the bot (POST method).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response containing webhook information.
+        """
+        endpoint = f"/v1/bots/{token}/getWebhookInfo"
+        response = await self._post(endpoint)
+        return BotApiResponse(**response)
+
+    def get_webhook_info_post_sync(self, token: str) -> BotApiResponse:
+        """
+        Get webhook information for the bot (POST method, synchronous version).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response containing webhook information.
+        """
+        endpoint = f"/v1/bots/{token}/getWebhookInfo"
+        response = self._post_sync(endpoint)
+        return BotApiResponse(**response)
+
+    async def log_out(self, token: str) -> BotApiResponse:
+        """
+        Log out the bot and invalidate its token (GET method).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response from the API.
+        """
+        endpoint = f"/v1/bots/{token}/logOut"
+        response = await self._get(endpoint)
+        return BotApiResponse(**response)
+
+    def log_out_sync(self, token: str) -> BotApiResponse:
+        """
+        Log out the bot and invalidate its token (GET method, synchronous version).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response from the API.
+        """
+        endpoint = f"/v1/bots/{token}/logOut"
+        response = self._get_sync(endpoint)
+        return BotApiResponse(**response)
+
+    async def log_out_post(self, token: str) -> BotApiResponse:
+        """
+        Log out the bot and invalidate its token (POST method).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response from the API.
+        """
+        endpoint = f"/v1/bots/{token}/logOut"
+        response = await self._post(endpoint)
+        return BotApiResponse(**response)
+
+    def log_out_post_sync(self, token: str) -> BotApiResponse:
+        """
+        Log out the bot and invalidate its token (POST method, synchronous version).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response from the API.
+        """
+        endpoint = f"/v1/bots/{token}/logOut"
+        response = self._post_sync(endpoint)
+        return BotApiResponse(**response)
+
+    async def delete_webhook(self, token: str) -> BotApiResponse:
+        """
+        Delete the webhook URL for the bot (GET method).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response from the API.
+        """
+        endpoint = f"/v1/bots/{token}/deleteWebhook"
+        response = await self._get(endpoint)
+        return BotApiResponse(**response)
+
+    def delete_webhook_sync(self, token: str) -> BotApiResponse:
+        """
+        Delete the webhook URL for the bot (GET method, synchronous version).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response from the API.
+        """
+        endpoint = f"/v1/bots/{token}/deleteWebhook"
+        response = self._get_sync(endpoint)
+        return BotApiResponse(**response)
+
+    async def delete_webhook_post(self, token: str) -> BotApiResponse:
+        """
+        Delete the webhook URL for the bot (POST method).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response from the API.
+        """
+        endpoint = f"/v1/bots/{token}/deleteWebhook"
+        response = await self._post(endpoint)
+        return BotApiResponse(**response)
+
+    def delete_webhook_post_sync(self, token: str) -> BotApiResponse:
+        """
+        Delete the webhook URL for the bot (POST method, synchronous version).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response from the API.
+        """
+        endpoint = f"/v1/bots/{token}/deleteWebhook"
+        response = self._post_sync(endpoint)
+        return BotApiResponse(**response)
+
+    async def delete_webhook_delete(self, token: str) -> BotApiResponse:
+        """
+        Delete the webhook URL for the bot (DELETE method).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response from the API.
+        """
+        endpoint = f"/v1/bots/{token}/deleteWebhook"
+        response = await self._delete(endpoint)
+        return BotApiResponse(**response)
+
+    def delete_webhook_delete_sync(self, token: str) -> BotApiResponse:
+        """
+        Delete the webhook URL for the bot (DELETE method, synchronous version).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response from the API.
+        """
+        endpoint = f"/v1/bots/{token}/deleteWebhook"
+        response = self._delete_sync(endpoint)
+        return BotApiResponse(**response)
+
+    async def get_me(self, token: str) -> BotApiResponse:
+        """
+        Get information about the bot (GET method).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response containing bot information.
+        """
+        endpoint = f"/v1/bots/{token}/getMe"
+        response = await self._get(endpoint)
+        return BotApiResponse(**response)
+
+    def get_me_sync(self, token: str) -> BotApiResponse:
+        """
+        Get information about the bot (GET method, synchronous version).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response containing bot information.
+        """
+        endpoint = f"/v1/bots/{token}/getMe"
+        response = self._get_sync(endpoint)
+        return BotApiResponse(**response)
+
+    async def get_me_post(self, token: str) -> BotApiResponse:
+        """
+        Get information about the bot (POST method).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response containing bot information.
+        """
+        endpoint = f"/v1/bots/{token}/getMe"
+        response = await self._post(endpoint)
+        return BotApiResponse(**response)
+
+    def get_me_post_sync(self, token: str) -> BotApiResponse:
+        """
+        Get information about the bot (POST method, synchronous version).
+
+        Args:
+            token: The bot token.
+
+        Returns:
+            BotApiResponse: The response containing bot information.
+        """
+        endpoint = f"/v1/bots/{token}/getMe"
+        response = self._post_sync(endpoint)
+        return BotApiResponse(**response)

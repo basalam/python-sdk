@@ -32,6 +32,7 @@ from .models import (
     ForwardMessageRequest,
     BooleanResponse,
     UnseenChatCountResponse,
+    BotApiResponse,
 )
 
 __all__ = [
@@ -62,4 +63,5 @@ __all__ = [
     "ForwardMessageRequest",
     "BooleanResponse",
     "UnseenChatCountResponse",
+    "BotApiResponse",
 ]

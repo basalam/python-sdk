@@ -6,38 +6,16 @@
     "description": "Filtered OpenAPI endpoints from core service"
   },
   "paths": {
-    "/v1/chats/unseen-count": {
-      "get": {
+    "/v1/chats/messages": {
+      "patch": {
         "tags": [
           "Chat"
         ],
-        "summary": "Get Unseen Chat Count",
-        "operationId": "get_unseen_chat_count_v3_chats_unseen_count_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnseenChatCountResponseV3"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/chats/messages/forward": {
-      "post": {
-        "tags": [
-          "Chat"
-        ],
-        "summary": "Send Forward Message",
-        "description": "Forwards messages to multiple conversations asynchronously and may take time to complete processing",
-        "operationId": "send_forward_message_v3_messages_forward_post",
+        "summary": "Edit Message",
+        "operationId": "edit_message_v3_messages_patch",
         "parameters": [
           {
-            "name": "User-Agent",
+            "name": "X-Client-Info",
             "in": "header",
             "required": false,
             "schema": {
@@ -49,15 +27,6 @@
                   "type": "null"
                 }
               ],
-              "title": "User-Agent"
-            }
-          },
-          {
-            "name": "X-Client-Info",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
               "title": "X-Client-Info"
             }
           }
@@ -67,7 +36,46 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ForwardMessageRequestModelV3"
+                "$ref": "#/components/schemas/EditMessageRequestModelV3"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/entity__messages__v3__model__response__message_v3__MessageResponseV3__2"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Delete Message",
+        "operationId": "delete_message_v3_messages_delete",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMessageRequestModelV3"
               }
             }
           }
@@ -96,97 +104,33 @@
         }
       }
     },
-    "/v1/chats/{chat_id}/messages": {
+    "/v1/bots/{token}/getWebhookInfo": {
       "post": {
         "tags": [
           "Chat"
         ],
-        "summary": "Send Message",
-        "operationId": "send_message_v3_messages_post",
+        "summary": "Get Webhook Info",
+        "description": "Retrieves the current webhook information for the bot.",
+        "operationId": "get_webhook_info_bot_token__getWebhookInfo_post",
         "parameters": [
           {
-            "name": "User-Agent",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "User-Agent"
-            }
-          },
-          {
-            "name": "X-Client-Info",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "title": "X-Client-Info"
-            }
-          },
-          {
-            "name": "X-Forwarded-For",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Forwarded-For"
-            }
-          },
-          {
-            "name": "X-Real-IP",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "X-Real-Ip"
-            }
-          },
-          {
-            "name": "chat_id",
+            "name": "token",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "string",
+              "pattern": "^(\\d+):([A-Za-z0-9_-]{35,})$",
+              "title": "Token"
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateMessageRequestModelV3_Modified_c056111f"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/entity__messages__v3__model__response__message_v3__MessageResponseV3__1"
+                  "$ref": "#/components/schemas/BotApiResponse"
                 }
               }
             }
@@ -207,73 +151,19 @@
         "tags": [
           "Chat"
         ],
-        "summary": "Get Messages",
-        "operationId": "get_messages_v3_messages_get",
+        "summary": "Get Webhook Info",
+        "description": "Retrieves the current webhook information for the bot.",
+        "operationId": "get_webhook_info_bot_token__getWebhookInfo_post",
         "parameters": [
           {
-            "name": "chat_id",
+            "name": "token",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "exclusiveMaximum": 10000000000,
-              "title": "Chat Id"
-            }
-          },
-          {
-            "name": "message_id",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "title": "Message Id"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "default": 20,
-              "title": "Limit"
-            }
-          },
-          {
-            "name": "order",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "enum": [
-                "desc",
-                "asc"
-              ],
               "type": "string",
-              "description": "sort(desc or asc) messages based on their ids.",
-              "default": "desc",
-              "title": "Order"
-            },
-            "description": "sort(desc or asc) messages based on their ids."
-          },
-          {
-            "name": "cmp",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "enum": [
-                "lte",
-                "lt",
-                "gte",
-                "gt",
-                "bt"
-              ],
-              "type": "string",
-              "description": "Comparison operator to use with `message_id` for pagination. Use '<'( or '<=') to get oldermessages and '>'(or '>=') to get newer ones.",
-              "default": "lt",
-              "title": "Cmp"
-            },
-            "description": "Comparison operator to use with `message_id` for pagination. Use '<'( or '<=') to get oldermessages and '>'(or '>=') to get newer ones."
+              "pattern": "^(\\d+):([A-Za-z0-9_-]{35,})$",
+              "title": "Token"
+            }
           }
         ],
         "responses": {
@@ -282,7 +172,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageListResponseModelV3"
+                  "$ref": "#/components/schemas/BotApiResponse"
                 }
               }
             }
@@ -520,16 +410,17 @@
         }
       }
     },
-    "/v1/chats/messages": {
-      "patch": {
+    "/v1/chats/messages/forward": {
+      "post": {
         "tags": [
           "Chat"
         ],
-        "summary": "Edit Message",
-        "operationId": "edit_message_v3_messages_patch",
+        "summary": "Send Forward Message",
+        "description": "Forwards messages to multiple conversations asynchronously and may take time to complete processing",
+        "operationId": "send_forward_message_v3_messages_forward_post",
         "parameters": [
           {
-            "name": "X-Client-Info",
+            "name": "User-Agent",
             "in": "header",
             "required": false,
             "schema": {
@@ -541,6 +432,15 @@
                   "type": "null"
                 }
               ],
+              "title": "User-Agent"
+            }
+          },
+          {
+            "name": "X-Client-Info",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
               "title": "X-Client-Info"
             }
           }
@@ -550,46 +450,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EditMessageRequestModelV3"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/entity__messages__v3__model__response__message_v3__MessageResponseV3__2"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Chat"
-        ],
-        "summary": "Delete Message",
-        "operationId": "delete_message_v3_messages_delete",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteMessageRequestModelV3"
+                "$ref": "#/components/schemas/ForwardMessageRequestModelV3"
               }
             }
           }
@@ -617,59 +478,541 @@
           }
         }
       }
+    },
+    "/v1/bots/{token}/logOut": {
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Log Out",
+        "description": "Logs out the bot and invalidates its token.",
+        "operationId": "log_out_bot_token__logOut_post",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^(\\d+):([A-Za-z0-9_-]{35,})$",
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotApiResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Log Out",
+        "description": "Logs out the bot and invalidates its token.",
+        "operationId": "log_out_bot_token__logOut_post",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^(\\d+):([A-Za-z0-9_-]{35,})$",
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotApiResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chats/{chat_id}/messages": {
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Send Message",
+        "operationId": "send_message_v3_messages_post",
+        "parameters": [
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User-Agent"
+            }
+          },
+          {
+            "name": "X-Client-Info",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "title": "X-Client-Info"
+            }
+          },
+          {
+            "name": "X-Forwarded-For",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Forwarded-For"
+            }
+          },
+          {
+            "name": "X-Real-IP",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Real-Ip"
+            }
+          },
+          {
+            "name": "chat_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMessageRequestModelV3_Modified_c056111f"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/entity__messages__v3__model__response__message_v3__MessageResponseV3__1"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Get Messages",
+        "operationId": "get_messages_v3_messages_get",
+        "parameters": [
+          {
+            "name": "chat_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "exclusiveMaximum": 10000000000,
+              "title": "Chat Id"
+            }
+          },
+          {
+            "name": "message_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Message Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "desc",
+                "asc"
+              ],
+              "type": "string",
+              "description": "sort(desc or asc) messages based on their ids.",
+              "default": "desc",
+              "title": "Order"
+            },
+            "description": "sort(desc or asc) messages based on their ids."
+          },
+          {
+            "name": "cmp",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "lte",
+                "lt",
+                "gte",
+                "gt",
+                "bt"
+              ],
+              "type": "string",
+              "description": "Comparison operator to use with `message_id` for pagination. Use '<'( or '<=') to get oldermessages and '>'(or '>=') to get newer ones.",
+              "default": "lt",
+              "title": "Cmp"
+            },
+            "description": "Comparison operator to use with `message_id` for pagination. Use '<'( or '<=') to get oldermessages and '>'(or '>=') to get newer ones."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageListResponseModelV3"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/chats/unseen-count": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Get Unseen Chat Count",
+        "operationId": "get_unseen_chat_count_v3_chats_unseen_count_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnseenChatCountResponseV3"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/bots/{token}/deleteWebhook": {
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Delete Webhook",
+        "description": "Deletes the webhook URL for the bot.",
+        "operationId": "delete_webhook_bot_token__deleteWebhook_post",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^(\\d+):([A-Za-z0-9_-]{35,})$",
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotApiResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Delete Webhook",
+        "description": "Deletes the webhook URL for the bot.",
+        "operationId": "delete_webhook_bot_token__deleteWebhook_post",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^(\\d+):([A-Za-z0-9_-]{35,})$",
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotApiResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Delete Webhook",
+        "description": "Deletes the webhook URL for the bot.",
+        "operationId": "delete_webhook_bot_token__deleteWebhook_post",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^(\\d+):([A-Za-z0-9_-]{35,})$",
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotApiResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/bots/{token}/getMe": {
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Get Me",
+        "description": "Returns information about the bot.",
+        "operationId": "get_me_bot_token__getMe_post",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^(\\d+):([A-Za-z0-9_-]{35,})$",
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotApiResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Get Me",
+        "description": "Returns information about the bot.",
+        "operationId": "get_me_bot_token__getMe_post",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^(\\d+):([A-Za-z0-9_-]{35,})$",
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BotApiResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "ReplyMarkupButton": {
+      "entity__messages__v3__model__response__message_v3__MessageResponseV3__1": {
         "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "label": {
-            "type": "string",
-            "title": "Label"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "url",
-              "msg",
-              "cb"
-            ],
-            "title": "Type"
-          },
           "data": {
-            "type": "object",
-            "title": "Data"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "label",
-          "type",
-          "data"
-        ],
-        "title": "ReplyMarkupButton"
-      },
-      "ChatListData": {
-        "properties": {
-          "chats": {
-            "items": {
-              "$ref": "#/components/schemas/ChatResourceV3"
-            },
-            "type": "array",
-            "title": "Chats"
-          }
-        },
-        "type": "object",
-        "title": "ChatListData"
-      },
-      "CreateChatRequestV3": {
-        "properties": {
-          "user_id": {
+            "$ref": "#/components/schemas/MessageResourceV3"
+          },
+          "temp_id": {
             "anyOf": [
               {
                 "type": "integer"
@@ -678,22 +1021,14 @@
                 "type": "null"
               }
             ],
-            "title": "User Id"
-          },
-          "hash_id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Hash Id"
+            "title": "Temp Id"
           }
         },
         "type": "object",
-        "title": "CreateChatRequestV3"
+        "required": [
+          "data"
+        ],
+        "title": "MessageResponseV3"
       },
       "MessageListData": {
         "properties": {
@@ -710,228 +1045,6 @@
           "messages"
         ],
         "title": "MessageListData"
-      },
-      "DeleteChatRequestModelV3": {
-        "properties": {
-          "chat_ids": {
-            "items": {
-              "type": "integer",
-              "maximum": 2147483647.0,
-              "minimum": 1.0
-            },
-            "type": "array",
-            "maxItems": 30,
-            "minItems": 1,
-            "title": "Chat Ids"
-          }
-        },
-        "type": "object",
-        "required": [
-          "chat_ids"
-        ],
-        "title": "DeleteChatRequestModelV3"
-      },
-      "MessageRequestModelV3": {
-        "properties": {
-          "text": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Text"
-          },
-          "entity_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Entity Id"
-          }
-        },
-        "type": "object",
-        "title": "MessageRequestModelV3"
-      },
-      "BotMetadata": {
-        "properties": {
-          "title": {
-            "type": "string",
-            "title": "Title"
-          },
-          "avatar": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Avatar"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "link": {
-            "type": "string",
-            "title": "Link"
-          },
-          "verified": {
-            "type": "boolean",
-            "title": "Verified"
-          }
-        },
-        "type": "object",
-        "required": [
-          "title",
-          "link",
-          "verified"
-        ],
-        "title": "BotMetadata"
-      },
-      "MessageListResponseModelV3": {
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/MessageListData"
-          }
-        },
-        "type": "object",
-        "required": [
-          "data"
-        ],
-        "title": "MessageListResponseModelV3"
-      },
-      "AttachmentFileModel": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "url": {
-            "type": "string",
-            "title": "Url"
-          },
-          "height": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Height"
-          },
-          "width": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Width"
-          },
-          "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Name"
-          },
-          "type": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": [
-                  "CSV"
-                ],
-                "const": "CSV"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Type"
-          },
-          "size": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Size"
-          },
-          "blur_hash": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Blur Hash"
-          },
-          "duration": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Duration"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "url"
-        ],
-        "title": "AttachmentFileModel"
-      },
-      "UnseenChatCountResponseV3": {
-        "properties": {
-          "count": {
-            "type": "integer",
-            "title": "Count"
-          },
-          "more_than_count": {
-            "type": "boolean",
-            "title": "More Than Count"
-          }
-        },
-        "type": "object",
-        "required": [
-          "count",
-          "more_than_count"
-        ],
-        "title": "UnseenChatCountResponseV3"
       },
       "AttachmentRequestModel": {
         "properties": {
@@ -952,6 +1065,65 @@
         },
         "type": "object",
         "title": "AttachmentRequestModel"
+      },
+      "BooleanResponse": {
+        "properties": {
+          "data": {
+            "type": "boolean",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "BooleanResponse"
+      },
+      "VendorCacheData": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "type": "integer",
+            "title": "Status"
+          },
+          "identifier": {
+            "type": "string",
+            "title": "Identifier"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "status",
+          "identifier"
+        ],
+        "title": "VendorCacheData"
+      },
+      "UnseenChatCountResponseV3": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "more_than_count": {
+            "type": "boolean",
+            "title": "More Than Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count",
+          "more_than_count"
+        ],
+        "title": "UnseenChatCountResponseV3"
       },
       "ValidationError": {
         "properties": {
@@ -985,554 +1157,6 @@
           "type"
         ],
         "title": "ValidationError"
-      },
-      "MessageResourceV3": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "chat_id": {
-            "type": "integer",
-            "title": "Chat Id"
-          },
-          "seen_at": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Seen At"
-          },
-          "created_at": {
-            "type": "string",
-            "title": "Created At"
-          },
-          "updated_at": {
-            "type": "string",
-            "title": "Updated At"
-          },
-          "message_type": {
-            "type": "string",
-            "title": "Message Type"
-          },
-          "sender": {
-            "anyOf": [
-              {
-                "type": "object"
-              },
-              {
-                "$ref": "#/components/schemas/UserDataResponseModel"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sender"
-          },
-          "content": {
-            "$ref": "#/components/schemas/MessageV3"
-          },
-          "forward_from": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Forward From"
-          },
-          "replied_message": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/BaseMessageResourceV3"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "chat_id",
-          "seen_at",
-          "created_at",
-          "updated_at",
-          "message_type",
-          "sender",
-          "content"
-        ],
-        "title": "MessageResourceV3"
-      },
-      "EditMessageRequestModelV3": {
-        "properties": {
-          "message_id": {
-            "type": "integer",
-            "title": "Message Id"
-          },
-          "content": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MessageRequestModelV3"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "type": "object",
-        "required": [
-          "message_id",
-          "content"
-        ],
-        "title": "EditMessageRequestModelV3"
-      },
-      "BaseMessageResourceV3": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "chat_id": {
-            "type": "integer",
-            "title": "Chat Id"
-          },
-          "seen_at": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Seen At"
-          },
-          "created_at": {
-            "type": "string",
-            "title": "Created At"
-          },
-          "updated_at": {
-            "type": "string",
-            "title": "Updated At"
-          },
-          "message_type": {
-            "type": "string",
-            "title": "Message Type"
-          },
-          "sender": {
-            "anyOf": [
-              {
-                "type": "object"
-              },
-              {
-                "$ref": "#/components/schemas/UserDataResponseModel"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sender"
-          },
-          "content": {
-            "$ref": "#/components/schemas/MessageV3"
-          },
-          "forward_from": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Forward From"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "chat_id",
-          "seen_at",
-          "created_at",
-          "updated_at",
-          "message_type",
-          "sender",
-          "content"
-        ],
-        "title": "BaseMessageResourceV3"
-      },
-      "CreateMessageRequestModelV3_Modified_c056111f": {
-        "properties": {
-          "content": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/MessageRequestModelV3"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "message_type": {
-            "type": "string",
-            "enum": [
-              "file",
-              "old_file",
-              "product",
-              "vendor",
-              "social_post",
-              "user",
-              "coupon",
-              "notification",
-              "order_process",
-              "story",
-              "product_voice",
-              "review",
-              "order",
-              "text",
-              "picture",
-              "gallery",
-              "label",
-              "sticker",
-              "voice",
-              "video",
-              "location",
-              "voice_call_phone",
-              "agreement"
-            ],
-            "title": "Message Type"
-          },
-          "attachment": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AttachmentRequestModel"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "replied_message_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Replied Message Id"
-          },
-          "temp_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Temp Id"
-          },
-          "message_metadata": {
-            "anyOf": [
-              {
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Message Metadata"
-          },
-          "inline_markup_button": {
-            "anyOf": [
-              {
-                "items": {
-                  "items": {
-                    "$ref": "#/components/schemas/ReplyMarkupButton"
-                  },
-                  "type": "array"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Inline Markup Button"
-          },
-          "forward_from": {
-            "anyOf": [
-              {
-                "type": "integer",
-                "maximum": 2147483647.0,
-                "minimum": 1.0
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Forward From"
-          }
-        },
-        "type": "object",
-        "required": [
-          "message_type"
-        ],
-        "title": "CreateMessageRequestModelV3"
-      },
-      "ChannelMetadataV3": {
-        "properties": {
-          "title": {
-            "type": "string",
-            "title": "Title"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "avatar": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Avatar"
-          },
-          "link": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Link"
-          },
-          "owner": {
-            "type": "integer",
-            "title": "Owner"
-          },
-          "is_admin": {
-            "type": "boolean",
-            "title": "Is Admin",
-            "default": false
-          },
-          "members_count": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Members Count"
-          },
-          "can_leave": {
-            "type": "boolean",
-            "title": "Can Leave",
-            "default": true
-          },
-          "verified": {
-            "type": "boolean",
-            "title": "Verified",
-            "default": true
-          },
-          "temp_group": {
-            "type": "boolean",
-            "title": "Temp Group",
-            "default": false
-          }
-        },
-        "type": "object",
-        "required": [
-          "title",
-          "owner"
-        ],
-        "title": "ChannelMetadataV3"
-      },
-      "UserDataResponseModel": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id"
-          },
-          "hash_id": {
-            "type": "string",
-            "title": "Hash Id"
-          },
-          "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Name"
-          },
-          "avatar": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Avatar"
-          },
-          "badge": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Badge"
-          },
-          "verified": {
-            "type": "boolean",
-            "title": "Verified",
-            "default": false
-          },
-          "vendor": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/VendorCacheData"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "hash_id"
-        ],
-        "title": "UserDataResponseModel"
-      },
-      "MessageV3": {
-        "properties": {
-          "links": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "object"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Links"
-          },
-          "files": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "object"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Files"
-          },
-          "text": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Text"
-          },
-          "entity_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Entity Id"
-          },
-          "metadata": {
-            "anyOf": [
-              {
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Metadata"
-          },
-          "reply_markup": {
-            "anyOf": [
-              {
-                "items": {
-                  "items": {
-                    "$ref": "#/components/schemas/ReplyMarkupButton"
-                  },
-                  "type": "array"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Reply Markup"
-          }
-        },
-        "type": "object",
-        "title": "MessageV3"
       },
       "ChatResourceV3": {
         "properties": {
@@ -1703,9 +1327,9 @@
         ],
         "title": "ChatResourceV3"
       },
-      "DeleteMessageRequestModelV3": {
+      "DeleteChatRequestModelV3": {
         "properties": {
-          "message_ids": {
+          "chat_ids": {
             "items": {
               "type": "integer",
               "maximum": 2147483647.0,
@@ -1714,72 +1338,353 @@
             "type": "array",
             "maxItems": 30,
             "minItems": 1,
-            "title": "Message Ids"
-          }
-        },
-        "type": "object",
-        "required": [
-          "message_ids"
-        ],
-        "title": "DeleteMessageRequestModelV3"
-      },
-      "BooleanResponse": {
-        "properties": {
-          "data": {
-            "type": "boolean",
-            "title": "Data"
-          }
-        },
-        "type": "object",
-        "required": [
-          "data"
-        ],
-        "title": "BooleanResponse"
-      },
-      "ChatListResponseModelV3": {
-        "properties": {
-          "data": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ChatListData"
-              }
-            ]
-          }
-        },
-        "type": "object",
-        "title": "ChatListResponseModelV3"
-      },
-      "ForwardMessageRequestModelV3": {
-        "properties": {
-          "message_ids": {
-            "items": {
-              "type": "integer",
-              "maximum": 2147483647.0,
-              "minimum": 1.0
-            },
-            "type": "array",
-            "maxItems": 26,
-            "minItems": 1,
-            "title": "Message Ids"
-          },
-          "chat_ids": {
-            "items": {
-              "type": "integer",
-              "maximum": 2147483647.0,
-              "minimum": 1.0
-            },
-            "type": "array",
-            "maxItems": 1,
-            "minItems": 1,
             "title": "Chat Ids"
           }
         },
         "type": "object",
         "required": [
-          "message_ids",
           "chat_ids"
         ],
-        "title": "ForwardMessageRequestModelV3"
+        "title": "DeleteChatRequestModelV3"
+      },
+      "UserDataResponseModel": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "hash_id": {
+            "type": "string",
+            "title": "Hash Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "avatar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar"
+          },
+          "badge": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Badge"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified",
+            "default": false
+          },
+          "vendor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VendorCacheData"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "hash_id"
+        ],
+        "title": "UserDataResponseModel"
+      },
+      "CreateMessageRequestModelV3_Modified_c056111f": {
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MessageRequestModelV3"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message_type": {
+            "type": "string",
+            "enum": [
+              "file",
+              "old_file",
+              "product",
+              "vendor",
+              "social_post",
+              "user",
+              "coupon",
+              "notification",
+              "order_process",
+              "story",
+              "product_voice",
+              "review",
+              "order",
+              "text",
+              "picture",
+              "gallery",
+              "label",
+              "sticker",
+              "voice",
+              "video",
+              "location",
+              "voice_call_phone",
+              "agreement"
+            ],
+            "title": "Message Type"
+          },
+          "attachment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttachmentRequestModel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "replied_message_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Replied Message Id"
+          },
+          "temp_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temp Id"
+          },
+          "message_metadata": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message Metadata"
+          },
+          "inline_markup_button": {
+            "anyOf": [
+              {
+                "items": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReplyMarkupButton"
+                  },
+                  "type": "array"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inline Markup Button"
+          },
+          "forward_from": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forward From"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message_type"
+        ],
+        "title": "CreateMessageRequestModelV3"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ReplyMarkupButton": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "url",
+              "msg",
+              "cb"
+            ],
+            "title": "Type"
+          },
+          "data": {
+            "type": "object",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "type",
+          "data"
+        ],
+        "title": "ReplyMarkupButton"
+      },
+      "ChannelMetadataV3": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "avatar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar"
+          },
+          "link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link"
+          },
+          "owner": {
+            "type": "integer",
+            "title": "Owner"
+          },
+          "is_admin": {
+            "type": "boolean",
+            "title": "Is Admin",
+            "default": false
+          },
+          "members_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Members Count"
+          },
+          "can_leave": {
+            "type": "boolean",
+            "title": "Can Leave",
+            "default": true
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified",
+            "default": true
+          },
+          "temp_group": {
+            "type": "boolean",
+            "title": "Temp Group",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "owner"
+        ],
+        "title": "ChannelMetadataV3"
+      },
+      "ChatListData": {
+        "properties": {
+          "chats": {
+            "items": {
+              "$ref": "#/components/schemas/ChatResourceV3"
+            },
+            "type": "array",
+            "title": "Chats"
+          }
+        },
+        "type": "object",
+        "title": "ChatListData"
       },
       "entity__messages__v3__model__response__message_v3__MessageResponseV3__2": {
         "properties": {
@@ -1793,25 +1698,20 @@
         ],
         "title": "MessageResponseV3"
       },
-      "ChatResponseModelV3": {
+      "MessageRequestModelV3": {
         "properties": {
-          "data": {
-            "allOf": [
+          "text": {
+            "anyOf": [
               {
-                "$ref": "#/components/schemas/ChatResourceV3"
+                "type": "string"
+              },
+              {
+                "type": "null"
               }
-            ]
-          }
-        },
-        "type": "object",
-        "title": "ChatResponseModelV3"
-      },
-      "entity__messages__v3__model__response__message_v3__MessageResponseV3__1": {
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/MessageResourceV3"
+            ],
+            "title": "Text"
           },
-          "temp_id": {
+          "entity_id": {
             "anyOf": [
               {
                 "type": "integer"
@@ -1820,14 +1720,241 @@
                 "type": "null"
               }
             ],
-            "title": "Temp Id"
+            "title": "Entity Id"
+          }
+        },
+        "type": "object",
+        "title": "MessageRequestModelV3"
+      },
+      "EditMessageRequestModelV3": {
+        "properties": {
+          "message_id": {
+            "type": "integer",
+            "title": "Message Id"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MessageRequestModelV3"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
         "required": [
-          "data"
+          "message_id",
+          "content"
         ],
-        "title": "MessageResponseV3"
+        "title": "EditMessageRequestModelV3"
+      },
+      "MessageV3": {
+        "properties": {
+          "links": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Links"
+          },
+          "files": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Files"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "entity_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entity Id"
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata"
+          },
+          "reply_markup": {
+            "anyOf": [
+              {
+                "items": {
+                  "items": {
+                    "$ref": "#/components/schemas/ReplyMarkupButton"
+                  },
+                  "type": "array"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reply Markup"
+          }
+        },
+        "type": "object",
+        "title": "MessageV3"
+      },
+      "BotApiResponse": {
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "title": "Ok",
+            "description": "Indicates if the request was successful"
+          },
+          "result": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result",
+            "description": "Detailed information about the bot (if available)"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ok"
+        ],
+        "title": "BotApiResponse",
+        "description": "Represents the overall response structure from the Telegram Bot API."
+      },
+      "BaseMessageResourceV3": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "chat_id": {
+            "type": "integer",
+            "title": "Chat Id"
+          },
+          "seen_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seen At"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          },
+          "message_type": {
+            "type": "string",
+            "title": "Message Type"
+          },
+          "sender": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "$ref": "#/components/schemas/UserDataResponseModel"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sender"
+          },
+          "content": {
+            "$ref": "#/components/schemas/MessageV3"
+          },
+          "forward_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forward From"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "chat_id",
+          "seen_at",
+          "created_at",
+          "updated_at",
+          "message_type",
+          "sender",
+          "content"
+        ],
+        "title": "BaseMessageResourceV3"
       },
       "GroupMetadataV3": {
         "properties": {
@@ -1879,46 +2006,352 @@
         ],
         "title": "GroupMetadataV3"
       },
-      "HTTPValidationError": {
-        "properties": {
-          "detail": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            },
-            "type": "array",
-            "title": "Detail"
-          }
-        },
-        "type": "object",
-        "title": "HTTPValidationError"
-      },
-      "VendorCacheData": {
+      "AttachmentFileModel": {
         "properties": {
           "id": {
             "type": "integer",
             "title": "Id"
           },
-          "title": {
+          "url": {
             "type": "string",
-            "title": "Title"
+            "title": "Url"
           },
-          "status": {
-            "type": "integer",
-            "title": "Status"
+          "height": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height"
           },
-          "identifier": {
-            "type": "string",
-            "title": "Identifier"
+          "width": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Width"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "CSV"
+                ],
+                "const": "CSV"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          },
+          "blur_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Blur Hash"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration"
           }
         },
         "type": "object",
         "required": [
           "id",
-          "title",
-          "status",
-          "identifier"
+          "url"
         ],
-        "title": "VendorCacheData"
+        "title": "AttachmentFileModel"
+      },
+      "MessageListResponseModelV3": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/MessageListData"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "MessageListResponseModelV3"
+      },
+      "ChatResponseModelV3": {
+        "properties": {
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ChatResourceV3"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ChatResponseModelV3"
+      },
+      "CreateChatRequestV3": {
+        "properties": {
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id"
+          },
+          "hash_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hash Id"
+          }
+        },
+        "type": "object",
+        "title": "CreateChatRequestV3"
+      },
+      "BotMetadata": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "avatar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avatar"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "link": {
+            "type": "string",
+            "title": "Link"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "link",
+          "verified"
+        ],
+        "title": "BotMetadata"
+      },
+      "ChatListResponseModelV3": {
+        "properties": {
+          "data": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ChatListData"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ChatListResponseModelV3"
+      },
+      "ForwardMessageRequestModelV3": {
+        "properties": {
+          "message_ids": {
+            "items": {
+              "type": "integer",
+              "maximum": 2147483647.0,
+              "minimum": 1.0
+            },
+            "type": "array",
+            "maxItems": 26,
+            "minItems": 1,
+            "title": "Message Ids"
+          },
+          "chat_ids": {
+            "items": {
+              "type": "integer",
+              "maximum": 2147483647.0,
+              "minimum": 1.0
+            },
+            "type": "array",
+            "maxItems": 1,
+            "minItems": 1,
+            "title": "Chat Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message_ids",
+          "chat_ids"
+        ],
+        "title": "ForwardMessageRequestModelV3"
+      },
+      "MessageResourceV3": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "chat_id": {
+            "type": "integer",
+            "title": "Chat Id"
+          },
+          "seen_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seen At"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          },
+          "message_type": {
+            "type": "string",
+            "title": "Message Type"
+          },
+          "sender": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "$ref": "#/components/schemas/UserDataResponseModel"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sender"
+          },
+          "content": {
+            "$ref": "#/components/schemas/MessageV3"
+          },
+          "forward_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forward From"
+          },
+          "replied_message": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BaseMessageResourceV3"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "chat_id",
+          "seen_at",
+          "created_at",
+          "updated_at",
+          "message_type",
+          "sender",
+          "content"
+        ],
+        "title": "MessageResourceV3"
+      },
+      "DeleteMessageRequestModelV3": {
+        "properties": {
+          "message_ids": {
+            "items": {
+              "type": "integer",
+              "maximum": 2147483647.0,
+              "minimum": 1.0
+            },
+            "type": "array",
+            "maxItems": 30,
+            "minItems": 1,
+            "title": "Message Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message_ids"
+        ],
+        "title": "DeleteMessageRequestModelV3"
       }
     }
   },

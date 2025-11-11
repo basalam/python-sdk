@@ -316,3 +316,11 @@ class UnseenChatCountResponse(BaseModel):
 class EditMessageResponse(BaseModel):
     """Edit message response model."""
     data: MessageResource
+
+
+class BotApiResponse(BaseModel):
+    """Bot API response model."""
+    ok: bool
+    result: Optional[Any] = None
+    description: Optional[str] = None
+    error_code: Optional[int] = None
