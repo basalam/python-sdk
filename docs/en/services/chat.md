@@ -12,17 +12,17 @@ different message types, manage chat participants, and track chat history and up
 
 ## Chat Methods
 
-| Method                                              | Description                 | Parameters                                                     |
-|-----------------------------------------------------|-----------------------------|----------------------------------------------------------------|
-| [`create_message()`](#create-message)               | Create a message            | `chat_id: int, request: MessageRequest`                        |
-| [`create_chat()`](#create-chat)                     | Create a chat               | `request: CreateChatRequest`                                   |
-| [`get_messages()`](#get-messages)                   | Get chat messages           | `chat_id: int, request: Optional[GetMessagesRequest] = None`   |
-| [`get_chats()`](#get-chats)                         | Get chats list              | `request: GetChatsRequest`                                     |
-| [`edit_message()`](#edit-message)                   | Edit an existing message    | `chat_id: int, message_id: int, request: EditMessageRequest`   |
-| [`delete_message()`](#delete-message)               | Delete a message            | `chat_id: int, message_id: int`                                |
-| [`delete_chats()`](#delete-chats)                   | Delete multiple chats       | `request: DeleteChatsRequest`                                  |
-| [`forward_message()`](#forward-message)             | Forward a message           | `chat_id: int, request: ForwardMessageRequest`                 |
-| [`get_unseen_chat_count()`](#get-unseen-chat-count) | Get unseen chats count      | None                                                           |
+| Method                                              | Description                 | Parameters                          |
+|-----------------------------------------------------|-----------------------------|-------------------------------------|
+| [`create_message()`](#create-message)               | Create a message            | `request: MessageRequest`           |
+| [`create_chat()`](#create-chat)                     | Create a chat               | `request: CreateChatRequest`        |
+| [`get_messages()`](#get-messages)                   | Get chat messages           | `request: GetMessagesRequest`       |
+| [`get_chats()`](#get-chats)                         | Get chats list              | `request: GetChatsRequest`          |
+| [`edit_message()`](#edit-message)                   | Edit an existing message    | `request: EditMessageRequest`       |
+| [`delete_message()`](#delete-message)               | Delete messages             | `request: DeleteMessageRequest`     |
+| [`delete_chats()`](#delete-chats)                   | Delete multiple chats       | `request: DeleteChatsRequest`       |
+| [`forward_message()`](#forward-message)             | Forward messages            | `request: ForwardMessageRequest`    |
+| [`get_unseen_chat_count()`](#get-unseen-chat-count) | Get unseen chats count      | None                                |
 
 ## Bot Methods
 
@@ -66,7 +66,7 @@ async def create_message_example():
             text="Hello, how can I help you?"
         )
     )
-    message = await client.chat.create_message(chat_id=123, request=request)
+    message = await client.chat.create_message(request=request)
     return message
 ```
 
@@ -92,19 +92,16 @@ from basalam_sdk.chat.models import GetMessagesRequest
 
 async def get_messages_example():
     request = GetMessagesRequest(
+        chat_id=123,
         message_id=456,
         limit=20,
         order="desc",
     )
-    messages = await client.chat.get_messages(chat_id=123, request=request)
+    messages = await client.chat.get_messages(request=request)
 
-    # Option 2: With default parameters (request is optional)
-    messages = await client.chat.get_messages(chat_id=123)
-
-    # Option 3: With only some custom parameters
+    # Option 2: With only some custom parameters
     messages = await client.chat.get_messages(
-        chat_id=123,
-        request=GetMessagesRequest(limit=50)
+        request=GetMessagesRequest(chat_id=123, limit=50)
     )
 
     return messages
@@ -130,17 +127,16 @@ async def get_chats_example():
 
 ```python
 import asyncio
-from basalam_sdk.chat.models import EditMessageRequest
+from basalam_sdk.chat.models import EditMessageRequest, MessageInput
 
 async def edit_message_example():
     request = EditMessageRequest(
-        text="Updated message text"
-    )
-    result = await client.chat.edit_message(
-        chat_id=123,
         message_id=456,
-        request=request
+        content=MessageInput(
+            text="Updated message text"
+        )
     )
+    result = await client.chat.edit_message(request=request)
     return result
 ```
 
@@ -148,12 +144,13 @@ async def edit_message_example():
 
 ```python
 import asyncio
+from basalam_sdk.chat.models import DeleteMessageRequest
 
 async def delete_message_example():
-    result = await client.chat.delete_message(
-        chat_id=123,
-        message_id=456
+    request = DeleteMessageRequest(
+        message_ids=[456, 457]
     )
+    result = await client.chat.delete_message(request=request)
     return result
 ```
 
@@ -179,13 +176,10 @@ from basalam_sdk.chat.models import ForwardMessageRequest
 
 async def forward_message_example():
     request = ForwardMessageRequest(
-        message_id=[456, 457],
+        message_ids=[456, 457],
         chat_ids=[789]
     )
-    result = await client.chat.forward_message(
-        chat_id=123,
-        request=request
-    )
+    result = await client.chat.forward_message(request=request)
     return result
 ```
 
