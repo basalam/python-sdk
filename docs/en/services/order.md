@@ -48,15 +48,15 @@ async def get_baskets_example():
     baskets = await client.get_baskets(
         refresh=True
     )
-    
+
     print(f"Basket ID: {baskets.id}")
     print(f"Item count: {baskets.item_count}")
     print(f"Error count: {baskets.error_count}")
-    
+
     if baskets.vendors:
         for vendor in baskets.vendors:
             print(f"Vendor: {vendor.title} - Items: {len(vendor.items) if vendor.items else 0}")
-    
+
     return baskets
 ```
 
@@ -67,7 +67,7 @@ async def get_product_variation_status_example():
     status = await client.get_product_variation_status(
         product_id=123
     )
-    
+
     print(f"Product variation status: {status}")
     return status
 ```
@@ -90,7 +90,7 @@ async def create_invoice_payment_example():
             national_id="1234567890"
         )
     )
-    
+
     print(f"Payment created: {payment}")
     return payment
 ```
@@ -103,7 +103,7 @@ async def get_payable_invoices_example():
         page=1,
         per_page=10
     )
-    
+
     print(f"Payable invoices: {invoices}")
     return invoices
 ```
@@ -119,7 +119,7 @@ async def get_unpaid_invoices_example():
         per_page=20,
         sort=OrderEnum.DESC
     )
-    
+
     print(f"Unpaid invoices: {invoices}")
     return invoices
 ```
@@ -136,7 +136,7 @@ async def get_payment_callback_example():
             description="Payment completed successfully"
         )
     )
-    
+
     print(f"Payment callback: {callback}")
     return callback
 ```
@@ -153,7 +153,7 @@ async def create_payment_callback_example():
             description="Payment verification completed"
         )
     )
-    
+
     print(f"Payment callback created: {callback}")
     return callback
 ```

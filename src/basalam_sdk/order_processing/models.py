@@ -52,6 +52,22 @@ class ParcelStatus(IntEnum):
     CANCEL = 3067
 
 
+class ShippingMethodCode(IntEnum):
+    """Enum for supported parcel shipping methods."""
+    SPECIAL = 3197
+    EXPRESS = 3198
+    COURIER = 3259
+    TRANSIT = 5137
+    TIPAX = 4040
+    MAHEX = 6102
+    CHAPAR = 6101
+    AMADAST = 6110
+    DECA = 6111
+    CHEETA = 6112
+    BOXIT = 6113
+    SALAM_RESAN = 6114
+
+
 class FileResponse(BaseModel):
     """File response model."""
     id: int
@@ -319,6 +335,17 @@ class OrdersResponse(BaseModel):
 class OrderStatsResponse(BaseModel):
     """OrderEnum statistics response model."""
     result: int
+
+
+class ResultResponse(BaseModel):
+    """Generic response wrapper for boolean or object results."""
+    result: Any
+
+
+class PostedOrderRequest(BaseModel):
+    """Request body for setting parcel as posted."""
+    tracking_code: Optional[str] = None
+    shipping_method: ShippingMethodCode
 
 
 class ParcelSummaryResponse(BaseModel):

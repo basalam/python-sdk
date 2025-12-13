@@ -8,6 +8,7 @@ from .client import OrderProcessingService
 from .models import (
     ResourceStats,
     ParcelStatus,
+    ShippingMethodCode,
     FileResponse,
     AmountDrivers,
     City,
@@ -34,12 +35,15 @@ from .models import (
     OrderParcelFilter,
     OrderFilter,
     ItemFilter,
+    ResultResponse,
+    PostedOrderRequest,
 )
 
 __all__ = [
     "OrderProcessingService",
     "ResourceStats",
     "ParcelStatus",
+    "ShippingMethodCode",
     "FileResponse",
     "AmountDrivers",
     "City",
@@ -66,4 +70,6 @@ __all__ = [
     "OrderParcelFilter",
     "OrderFilter",
     "ItemFilter",
+    "ResultResponse",
+    "PostedOrderRequest",
 ]

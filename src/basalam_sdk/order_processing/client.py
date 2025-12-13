@@ -17,8 +17,11 @@ from .models import (
     OrderFilter,
     ItemFilter,
     OrderParcelFilter,
-    ParcelsResponse, Order,
+    ParcelsResponse,
+    Order,
     ParcelHintsResponse,
+    ResultResponse,
+    PostedOrderRequest,
 )
 from ..base_client import BaseClient
 
@@ -332,6 +335,72 @@ class OrderProcessingService(BaseClient):
         endpoint = f"/v1/vendor-parcels/{parcel_id}"
         response = self._get_sync(endpoint)
         return ParcelResponse(**response)
+
+    async def set_order_parcel_preparation(self, parcel_id: int) -> ResultResponse:
+        """
+        Confirm that a vendor parcel is in the preparation stage.
+
+        Args:
+            parcel_id: The ID of the parcel to update.
+
+        Returns:
+            The result of the preparation request.
+        """
+        endpoint = f"/v1/vendor-parcels/{parcel_id}/set-preparation"
+        response = await self._post(endpoint)
+        return ResultResponse(**response)
+
+    def set_order_parcel_preparation_sync(self, parcel_id: int) -> ResultResponse:
+        """
+        Confirm that a vendor parcel is in the preparation stage (sync version).
+
+        Args:
+            parcel_id: The ID of the parcel to update.
+
+        Returns:
+            The result of the preparation request.
+        """
+        endpoint = f"/v1/vendor-parcels/{parcel_id}/set-preparation"
+        response = self._post_sync(endpoint)
+        return ResultResponse(**response)
+
+    async def set_order_parcel_posted(
+            self,
+            parcel_id: int,
+            posted_data: PostedOrderRequest,
+    ) -> ResultResponse:
+        """
+        Mark a vendor parcel as posted/shipped.
+
+        Args:
+            parcel_id: The ID of the parcel to update.
+            posted_data: Tracking and shipping data required by the API.
+
+        Returns:
+            The result of the posted request.
+        """
+        endpoint = f"/v1/vendor-parcels/{parcel_id}/set-posted"
+        response = await self._post(endpoint, json_data=posted_data.model_dump(exclude_none=True))
+        return ResultResponse(**response)
+
+    def set_order_parcel_posted_sync(
+            self,
+            parcel_id: int,
+            posted_data: PostedOrderRequest,
+    ) -> ResultResponse:
+        """
+        Mark a vendor parcel as posted/shipped (sync version).
+
+        Args:
+            parcel_id: The ID of the parcel to update.
+            posted_data: Tracking and shipping data required by the API.
+
+        Returns:
+            The result of the posted request.
+        """
+        endpoint = f"/v1/vendor-parcels/{parcel_id}/set-posted"
+        response = self._post_sync(endpoint, json_data=posted_data.model_dump(exclude_none=True))
+        return ResultResponse(**response)
 
     async def get_orders_stats(
             self,

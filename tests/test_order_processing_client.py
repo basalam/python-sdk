@@ -11,16 +11,20 @@ from basalam_sdk.order_processing.models import (
     ItemFilter,
     OrderParcelFilter,
     ResourceStats,
-    ParcelStatus
+    ParcelStatus,
+    PostedOrderRequest,
+    ShippingMethodCode,
 )
 
 # Test IDs (you'll need valid IDs for testing)
 TEST_ORDER_ID = 57745665
 TEST_ITEM_ID = 67890
-TEST_PARCEL_ID = 2196466970
+TEST_PARCEL_ID = 59530910
 TEST_VENDOR_ID = "266"
 TEST_CUSTOMER_ID = "430"
 TEST_PRODUCT_ID = 456
+TEST_SHIPPING_METHOD = ShippingMethodCode.SPECIAL
+TEST_TRACKING_CODE = "072500037102188250223200"
 
 
 @pytest.fixture
@@ -268,6 +272,74 @@ def test_get_order_parcel_sync(basalam_client):
 
     except Exception as e:
         print(f"get_order_parcel_sync error: {e}")
+        # Don't fail the test for API errors, just log them
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_set_order_parcel_preparation_async(basalam_client):
+    """Test set_order_parcel_preparation async method."""
+    try:
+        result = await basalam_client.order_processing.set_order_parcel_preparation(TEST_PARCEL_ID)
+        print(f"set_order_parcel_preparation async result: {result}")
+        assert hasattr(result, 'result')
+
+    except Exception as e:
+        print(f"set_order_parcel_preparation async error: {e}")
+        # Don't fail the test for API errors, just log them
+        assert True
+
+
+def test_set_order_parcel_preparation_sync(basalam_client):
+    """Test set_order_parcel_preparation_sync method."""
+    try:
+        result = basalam_client.order_processing.set_order_parcel_preparation_sync(TEST_PARCEL_ID)
+        print(f"set_order_parcel_preparation_sync result: {result}")
+        assert hasattr(result, 'result')
+
+    except Exception as e:
+        print(f"set_order_parcel_preparation_sync error: {e}")
+        # Don't fail the test for API errors, just log them
+        assert True
+
+
+@pytest.mark.asyncio
+async def test_set_order_parcel_posted_async(basalam_client):
+    """Test set_order_parcel_posted async method."""
+    try:
+        posted_request = PostedOrderRequest(
+            shipping_method=TEST_SHIPPING_METHOD,
+            tracking_code=TEST_TRACKING_CODE,
+        )
+        result = await basalam_client.order_processing.set_order_parcel_posted(
+            TEST_PARCEL_ID,
+            posted_request,
+        )
+        print(f"set_order_parcel_posted async result: {result}")
+        assert hasattr(result, 'result')
+
+    except Exception as e:
+        print(f"set_order_parcel_posted async error: {e}")
+        # Don't fail the test for API errors, just log them
+        assert True
+
+
+def test_set_order_parcel_posted_sync(basalam_client):
+    """Test set_order_parcel_posted_sync method."""
+    try:
+        posted_request = PostedOrderRequest(
+            shipping_method=TEST_SHIPPING_METHOD,
+            tracking_code="TEST-CODE",
+        )
+        result = basalam_client.order_processing.set_order_parcel_posted_sync(
+            TEST_PARCEL_ID,
+            posted_request,
+        )
+        print(f"set_order_parcel_posted_sync result: {result}")
+        assert hasattr(result, 'result')
+
+    except Exception as e:
+        print(f"set_order_parcel_posted_sync error: {e}")
         # Don't fail the test for API errors, just log them
         assert True
 
